@@ -305,7 +305,8 @@ hr {
 	width:100%;
 	position:relative;
 	
-	background: url(../img/bg1.jpg) no-repeat top center;
+	background: url(../img/tibet-night-sky.png) no-repeat top center;
+	/*Source: http://www.10wallpaper.com/wallpaper/1680x1050/1209/The_night_sky_in_Tibet-Natural_Scenery_Wallpaper_1680x1050.jpg*/
 }
 
 #intro.intro {
