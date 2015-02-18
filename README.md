@@ -1,1 +1,1 @@
-# Sandbox for personal data exploration and visualization projects
+# Sandbox for personal data exploration and visualization projects.
