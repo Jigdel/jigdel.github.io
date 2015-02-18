@@ -1,1 +1,1 @@
-# jigdel.github.io
+# List of projects
