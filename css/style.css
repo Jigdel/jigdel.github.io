@@ -49,7 +49,7 @@ a {
 a:hover,
 a:focus {
     text-decoration: none;
-    color: #176e61;
+    color: #101553; /* Change earlier color: #176e61; */
 }
 
 .light {
@@ -734,7 +734,7 @@ Parallax
     }
 
     .navbar-custom.top-nav-collapse {
-        border-bottom: 1px solid rgba(255,255,255,.3);
+        border-bottom: 0px solid rgba(255,255,255,.3); /*change 1px */
     }
 	
     .intro {
