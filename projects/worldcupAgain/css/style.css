@@ -6,7 +6,7 @@ body {
     width: 100%;
     height: 100%;
     font-family: 'Lato',sans-serif;
-	font-weight: 300;
+	font-weight: 100;
     color: #666;
     background-color: #fff;
 }
@@ -28,6 +28,37 @@ h6 {
     font-weight: 700;
     letter-spacing: 1px;
 }
+h2 {
+        color: black;
+        text-align: center;
+}
+
+.axis {
+        font-family: arial;
+        font-size: 0.6em;
+}
+
+path {
+        fill: none;
+        stroke: black;
+        stroke-width: 2px;
+}
+
+.tick {
+        fill: none;
+        stroke: black;
+}
+
+circle {
+        opacity: 0.4;
+        stroke: none;
+}
+      
+.line_plot {
+        fill: none;
+        stroke: #4eb0bb;
+        stroke-width: 1px;
+}
 
 p {
     margin: 0 0 20px;
@@ -36,7 +67,7 @@ p {
 }
 
 p.lead {
-	font-weight: 600;
+	font-weight: 200;
 }
 
 a {

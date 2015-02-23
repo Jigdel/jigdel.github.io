@@ -16,7 +16,10 @@
     -->
     <script src="js/d3.v3.min.js"></script>
     <script src="js/dimple.v2.0.0.min.js"></script>
-    <script src="js/chart.js"></script>
+    
+    <!-- Customized D3 charts -->
+    <script src="js/chartD3.js"></script>
+    
     <link rel="stylesheet" href="css/main.css">
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -27,7 +30,6 @@
     <!-- Squad theme CSS -->
     <link href="css/style.css" rel="stylesheet">
     <link href="color/default.css" rel="stylesheet">
-
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-custom">
@@ -85,7 +87,23 @@
 	      Use D3 (not dimple.js) to load the TSV file
 	      and pass the contents of it to the draw function
 	      */
-	      d3.tsv("world_cup.tsv", draw);
+	      
+	      //example date:27-05-1934 (16:00 h)
+	      //note all times are local, not an issue here
+	      format = d3.time.format("%d-%m-%Y (%H:%M h)");
+	      
+	      //parse "date" (currently string format) so 
+	      //we can use d3.extent() to get min/max
+	      //d3.tsv("world_cup.tsv", draw);
+	      d3.tsv("world_cup_geo.tsv", function(d) {
+	      	//transform data
+	      	d['date'] = format.parse(d['date']);
+	      	//attendance initially stored as string
+	      	// unary plus operator used
+	      	d['attendance'] = +d["attendance"]; 
+	      	return d;
+	      	}, draw);
+	      			
 	  </script>
 	</div>
       </div>
