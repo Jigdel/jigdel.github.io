@@ -91,7 +91,7 @@
 	      //example date:27-05-1934 (16:00 h)
 	      //note all times are local, not an issue here
 	      format = d3.time.format("%d-%m-%Y (%H:%M h)");
-	      
+	      /*
 	      //parse "date" (currently string format) so 
 	      //we can use d3.extent() to get min/max
 	      //d3.tsv("world_cup.tsv", draw);
@@ -103,6 +103,12 @@
 	      	d['attendance'] = +d["attendance"]; 
 	      	return d;
 	      	}, draw);
+           */
+          
+          //Geo
+          <script type="text/javascript">
+          //Use D3 to load GeoJSON file
+          d3.json("world_countries.json", draw);
 	      			
 	  </script>
 	</div>
