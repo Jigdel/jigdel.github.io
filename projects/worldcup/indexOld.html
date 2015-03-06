@@ -27,6 +27,14 @@
     <!-- Squad theme CSS -->
     <link href="css/style.css" rel="stylesheet">
     <link href="color/default.css" rel="stylesheet">
+        <script type="text/javascript">
+            /*
+             Use D3 (not dimple.js) to load the TSV file
+             and pass the contents of it to the draw function
+             */
+            d3.tsv("world_cup.tsv", draw);
+            </script>
+        
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-custom">
@@ -51,6 +59,18 @@
 	<ul class="nav navbar-nav">
 	  <li class="active"><a href="http://jigdel.github.io/index.html">Home</a></li>
 	  <li><a href="http://jigdel.github.io/index.html#about">Projects</a></li>
+	  <!--
+	      <li><a href="#service">Service</a></li>
+		<li><a href="#contact">Contact</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Example menu</a></li>
+            <li><a href="#">Example menu</a></li>
+            <li><a href="#">Example menu</a></li>
+          </ul>
+        </li>
+	-->
 	</ul>
       </div>
       <!-- /.navbar-collapse -->
@@ -69,41 +89,80 @@
         <h3><font color="yellow">Won by host nation six times! </font>
         </h3>
     </div>
-    <div class="container">
-      <div class="row"><!--
+    <div class="container"><!--
+      <div class="row">
           <div class="col-lg-12 col-lg-offset-2"> -->
-          
+        <svg class = "chart">
+            </svg>
         <!--</div> -->
       </div>
     </div>
   </section>
-    
+  
+
+  <!-- /Section: intro -->
+  
+  <!-- Section: about -->
+   <!--
   <section id="about" class="home-section text-center">
-      <script type="text/javascript">
-          /*
-           Use D3 (not dimple.js) to load the TSV file
-           and pass the contents of it to the draw function
-           */
-          d3.tsv("world_cup.tsv", draw);
-          </script>
+    <div class="heading-about">
+      <div class="container">
+	<div class="row">
+	  <div class="col-lg-8 col-lg-offset-2">
+	    	<script type="text/javascript">
+	      /*
+	      Use D3 (not dimple.js) to load the TSV file
+	      and pass the contents of it to the draw function
+	      */
+	      d3.tsv("world_cup.tsv", draw);
+		</script>
+	    <div class="wow bounceInDown" data-wow-delay="0.4s">
+	      <div class="section-heading">
+		<h2>World Cup Attendance</h2>
+		<i class="fa fa-2x fa-angle-down"></i>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+	<div class="col-lg-2 col-lg-offset-5">
+	  <hr class="marginbot-50">
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-lg-9 col-sm-9 col-md-9">
+	  <div class="wow bounceInUp" data-wow-delay="0.2s">
+	    
+	  </div>
+	</div>
+      </div>
+    </div>   
   </section>
-    
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 col-lg-12">
-                    <div class="wow shake" data-wow-delay="0.4s">
-                        <div class="page-scroll marginbot-30">
-                            <a href="#intro" id="totop" class="btn btn-circle">
-                                <i class="fa fa-angle-double-up animated"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <!--&copy;Copyright 2014 - Squad. All rights reserved. -->
-                </div>
-            </div>
-        </div>
-    </footer>
+  -->
+
+  <!-- /Section: project -->
+ 
+  <footer>
+    <div class="container">
+      <div class="row">
+	<div class="col-md-12 col-lg-12">
+	  <div class="wow shake" data-wow-delay="0.4s">
+	    <div class="page-scroll marginbot-30">
+	      <a href="#about" id="totop" class="btn btn-circle">
+		<i class="fa fa-angle-double-up animated"></i>
+	      </a>
+	    </div>
+	  </div>
+	  -->
+	  <!--&copy;Copyright 2014 - Squad. All rights reserved. -->
+
+	</div>
+      </div>
+    </div>
+  </footer>
 
 
   <!-- Core JavaScript Files -->

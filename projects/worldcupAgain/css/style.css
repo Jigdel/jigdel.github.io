@@ -50,9 +50,23 @@ path {
 }
 
 circle {
-        opacity: 0.4;
-        stroke: none;
+        fill: orange;
+        stroke: black;
+        stroke-width: 0.7;
+        opacity: 0.7;
 }
+
+div.years_buttons {
+            position: fixed;
+            top: 5px;
+            left: 50px;
+        }
+
+div.years_buttons div {
+            background-color: lightBlue; /*rgb(251, 201, 127); */
+            padding: 3px;
+            margin: 7px;
+        }
       
 .line_plot {
         fill: none;
@@ -341,7 +355,7 @@ hr {
 }
 
 #intro.intro {
-	padding:5% 0 0 0; /*changed initial 20% */
+	padding:8% 0 0 0; /*changed initial 20% */
 }
 
 .intro .slogan {

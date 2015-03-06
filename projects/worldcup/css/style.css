@@ -4,7 +4,7 @@
 
 body {
     width: 100%;
-    height: 100%;
+    height: 65%;
     font-family: 'Lato',sans-serif;
 	font-weight: 300;
     color: #666;
@@ -258,8 +258,8 @@ hr {
 ============================ */
 
 .home-section {
-    padding-top: 110px;
-    padding-bottom: 110px;
+    padding-top: 10px; /* 110px */
+    padding-bottom: 10px; /* 110px */
 	display:block;
     position:relative;
     z-index:120;
@@ -305,12 +305,11 @@ hr {
 	width:100%;
 	position:relative;
 	
-	background: url(../img/tibet-night-sky.png) no-repeat top center;
-	/*Source: http://www.10wallpaper.com/wallpaper/1680x1050/1209/The_night_sky_in_Tibet-Natural_Scenery_Wallpaper_1680x1050.jpg*/
+	background: url(../img/attendance.png) no-repeat top center;
 }
 
 #intro.intro {
-	padding:5% 0 0 0; /*changed initial 20% */
+	padding:8% 0 0 0; /*changed initial 20% */
 }
 
 .intro .slogan {
@@ -738,7 +737,7 @@ Parallax
     }
 	
     .intro {
-        height: 50%; /*changed initial 100% */
+        height: 100%; /*changed initial 100% */
         padding: 0;
     }
 
