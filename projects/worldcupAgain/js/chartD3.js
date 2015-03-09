@@ -1,7 +1,8 @@
 function draw(geo_data) {
         "use strict";
-        var margin = 75,
-            width = 1400 - margin,
+        var margin = 5,
+        	container_width= (1170 * .91),
+            width = container_width - margin,
             height = 600 - margin;
         /*  
         d3.select("body")
@@ -9,7 +10,7 @@ function draw(geo_data) {
           .text("World Cup");
 		*/
 		
-        var svg = d3.select("body")
+        var svg = d3.select("#map")
             .append("svg")
             .attr("width", width + margin)
             .attr("height", height + margin)
@@ -27,7 +28,7 @@ function draw(geo_data) {
         
         var projection = d3.geo.mercator()
                                .scale(150)
-                               .translate( [width / 2.3, height / 1.3]);
+                               .translate( [width / 2.3, height / 1.4]);
 
         var path = d3.geo.path().projection(projection);
 
@@ -125,7 +126,7 @@ function draw(geo_data) {
                         return new Date(d['key']).getUTCFullYear() === year;
                     });
                   
-                  d3.select('h2')
+                  d3.select('#yearTitle')
                   .text("World Cup " + year);
                   
                   var circles = svg.selectAll('circle')
@@ -187,11 +188,11 @@ function draw(geo_data) {
                            */
                           
                           //user-driven buttons - pick year
-                          var buttons = d3.select("body")
-                                      .append("div")
+                          var buttons = d3.select(".years_buttons")
+                                      //.append("div")
                                       //.transition
                                       //.duration(10000)
-                                      .attr("class", "years_buttons")
+                                      //.attr("class", "years_buttons")
                                       .selectAll("div") //select divs
                                       .data(years)      //bind data
                                       .enter()          //enter selection
