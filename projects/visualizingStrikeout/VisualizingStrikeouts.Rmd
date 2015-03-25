@@ -1,0 +1,74 @@
+---
+title: "VisualizingStrikeouts"
+output: html_document
+---
+
+rCharts tutorial on visualizing strikeouts - similar to NYTimes.
+
+Use  `plyr` to create two dataframes. 
+
+```{r}
+library(Lahman)
+library(plyr)
+#install.packages('ascii')
+library(ascii)
+dat = Teams[, c('yearID', 'name', 'G', 'SO')]
+team_data = na.omit(transform(dat, SOG=round(SO/G, 2)))
+league_data = ddply(team_data, .(yearID), summarize, SOG=mean(SOG))
+ascii(head(team_data), type='rst')
+head(league_data, 2)
+```
+
+Let's starting plotting!
+
+```{r, echo=FALSE}
+require(rCharts)
+p1 <- rPlot(SOG ~ yearID, data=team_data,
+            type="point",
+            size=list(const=2),
+            color=list(const="#888"),
+            tooltip= "#! function(item){
+            return item.SOG + ' ' + item.name + ' ' + item.yearID
+            } !#"
+      )
+p1$print('chart1', include_assets=TRUE, cdn=TRUE)
+```
+
+Let's add a line plot of the average SOG.
+
+```{r, echo=FALSE}
+p1$layer(x='yearID', y='SOG', data=league_data, type='line',
+         color=list(const='blue', copy_layer=T, tooltip=NULL))
+p1$print('chart2', include_assets=TRUE, cdn=TRUE)
+```
+Let's add a team name with a different color. We will use this change the team name later.
+
+```{r}
+myTeam="Boston Red Sox"
+p1$layer(x='yearID', y='SOG', data=team_data[team_data$name == myTeam,],
+         color=list(const='red'),
+         coply_layer=T)
+p1$set(dom='chart3')
+p1$print('chart3', include_assets=TRUE, cdn=TRUE)
+```
+Add some interactivity. Click on the scatterplot to see the team name.
+
+```{r}
+p2 <- p1$copy()
+p2$setTemplate(afterScript = '
+               <script>
+               graph_chart3.addHandle(function(type, e) {
+                    var data;
+                    data = e.evtData;
+                    if (type == "click") {
+                        return alert("You clicked on the team: " + data.name["in"][0]);
+               }
+            });
+          </script>
+        ')
+p2$print('chart4', include_assets=TRUE, cdn=TRUE)
+
+```
+
+
+
