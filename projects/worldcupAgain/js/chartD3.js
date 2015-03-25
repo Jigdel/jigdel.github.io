@@ -1,9 +1,9 @@
 function draw(geo_data) {
         "use strict";
         var margin = 5,
-        	container_width= (1170 * .91),
+        	container_width= (1140 * .91),
             width = container_width - margin,
-            height = 600 - margin;
+            height = 580 - margin;
         /*  
         d3.select("body")
           .append("h2")
