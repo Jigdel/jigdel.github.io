@@ -3,7 +3,7 @@ a,.tp-caption a.btn:hover {
 	color: #67b0d1;
 }
 .top-nav-collapse {
-    background: #101553; /*change 67b0d1; */
+    background: #68A0C3; /* dark blue - #101553; change 67b0d1; */
 }
 
 .navbar-custom ul.nav ul.dropdown-menu li a:hover {
@@ -12,7 +12,7 @@ a,.tp-caption a.btn:hover {
 
 .owl-theme .owl-controls .owl-page.active span,
 .owl-theme .owl-controls.clickable .owl-page:hover span {
-    background-color: #101553; /* change #67b0d1; */
+    background-color: #68A0C3; /* dark blule - #101553; /* change #67b0d1; */
 }
 
 .widget-avatar .avatar:hover {
@@ -20,7 +20,7 @@ a,.tp-caption a.btn:hover {
 }
 
 .bg-skin {
-    background: #101553; /* change #67b0d1; */
+    background: #68A0C3; /* dark blue - #101553; /* change #67b0d1; */
 }
 
 form#contact-form input:focus,form#contact-form select:focus,form#contact-form textarea:focus {
@@ -28,7 +28,7 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
 }
 
 footer {
-    background-color: #101553; /* change 67b0d1;*/
+    background-color: #68A0C3; /* dark blue - #101553; /* change 67b0d1;*/
 }
 
 .btn-skin {
