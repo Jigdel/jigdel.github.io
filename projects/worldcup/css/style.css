@@ -29,6 +29,70 @@ h6 {
     letter-spacing: 1px;
 }
 
+#yearTitle {
+  color: darkBlue;
+  text-shadow: none;
+  font-size: 40px;
+  line-height: 60px;
+  font-weight: 400;
+  font-family: Montserrat, sans-serif;
+  background-color: rgba(0, 0, 0, 0);
+  text-decoration: none;
+  text-transform: uppercase;
+  border-width: 0px;
+  border-color: #000;
+  border-style: none;
+  text-shadow: -1px 0 1px #000;
+}
+
+
+path {
+        fill: none;
+        stroke: black;
+        stroke-width: 2px;
+}
+/*
+.tick {
+        fill: none;
+        stroke: black;
+        
+}
+*/
+.axis {
+        font-family: arial;
+        font-size: 0.6em;
+}
+
+
+circle {
+        fill: orange;
+        stroke: black;
+        stroke-width: 0.7;
+        opacity: 0.7;
+}
+
+div.years_buttons {
+            position: relative;
+            top: 5px;
+            left: 5px;
+        }
+
+div.years_buttons div {
+            background-color: lightBlue; /*rgb(251, 201, 127); */
+            padding: 3px;
+            margin: 3px;
+      font-size: 13px;
+      line-height: ;
+      font-weight: 200;
+      font-family: Montserrat, sans-serif;
+        }
+
+.line_plot {
+        fill: none;
+        stroke: #4eb0bb;
+        stroke-width: 1px;
+}
+
 p {
     margin: 0 0 20px;
     font-size: 16px;

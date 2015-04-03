@@ -17,7 +17,7 @@ function draw(data) {
           
     	/*debugger; */
 
-          var svg = d3.select("#about")
+          var svg = d3.select("#about1")
             .append("svg")
               .attr("width", width + margin)
               .attr("height", height + margin)
@@ -42,7 +42,9 @@ function draw(data) {
           /* dimple.plot.bar/scatter/line */
           /* "null" tells Dimple not to facet or group the bars in any way*/
           myChart.addSeries(null, dimple.plot.bar);
-          myChart.addSeries("stage", dimple.plot.scatter);
+          /*myChart.addSeries("stage", dimple.plot.bubble); /*scatter); */
+          var s = myChart.addSeries("stage", dimple.plot.bar);
+          s.stacked = false;
           /* myChart.addSeries("stage", dimple.plot.line); */
           var myLegend = myChart.addLegend(50, 50, 60, 300, "Right");
           myChart.draw();
