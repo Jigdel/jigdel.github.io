@@ -92,7 +92,6 @@ function drawWorld(geo_data) {
                                 .domain([0, attendance_max])
                                 .range([0, 15]);
               
-              
               function key_func(d) {
                   return d['key'];
               }
@@ -154,8 +153,7 @@ function drawWorld(geo_data) {
                       } else {
                           return "lightBlue";
                       }
-                  }
-                  
+                  };
                 svg.selectAll('path')
                   .transition()
                   .duration(500)
