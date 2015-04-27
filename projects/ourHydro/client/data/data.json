@@ -1,0 +1,75 @@
+{
+
+    "province": "ON",
+    "city": "Mississauga",
+    "boundaries_centroid": [ ],
+    "code": "L5G4L3",
+    "centroid": 
+
+{
+
+    "type": "Point",
+    "coordinates": 
+
+    [
+        -79.58165,
+        43.58035
+    ]
+
+},
+"representatives_concordance": 
+[
+
+{
+
+    "first_name": "Charles",
+    "last_name": "Sousa",
+    "name": "Charles Sousa",
+    "elected_office": "MPP",
+    "url": "http://www.ontla.on.ca/web/members/members_detail.do?locale=en&ID=7100",
+    "gender": "",
+    "extra": { },
+    "related": 
+
+{
+
+    "boundary_url": "/boundaries/ontario-electoral-districts/mississauga-south/",
+    "representative_set_url": "/representative-sets/ontario-legislature/"
+
+},
+"source_url": "http://www.ontla.on.ca/web/members/member_addresses.do",
+"offices": 
+[
+
+            {
+                "tel": "1 416 325-0400",
+                "type": "legislature"
+            }
+        ],
+        "representative_set_name": "Legislative Assembly of Ontario",
+        "party_name": "Ontario Liberal Party",
+        "district_name": "Mississauga South",
+        "email": "csousa.mpp@liberal.ola.org",
+        "personal_url": "",
+        "photo_url": "http://www.ontla.on.ca/members/img-mpp/Charles_Sousa.jpg"
+    }
+
+],
+"boundaries_concordance": 
+[
+
+{
+
+    "url": "/boundaries/ontario-electoral-districts/mississauga-south/",
+    "boundary_set_name": "Ontario electoral district",
+    "external_id": "50",
+    "name": "Mississauga South",
+    "related": 
+
+            {
+                "boundary_set_url": "/boundary-sets/ontario-electoral-districts/"
+            }
+        }
+    ]
+
+}
