@@ -7,13 +7,13 @@ ourHydro.service("postalCodeService", function postalCodeService($http, $q){
 	this.getMPPs = function(newPostalCode) {
 
 		var deferred = $q.defer();
-		console.log('New postal code: ', newPostalCode);
+		//console.log('New postal code: ', newPostalCode);
 
-		var httpPromise = $http.get('client/data/data.json');
+		//var httpPromise = $http.get('client/data/data.json');
 
 		// M1T3W6
 		// https://represent.opennorth.ca/postcodes/M1T3L5/?sets=ontario-electoral-districts
-		//httpPromise = $http.get('https://represent.opennorth.ca/postcodes/'+newPostalCode+'/?sets=ontario-electoral-districts');
+		var httpPromise = $http.get('https://represent.opennorth.ca/postcodes/'+newPostalCode+'/?sets=ontario-electoral-districts');
 		httpPromise.then(function (response) {
 			deferred.resolve(response);
 		});
