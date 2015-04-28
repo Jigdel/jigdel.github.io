@@ -106,7 +106,7 @@ body {
 
 .info-list-form {
 	text-align: left;
-  font-size: 14px;
+  font-size: 16px;
   padding-left: 10px;
 
 }
@@ -118,6 +118,11 @@ body {
 .dollarValue {
 	font-weight: 600;
 	font-size: 13px;
+}
+
+.dollarValueBig {
+  font-weight: 600;
+  font-size: 16px;
 }
 /* ---------------------------------------------- /*
  * Skills

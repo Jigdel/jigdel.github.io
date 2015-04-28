@@ -88,8 +88,8 @@
 
             </div><!-- .row -->
 		
-			<div class="start">If you could recover the proposed sale amount in less than 1.5 years, would you sell your home or save it for your children?</div>
-			<h3>You would save your home. Why sell Hydro One then?</h3>
+			<font class="info-list-form">If you could recover the proposed sale amount in less than 1.5 years, would you sell your home or save it for your children?</font>
+			<h2>You would save your home. Why sell Hydro One then?</h2>
 		</div>
 
         <a href="#numbers">
@@ -125,8 +125,8 @@
 				<div class="collapse navbar-collapse" id="custom-collapse">
 					<ul class="nav navbar-nav navbar-right">
 						<li><a href="#home">Home</a></li>
-						<li><a href="#numbers">Numbers</a></li>
                         <li><a href="#yourMPP">Your MPP</a></li>
+						<li><a href="#numbers">Numbers</a></li>
                         <li><a href="#donate">Donate</a></li>
                         <!-- 
 						<li><a href="#contact">Contact</a></li>
@@ -142,70 +142,9 @@
 
 	<!-- Navigation end -->
 
-    <!-- Services start -->
-
-	<section id="numbers" class="pfblock pfblock-gray">
-		<div class="container" ng-controller="chartsCtrl">
-			<div class="row">
-
-				<div class="col-sm-12">
-
-					<div class="pfblock-header wow fadeInUp">
-						<h2 class="pfblock-title">Numbers</h2>
-						<div class="pfblock-line"></div>
-						<div class="pfblock-subtitle">
-							<ul class="info-list">
-									<li>2014 financials:
-									<ul class="info-list">
-										<li>Hydro One's revenue was <font class="dollarValue">$6.55B</font>. Ontario could recover the <font class="dollarValue">60% sale amount ($9.6B) in one and half years!</font></li>
-										<li>Hydro One's net income was $749M and paid Ontario a divided of $287M. <font class="dollarValue">This combined profit ($1.04B) would recover the proposed sale amount in less than 10 years!</font></li>
-										<li>Would you sell your house for a paltry $300,000 if it generated a revenue of over $200,000? Doesn't it make sense to save the house for your children?</li>
-										<li> Electricity is a necessity and is also a vital part of our "infrastructure" - what will we sell in the future to buy this back?</li>
-										</ul>
-									</li>
-									<li>Take action before it's too late. Find your MPP below and contact them immediately!</li>
-							</ul>
-						</div>
-					</div>
-
-				</div>
-
-			</div>
-
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="col-md-12 col-lg-12 calltoaction-btn1 wow pulse" data-wow-delay=".3s">
-						<button ng-click="hydroRevenue()"
-	                        class="btn1 btn-sm">Revenue</button>
-	                    <button ng-click="hydroRevenueBreakdown()"
-                        class="btn1 btn-sm">Revenue Breakdown</button>
-						<button ng-click="hydroIncome()"
-	                        class="btn1 btn-sm">Income</button>
-	                	<button ng-click="hydroDistCust()"
-	                        class="btn1 btn-sm">Customers</button>
-	                	<button ng-click="hydroAssets()"
-	                        class="btn1 btn-sm">Assets</button>
-	                	<input type="checkbox"
-	                			ng-model="swapChart"
-	                			ng-change="swapChartType()">Swap Chart</button>
-					</div>
-
-				</div>
-
-				<div class="col-sm-12 col-md-12">
-					<highchart id="chart1" config="highchartsNG"></highchart>
-           		</div>
-				
-
-			</div><!-- .row -->
-		</div><!-- .container -->
-	</section>
-
-	<!-- Services end -->
-
 <!-- Your MPP start -->
 
-	<section id="yourMPP" class="pfblock">
+	<section id="yourMPP" class="pfblock pfblock-gray">
 		<div class="container" ng-controller="MppCtrl">
 			<div class="row">
 
@@ -234,7 +173,7 @@
 						
 							<div ng-show="myForm.$invalid">
 								<ul class="info-list-form">
-								<li ng-show="myForm.$error.required">Field must contain a value.</li>
+								<!--<li ng-show="myForm.$error.required">Field must contain a value.</li> -->
 							  	<li ng-show="myForm.$error.minlength">Field must contain six characters.</li>
 							  	<li ng-show="myForm.$error.pattern">Please make sure all characters are uppercase and there's no space in between.</li>
 							  	</ul>
@@ -252,10 +191,9 @@
 					<div class="iconbox ">
 						<img class="img-circle" ng-src="{{mpp.representatives_concordance[0].photo_url}}">
 						<div class="iconbox-text">
-							<h3 class="iconbox-title">Your MPP Details</h3>
 							<div class="iconbox-desc">
 				                <ul class="info-list">
-				                    Your electoral district is {{mpp.representatives_concordance[0].district_name}} and your current MPP is {{mpp.representatives_concordance[0].name}}. Please contact <font class="dollarValue">MPP {{mpp.representatives_concordance[0].last_name}} </font>from {{mpp.representatives_concordance[0].party_name}} with the information below:
+				                    Your electoral district is <font class="dollarValue">{{mpp.representatives_concordance[0].district_name}}</font> and your current MPP is <font class="dollarValue">{{mpp.representatives_concordance[0].name}}</font>. Please contact <font class="dollarValue">MPP {{mpp.representatives_concordance[0].last_name}} from {{mpp.representatives_concordance[0].party_name}} with the information below:</font>
 				                        
 				                        	<ul class="info-list">
 					                        	<li>Email : {{mpp.representatives_concordance[0].email}} </li>
@@ -275,7 +213,69 @@
 	</section>
 
 	<!-- Your MPP ends -->
-    
+
+    <!-- Services start -->
+
+	<section id="numbers" class="pfblock">
+		<div class="container" ng-controller="chartsCtrl">
+			<div class="row">
+
+				<div class="col-sm-12">
+
+					<div class="pfblock-header wow fadeInUp">
+						<h2 class="pfblock-title">Numbers</h2>
+						<div class="pfblock-line"></div>
+						<div class="pfblock-subtitle">
+							<ul class="info-list-form">
+									<li>2014 financials:
+									<ul class="info-list-form">
+										<li>Hydro One's revenue was <font class="dollarValueBig">$6.55B</font>. Ontario could recover the <font class="dollarValueBig">60% sale amount ($9.6B)</font> in <font class="dollarValueBig">one and half years!</font></li>
+										<li>Hydro One's net income was $749M and paid Ontario a divided of $287M. This <font class="dollarValueBig">combined profit ($1.04B)</font> would recover the proposed sale amount in <font class="dollarValueBig">less than 10 years!</font></li>
+										<li>Would you sell your house for a paltry $300,000 if it generated a revenue of over $200,000? Doesn't it make sense to save the house for your children?</li>
+										<li> Electricity is a necessity and is also a vital part of our infrastructure - what will we sell in the future to buy this back?</li>
+										</ul>
+									</li>
+									<li>Take action before it's too late. Find your MPP below and contact them immediately!</li>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="col-md-12 col-lg-12 calltoaction-btn1 wow pulse" data-wow-delay=".3s">
+						<button ng-click="hydroRevenue()"
+	                        class="btn1 btn-lg">Revenue</button>
+	                    <button ng-click="hydroRevenueBreakdown()"
+                        class="btn1 btn-lg">Revenue Breakdown</button>
+						<button ng-click="hydroIncome()"
+	                        class="btn1 btn-lg">Income</button>
+	                	<button ng-click="hydroDistCust()"
+	                        class="btn1 btn-lg">Customers</button>
+	                	<button ng-click="hydroAssets()"
+	                        class="btn1 btn-lg">Assets</button>
+	                	<input type="checkbox"
+	                			ng-model="swapChart"
+	                			ng-change="swapChartType()"> Swap Chart</button>
+					</div>
+
+				</div>
+
+				<div class="col-sm-12 col-md-12">
+					<highchart id="chart1" config="highchartsNG"></highchart>
+           		</div>
+				
+
+			</div><!-- .row -->
+		</div><!-- .container -->
+	</section>
+
+	<!-- Services end -->
+
+
     <!-- Donate start -->
     
     <section class="pfblock pfblock-gray" id="donate">
