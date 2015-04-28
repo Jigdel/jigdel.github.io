@@ -185,8 +185,9 @@
 	                        class="btn1 btn-sm">Customers</button>
 	                	<button ng-click="hydroAssets()"
 	                        class="btn1 btn-sm">Assets</button>
-	                	<button ng-click="swapChartType()"
-	                        class="btn1 btn-sm">Swap Chart</button>
+	                	<input type="checkbox"
+	                			ng-model="swapChart"
+	                			ng-change="swapChartType()">Swap Chart</button>
 					</div>
 
 				</div>
