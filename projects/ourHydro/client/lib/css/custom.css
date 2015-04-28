@@ -86,7 +86,7 @@ body {
 
 .titlebox {
 	background: transparent;
-	border-bottom: 1px solid #d4d4d4;
+	border-bottom: 0px solid #d4d4d4;
 	text-align: left;
 	padding: 0px 6px;
 	margin: 0 0 10px;
