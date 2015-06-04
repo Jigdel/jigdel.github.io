@@ -193,15 +193,18 @@
 						<div class="iconbox-text">
 							<div class="iconbox-desc">
 				                <ul class="info-list">
-				                    Your electoral district is <font class="dollarValue">{{mpp.representatives_concordance[0].district_name}}</font> and your current MPP is <font class="dollarValue">{{mpp.representatives_concordance[0].name}}</font>. Please contact <font class="dollarValue">MPP {{mpp.representatives_concordance[0].last_name}} from {{mpp.representatives_concordance[0].party_name}} with the information below:</font>
+				                    Your electoral district is <font class="dollarValueBig">{{mpp.representatives_concordance[0].district_name}}</font> and your current MPP is <font class="dollarValueBig">{{mpp.representatives_concordance[0].name}}</font>. Please contact MPP {{mpp.representatives_concordance[0].last_name}} from {{mpp.representatives_concordance[0].party_name}} with the information below:
 				                        
 				                        	<ul class="info-list">
-					                        	<li>Email : {{mpp.representatives_concordance[0].email}} </li>
-					                        	<li>Phone : {{mpp.representatives_concordance[0].offices[0].tel}}</li>
-					                        	<li>Twitter : {{mppSocialAccount[0]}} </li>
-					                        	<li>Facebook : {{mppSocialAccount[1]}} </li>
-					                        </ul>
-					                      
+					                        	<li><a href="" target="_blank" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-envelope"><font class="dollarValue">{{mpp.representatives_concordance[0].email}}</font></i></a></li>
+					                        	<li>Phone : <font class="dollarValue"> {{mpp.representatives_concordance[0].offices[0].tel}}</font></li>
+					                        	<li><a href="https://twitter.com/share?text=%40+60+Hydro+One+sale+can+be+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli" class="wow fadeInUp" data-wow-delay=".1s" target="_blank"><i class="fa fa-twitter"></i></a>  <font class="dollarValue">{{mppSocialAccount[0]}}</font>
+					                        	<!--
+					                        	<a href="https://twitter.com/share?text=%40+60%+Hydro+One+sale+can+be+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli&via=ourHydro" class="wow fadeInUp" data-wow-delay=".1s" target="_blank">
+					                        	-->
+					                        	</li>
+					                        	<li><a href="" target="_blank" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-facebook"></i> <font class="dollarValue">{{mppSocialAccount[1]}}</font></a> </li>
+					                        </ul>        
 				                </ul>
 							</div>
 						</div>
