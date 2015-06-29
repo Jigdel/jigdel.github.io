@@ -125,10 +125,11 @@
 				<div class="collapse navbar-collapse" id="custom-collapse">
 					<ul class="nav navbar-nav navbar-right">
 						<li><a href="#home">Home</a></li>
-                        <li><a href="#yourMPP">Your MPP</a></li>
 						<li><a href="#numbers">Numbers</a></li>
-                        <li><a href="#donate">Donate</a></li>
+						<li><a href="#barCharts">Charts</a></li>
+						<li><a href="#yourMPP">Your MPP</a></li>
                         <!-- 
+                        <li><a href="#donate">Donate</a></li>
 						<li><a href="#contact">Contact</a></li>
 						-->
 					</ul>
@@ -141,6 +142,87 @@
 	</header>
 
 	<!-- Navigation end -->
+
+<!-- Services start -->
+
+	<section id="numbers" class="pfblock pfblock-gray">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="pfblock-header wow fadeInUp">
+						<h2 class="pfblock-title">Numbers</h2>
+						<div class="pfblock-line"></div>
+						<div class="pfblock-subtitle">
+						<h3> The latest financials from 2014 Annual Report: </h3>
+						</div>
+						<div class="col-sm-6 col-sm-offset-3">
+							<ul class="info-list-form">
+								<li>Hydro One's revenue was <font class="dollarValueBig">$6.55B</font>. Ontario could recover the <font class="dollarValueBig">60% sale amount ($9.6B)</font> in <font class="dollarValueBig">one and half years.</font></li>
+								<li>Hydro One's net income was $749M and paid Ontario a dividend of $287M. This <font class="dollarValueBig">combined profit ($1.04B)</font> would recover the proposed sale amount in <font class="dollarValueBig">less than 10 years.</font></li>
+								<li>Would you sell your house for a paltry $300,000 if it generated a revenue of over $200,000? Doesn't it make sense to save the house for your children?</li>
+								<li> Electricity is a necessity and is also a vital part of our infrastructure - what will we sell in the future to buy this back?</li>
+
+								<!--
+									<li>2014 financials:
+									<ul class="info-list-form">
+										<li>Hydro One's revenue was <font class="dollarValueBig">$6.55B</font>. Ontario could recover the <font class="dollarValueBig">60% sale amount ($9.6B)</font> in <font class="dollarValueBig">one and half years!</font></li>
+										<li>Hydro One's net income was $749M and paid Ontario a divided of $287M. This <font class="dollarValueBig">combined profit ($1.04B)</font> would recover the proposed sale amount in <font class="dollarValueBig">less than 10 years!</font></li>
+										<li>Would you sell your house for a paltry $300,000 if it generated a revenue of over $200,000? Doesn't it make sense to save the house for your children?</li>
+										<li> Electricity is a necessity and is also a vital part of our infrastructure - what will we sell in the future to buy this back?</li>
+										</ul>
+									</li>
+									<li>Take action before it's too late. Find your MPP below and contact them immediately!</li>
+								-->
+							</ul>
+						</div><!-- .col sm-9 -->
+					</div>
+
+				</div>
+
+			</div>
+	</section>
+
+	<!-- Services end -->
+
+	<!-- Bar charts begin -->
+	<section id="barCharts" class="pfblock">
+		<div class="container" ng-controller="chartsCtrl">
+			<div class="row">
+				<div class="col-sm-12">
+				<div class="pfblock-header wow fadeInUp">
+						<h2 class="pfblock-title">Financials of Past 10 Years<sup>*</sup></h2>
+						<div class="pfblock-line"></div>
+						<div class="pfblock-subtitle">
+							<sup><b>*</b></sup>Based on the Hydro One's various reports, including Financial MD&A and Investor presentations
+						</div>
+						<br \>
+					<div class="col-md-12 col-lg-12 calltoaction-btn1 wow pulse" data-wow-delay=".3s">
+						<button ng-click="hydroRevenue()"
+	                        class="btn1 btn-lg">Revenue</button>
+	                    <button ng-click="hydroRevenueBreakdown()"
+                        class="btn1 btn-lg">Revenue Breakdown</button>
+						<button ng-click="hydroIncome()"
+	                        class="btn1 btn-lg">Income</button>
+	                	<button ng-click="hydroDistCust()"
+	                        class="btn1 btn-lg">Customers</button>
+	                	<button ng-click="hydroAssets()"
+	                        class="btn1 btn-lg">Assets</button>
+	                	<input type="checkbox"
+	                			ng-model="swapChart"
+	                			ng-change="swapChartType()"> Swap Chart
+					</div>
+					</div>
+
+				</div>
+
+				<div class="col-sm-12 col-md-12">
+					<highchart id="chart1" config="highchartsNG"></highchart>
+           		</div>
+           	</div> <!-- .col -->
+		</div><!-- .row -->
+	</div><!-- .container -->
+	</section>
+
+	<!-- Services end -->	
 
 <!-- Your MPP start -->
 
@@ -198,12 +280,12 @@
 				                        	<ul class="info-list">
 					                        	<li><a href="" target="_blank" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-envelope"><font class="dollarValue">{{mpp.representatives_concordance[0].email}}</font></i></a></li>
 					                        	<li>Phone : <font class="dollarValue"> {{mpp.representatives_concordance[0].offices[0].tel}}</font></li>
-					                        	<li><a href="https://twitter.com/share?text=%40+60+Hydro+One+sale+can+be+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli" class="wow fadeInUp" data-wow-delay=".1s" target="_blank"><i class="fa fa-twitter"></i></a>  <font class="dollarValue">{{mppSocialAccount[0]}}</font>
+					                        	<li><a href="https://twitter.com/share?text=%40+60+Hydro+One+sale+can+be+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli" class="wow fadeInUp" data-wow-delay=".1s" target="_blank">  <font class="dollarValue">{{mppSocialAccount[0]}}</font><i class="fa fa-twitter"></i></a>
 					                        	<!--
 					                        	<a href="https://twitter.com/share?text=%40+60%+Hydro+One+sale+can+be+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli&via=ourHydro" class="wow fadeInUp" data-wow-delay=".1s" target="_blank">
 					                        	-->
 					                        	</li>
-					                        	<li><a href="" target="_blank" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-facebook"></i> <font class="dollarValue">{{mppSocialAccount[1]}}</font></a> </li>
+					                        	<li><a href="" target="_blank" class="wow fadeInUp" data-wow-delay=".1s">< <font class="dollarValue">{{mppSocialAccount[1]}}</font>i class="fa fa-facebook"></i></a> </li>
 					                        </ul>        
 				                </ul>
 							</div>
@@ -217,70 +299,11 @@
 
 	<!-- Your MPP ends -->
 
-    <!-- Services start -->
 
-	<section id="numbers" class="pfblock">
-		<div class="container" ng-controller="chartsCtrl">
-			<div class="row">
-
-				<div class="col-sm-12">
-
-					<div class="pfblock-header wow fadeInUp">
-						<h2 class="pfblock-title">Numbers</h2>
-						<div class="pfblock-line"></div>
-						<div class="pfblock-subtitle">
-							<ul class="info-list-form">
-									<li>2014 financials:
-									<ul class="info-list-form">
-										<li>Hydro One's revenue was <font class="dollarValueBig">$6.55B</font>. Ontario could recover the <font class="dollarValueBig">60% sale amount ($9.6B)</font> in <font class="dollarValueBig">one and half years!</font></li>
-										<li>Hydro One's net income was $749M and paid Ontario a divided of $287M. This <font class="dollarValueBig">combined profit ($1.04B)</font> would recover the proposed sale amount in <font class="dollarValueBig">less than 10 years!</font></li>
-										<li>Would you sell your house for a paltry $300,000 if it generated a revenue of over $200,000? Doesn't it make sense to save the house for your children?</li>
-										<li> Electricity is a necessity and is also a vital part of our infrastructure - what will we sell in the future to buy this back?</li>
-										</ul>
-									</li>
-									<li>Take action before it's too late. Find your MPP below and contact them immediately!</li>
-							</ul>
-						</div>
-					</div>
-
-				</div>
-
-			</div>
-
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="col-md-12 col-lg-12 calltoaction-btn1 wow pulse" data-wow-delay=".3s">
-						<button ng-click="hydroRevenue()"
-	                        class="btn1 btn-lg">Revenue</button>
-	                    <button ng-click="hydroRevenueBreakdown()"
-                        class="btn1 btn-lg">Revenue Breakdown</button>
-						<button ng-click="hydroIncome()"
-	                        class="btn1 btn-lg">Income</button>
-	                	<button ng-click="hydroDistCust()"
-	                        class="btn1 btn-lg">Customers</button>
-	                	<button ng-click="hydroAssets()"
-	                        class="btn1 btn-lg">Assets</button>
-	                	<input type="checkbox"
-	                			ng-model="swapChart"
-	                			ng-change="swapChartType()"> Swap Chart</button>
-					</div>
-
-				</div>
-
-				<div class="col-sm-12 col-md-12">
-					<highchart id="chart1" config="highchartsNG"></highchart>
-           		</div>
-				
-
-			</div><!-- .row -->
-		</div><!-- .container -->
-	</section>
-
-	<!-- Services end -->
 
 
     <!-- Donate start -->
-    
+    <!--
     <section class="pfblock pfblock-gray" id="donate">
 		
 			<div class="container">
@@ -300,8 +323,10 @@
                             </div>
 
                         </div>
-
-                    </div><!-- .row -->
+	
+                    </div>
+	-->
+                    <!-- .row -->
 					<!--
 					<div class="col-sm-6 col-md-3 text-center">
 						<span data-percent="80" class="chart easyPieChart" style="width: 140px; height: 140px; line-height: 140px;">
@@ -327,13 +352,15 @@
                         </span>
 						<h3 class="text-center">UI / UX</h3>
 					</div>
-					-->
-				</div><!--End row -->
-			
+	-->
+	<!--
+				</div> -->
+				<!--End row -->
+	<!--		
 			</div>
 		
     </section>
-    
+    -->
     <!-- Skills end -->
 
 	<!-- CallToAction start -->
@@ -397,13 +424,15 @@
 				<div class="col-sm-12">
 
 					<ul class="social-links">
-						<li><a href="index.html#" class="wow fadeInUp"><i class="fa fa-facebook"></i></a></li>
+						<!-- <li><a href="index.html#" class="wow fadeInUp"><i class="fa fa-facebook"></i></a></li>
+						-->
 						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-twitter"></i></a></li>
 						<!--
 						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".2s"><i class="fa fa-google-plus"></i></a></li>
 						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".4s"><i class="fa fa-pinterest"></i></a></li>
 						-->
 						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".5s"><i class="fa fa-envelope"></i></a></li>
+
 					</ul>
 
 					<p class="heart">
