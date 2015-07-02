@@ -143,7 +143,7 @@
 
 	<!-- Navigation end -->
 
-<!-- Services start -->
+<!-- Numbers start -->
 
 	<section id="numbers" class="pfblock pfblock-gray">
 			<div class="row">
@@ -181,7 +181,7 @@
 			</div>
 	</section>
 
-	<!-- Services end -->
+	<!-- Numbers end -->
 
 	<!-- Bar charts begin -->
 	<section id="barCharts" class="pfblock">
@@ -222,7 +222,7 @@
 	</div><!-- .container -->
 	</section>
 
-	<!-- Services end -->	
+	<!-- Barcharts end -->	
 
 <!-- Your MPP start -->
 
@@ -238,7 +238,7 @@
 						<div class="pfblock-subtitle">Enter Postal Code
 							<form name="myForm"> <!--  ng-submit="MppCtrl.submit(postalcode)" -->
 								<input type="text"
-										placeholder="Uppercase: 'M4G3K2'"
+										placeholder="'M4G3K2'"
 										class="form_pc"
 										ng-model="postalCode"
 										required
@@ -280,12 +280,9 @@
 				                        	<ul class="info-list">
 					                        	<li><a href="" target="_blank" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-envelope"><font class="dollarValue">{{mpp.representatives_concordance[0].email}}</font></i></a></li>
 					                        	<li>Phone : <font class="dollarValue"> {{mpp.representatives_concordance[0].offices[0].tel}}</font></li>
-					                        	<li><a href="https://twitter.com/share?text=%40+60+Hydro+One+sale+can+be+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli" class="wow fadeInUp" data-wow-delay=".1s" target="_blank">  <font class="dollarValue">{{mppSocialAccount[0]}}</font><i class="fa fa-twitter"></i></a>
-					                        	<!--
-					                        	<a href="https://twitter.com/share?text=%40+60%+Hydro+One+sale+can+be+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli&via=ourHydro" class="wow fadeInUp" data-wow-delay=".1s" target="_blank">
-					                        	-->
+					                        	<li><i class="fa fa-twitter"></i> <a href="https://twitter.com/share?text=%40{{mppSocialAccount[0]}}+%23HydroOne+2014+rev:+$6.55B,+60%25+sale+recovered+in+1.5+years!+%23NoHydroSale+%23onpoli+%40kathleen_wynne+%40timhudak+%40andreahorwath" class="wow fadeInUp" data-wow-delay=".1s" target="_blank">  <font class="dollarValue">{{mppSocialAccount[0]}}</font></a>
 					                        	</li>
-					                        	<li><a href="" target="_blank" class="wow fadeInUp" data-wow-delay=".1s">< <font class="dollarValue">{{mppSocialAccount[1]}}</font>i class="fa fa-facebook"></i></a> </li>
+					                        	<li><i class="fa fa-facebook"></i> <a href="{{mppSocialAccount[1]}}" target="_blank" class="wow fadeInUp" data-wow-delay=".1s"><font class="dollarValue">{{mppSocialAccount[1]}}</font></a> </li>
 					                        </ul>        
 				                </ul>
 							</div>
@@ -299,8 +296,41 @@
 
 	<!-- Your MPP ends -->
 
+	<!-- Other resources begin -->
 
+	<section id="numbers" class="pfblock">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="pfblock-header wow fadeInUp">
+						<h2 class="pfblock-title">Other Resources</h2>
+						<div class="pfblock-line"></div>
+						<div class="pfblock-subtitle">
+						</div>
+						<div class="col-sm-6 col-sm-offset-3"> 
+						<h3>Listed below are two sites with additional information. </h3>
+							<ul class="info-list-form">
+								<li><a href="http://youpaytheprice.ca/" target="_blank"><font class="dollarValueBig">Sign Petition</font></a> [Source: Ontario NDP Party]</li>
+								<li><a href="http://keephydropublic.ca/" target="_blank"><font class="dollarValueBig">Email your MPPs</font></a> [Source: Coalition of Ontario Unions]</li>
 
+								<!--
+									<li>2014 financials:
+									<ul class="info-list-form">
+										<li>Hydro One's revenue was <font class="dollarValueBig">$6.55B</font>. Ontario could recover the <font class="dollarValueBig">60% sale amount ($9.6B)</font> in <font class="dollarValueBig">one and half years!</font></li>
+										<li>Hydro One's net income was $749M and paid Ontario a divided of $287M. This <font class="dollarValueBig">combined profit ($1.04B)</font> would recover the proposed sale amount in <font class="dollarValueBig">less than 10 years!</font></li>
+										<li>Would you sell your house for a paltry $300,000 if it generated a revenue of over $200,000? Doesn't it make sense to save the house for your children?</li>
+										<li> Electricity is a necessity and is also a vital part of our infrastructure - what will we sell in the future to buy this back?</li>
+										</ul>
+									</li>
+									<li>Take action before it's too late. Find your MPP below and contact them immediately!</li>
+								-->
+							</ul>
+						</div><!-- .col sm-9 -->
+					</div>
+
+				</div>
+
+			</div>
+	</section>
 
     <!-- Donate start -->
     <!--
@@ -426,12 +456,12 @@
 					<ul class="social-links">
 						<!-- <li><a href="index.html#" class="wow fadeInUp"><i class="fa fa-facebook"></i></a></li>
 						-->
-						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-twitter"></i></a></li>
+						<li><a href="https://twitter.com/ourhydro" class="wow fadeInUp" data-wow-delay=".1s"><i class="fa fa-twitter"></i></a></li>
 						<!--
 						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".2s"><i class="fa fa-google-plus"></i></a></li>
 						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".4s"><i class="fa fa-pinterest"></i></a></li>
 						-->
-						<li><a href="index.html#" class="wow fadeInUp" data-wow-delay=".5s"><i class="fa fa-envelope"></i></a></li>
+						<li><a href="mailto:ourhydro@gmail.com" class="wow fadeInUp" data-wow-delay=".5s"><i class="fa fa-envelope"></i></a></li>
 
 					</ul>
 
