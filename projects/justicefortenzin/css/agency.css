@@ -131,7 +131,7 @@ fieldset[disabled] .btn-primary.active {
 
 .btn-xl-top {
     padding: 20px 40px;
-    border-color: #fed136;
+    border-color: #E72009; /* #fed136; */
     border-radius: 3px;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -276,7 +276,7 @@ header {
     text-align: center;
     color: #fff;
     background-attachment: scroll;
-    background-image: url(../img/header-bg.jpg);
+    background-image: url(../img/header-bg-small.jpg);
     background-position: center center;
     background-repeat: none;
     -webkit-background-size: cover;
@@ -286,14 +286,14 @@ header {
 }
 
 header .intro-text {
-    padding-top: 100px;
-    padding-bottom: 50px;
+    padding-top: 230px; /*100px;*/
+    padding-bottom: 30px; /*50px*/
 }
 
 header .intro-text .intro-lead-in {
     margin-bottom: 25px;
     font-family: "Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 22px;
+    font-size: 16px; /*22px;*/
     font-style: italic;
     line-height: 22px;
 }
@@ -302,9 +302,10 @@ header .intro-text .intro-heading {
     margin-bottom: 25px;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 50px;
+    font-size: 35px; /*50px; */
     font-weight: 700;
     line-height: 50px;
+    /* color: #fec503; my addition */
 }
 
 @media(min-width:768px) {
@@ -328,6 +329,16 @@ header .intro-text .intro-heading {
         font-size: 45px; /*75px; */
         font-weight: 700;
         line-height: 75px;
+    }
+
+    header {
+        background-image: url(../img/header-bg.jpg);
+        background-position: center center;
+        background-repeat: none;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        background-size: cover;
+        -o-background-size: cover;
     }
 }
 
