@@ -452,7 +452,7 @@ section h3.section-subheading {
     left: 40px;
     width: 2px;
     margin-left: -1.5px;
-    background-color: #f1f1f1;
+    background-color: #F83208; /*#f1f1f1; */
 }
 
 .timeline>li {
@@ -679,7 +679,7 @@ section#contact .form-group {
 
 section#contact .form-group input,
 section#contact .form-group textarea {
-    padding: 20px;
+    padding: 12px; /*20px;*/
 }
 
 section#contact .form-group input.form-control {
@@ -687,7 +687,7 @@ section#contact .form-group input.form-control {
 }
 
 section#contact .form-group textarea.form-control {
-    height: 236px;
+    /*height: 236px; */
 }
 
 section#contact .form-control:focus {
