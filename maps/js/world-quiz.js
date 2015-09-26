@@ -85,7 +85,7 @@ function showscore(){
 	}else if (correctanswers >= 13 && correctanswers <= 15){
 		scoretitle = "Such a map nerd, Tamdin! Go ahead jump now :)";
 		scoredescr = "Not surprised you know the maps of "+quizcontinent+" fairly well.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/2.png" height="150px" width="260"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/2.png" height="150px" width="135"></h2>');
 	}else if (correctanswers >= 9 && correctanswers <= 12){
 		scoretitle = "Ke garne Tamdin";
 		scoredescr = "You did OK, still room for improvement in "+quizcontinent+" maps marey.";
