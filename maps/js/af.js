@@ -81,23 +81,23 @@ function showscore(){
 	if (correctanswers == 16){
 		scoretitle = "Tamdin you're map genius! Your pala would have been proud of you :)";
 		scoredescr = "You answered every question correct. You know "+quizcontinent+" inside and out!";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/11.png" height="150px" width="260"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/11.png" height="170px" width="254px"></h2>');
 	}else if (correctanswers >= 13 && correctanswers <= 15){
 		scoretitle = "Such a map nerd, Tamdin! Go ahead jump now :)";
 		scoredescr = "Not surprised you know the maps of "+quizcontinent+" fairly well.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/2.png" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/2.png" height="160px" width="171px"></h2>');
 	}else if (correctanswers >= 9 && correctanswers <= 12){
 		scoretitle = "Ke garne Tamdin";
 		scoredescr = "You did OK, still room for improvement in "+quizcontinent+" maps marey.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/7.jpg" height="150px" width="260"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/7.jpg" height="160px" width="284px"></h2>');
 	}else if (correctanswers >= 4 && correctanswers <= 8){
-		scoretitle = "Ke garne Tamdin but I still love you :)";
+		scoretitle = "Ke bhayo Tamdin but I still love you :)";
 		scoredescr = "You did OK, still room for improvement in "+quizcontinent+" maps marey.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/4.png" height="150px" width="250"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/4.png" height="160px" width="259px"></h2>');
 	}else{
 		scoretitle = "What happened :( but I still love you more ";
 		scoredescr = "Was I distracting you during this map of "+quizcontinent+"? ;)";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/6.jpg" height="150px" width="250"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/6.jpg" height="160px" width="284"></h2>');
 	}
 	
 	$("#quiz-area").append('<h2 class="text-center score-title">'+scoretitle+'</h2>');
