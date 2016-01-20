@@ -801,8 +801,12 @@ dfPriUG = dfPriUG.rename(columns={'SHAPE_Length':'ID',
 								  'PHASEDESIGNATION':'CABLE_PHASE'})
 # Separate year
 dfPriUG['INSTALL_YEAR'] = dfPriUG['INSTALL_YEAR'].apply(lambda x: x.year)
+dfPriUG = dfPriUG[dfPriUG.INSTALL_YEAR.notnull()]
 #print(dfPriUG.head(3))
-dfPriUG[ASSET_SUBCLASS] = dfPriUG['INSTALL_YEAR'].apply(lambda x: 'XLPE' if x < 1990 else 'TRXLPE')
+xlpe = 'XLPLE'
+trxlpe = 'TRXLPE'
+cutOffYr_trxlpe = 1990
+dfPriUG[ASSET_SUBCLASS] = dfPriUG['INSTALL_YEAR'].apply(lambda x: trxlpe if x > 1989 else xlpe)
 # Replace Asset class and 'SUBTYPECD' with actual tx types
 dictCablesPhasing = {'1':'1','2':'1','3':'1','4':'2','5':'3','6':'Abandon'}
 dictCablesPhase = {'0.0':'', '1.0':'B','2.0':'Y','3.0':'YB','4.0':'R','6.0':'RB','7.0':'RYB','':''}
@@ -1108,7 +1112,7 @@ dfPriUG_later_XY = dfPriUG_later_XY.rename(columns = {'install_year_y': 'install
 dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.phasing != 'Abandon']
 dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.circuit != 'nan']
 dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.length.notnull()]
-
+dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.install_year.notnull()]
 #print(dfPriUG_later_XY.columns)
 
 # dfPriUG_later = dfPriUG_later[np.isfinite(dfPriUG_later['install_year'])] #one blank value
@@ -1269,6 +1273,7 @@ dfPriUGcablePRID_new = drop_columns(dfPriUGcablePRID_new, ['x', 'y','xEnd','yEnd
 dfPriUG_later_XY = drop_columns(dfPriUG_later_XY, 'prid')
 dfPriUG_later_XY = pd.merge(dfPriUG_later_XY,dfPriUGcablePRID_new, how='left', on='id')
 
+
 MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE)
 dfPriUG_later_XY.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
@@ -1283,7 +1288,7 @@ PriOHXY_dropCols = ['FID','OBJECTID','ENABLED','WORKORDERI','INSTALLATI','FIELDV
 					'WORKREQUES','DESIGNID','WORKLOCATI','WMSID','WORKFLOWST','WORKFUNCTI','FEEDERID2','FEEDERINFO','ELECTRICTR','LOCATIONID','LENGTHSOUR',
 					'MEASUREDLE','LENGTHUOMC','WIRECOUNT','GISONUMBER','GISOTYPENB','SUBTYPECD','LABELTEXT','COMPATIBLE','OWNERSHIP','PHASEDESIG','OPERATINGV',
 					'NOMINALVOL','ISFEEDERTR','NEUTRALUSE','PHASECONFI','CLEARANCE','FEATURE_ST','TL_DESIGNA','SHAPE_LEN','FeederID_1','EnergizedP',
-					'SourceCoun','Loop']
+					'SourceCoun','Loop', 'xMid','yMid']
 
 dfPriOHXY = drop_columns(dfPriOHXY, PriOHXY_dropCols)
 
@@ -1292,27 +1297,51 @@ def drop_nan(nan_col):
 	# return nan_col.notnull()
 	return np.isfinite(nan_col)
 
-# FEEDERID xStart	xMid	xEnd	yStart	yMid	yEnd
+# FEEDERID xStart xEnd	yStart yEnd
 # Take xStart, yStart; xMid, yMid, xEnd, yEnd
 #dfPriOHXY= drop_nan(dfPriOHXY['xStart'])
 dfPriOHXY.dropna()
 
+dfPriOHXY = dfPriOHXY[dfPriOHXY['xStart'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['yStart'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['xEnd'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['yEnd'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['FEEDERID'].notnull()]
+
 dfPriOHXY['xyStart'] = np_concat(dfPriOHXY['xStart'], dfPriOHXY['yStart'])
 dfPriOHXY['xyEnd'] = np_concat(dfPriOHXY['xEnd'], dfPriOHXY['yEnd'])
-
+# print('dfPriOHXY cols: ', dfPriOHXY.columns)
 dfPoles_XY_OHcond = dfPolesXY_later
+# print(dfPoles_XY_OHcond.columns) #['install_year', 'id', 'x', 'y']
 dfPoles_XY_OHcond['xy'] = np_concat(dfPoles_XY_OHcond['x'],dfPoles_XY_OHcond['y'])
 
-OHcond_XY_dropCols = ['xStart', 'yStart','xMid','yMid','xEnd', 'FEEDERID']
-# 1. Match just xStart_yStart with Poles
-dfPoles_XY_OHcond = dfPoles_XY_OHcond.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyStart')
-dfPoles_XY_OHcond_matched_xyStart = dfPoles_XY_OHcond[dfPoles_XY_OHcond.FEEDERID.notnull()]
+#dfPoles_XY_OHcond['x'] = dfPoles_XY_OHcond['x'].astype(str)
+#dfPoles_XY_OHcond['y'] = dfPoles_XY_OHcond['y'].astype(str)
+#dfPoles_XY_OHcond['xy'] = dfPoles_XY_OHcond[['x','y']].apply(lambda x: '_'.join(x), axis=1)
 
+dfPoles_XY_OHcond = drop_columns(dfPoles_XY_OHcond, ['install_year', 'id','x','y'])
+# 1. Match just xStart_yStart with Poles
+# print('dfPoles_XY_OHcond cols 1 :', dfPoles_XY_OHcond.columns)
+dfPolesOHcond = dfPoles_XY_OHcond.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyStart')
+
+# print('dfPolesOHcond cols: 2', dfPolesOHcond.columns)
+dfPoles_XY_OHcond_matched_xyStart = dfPolesOHcond[dfPolesOHcond.FEEDERID.notnull()]
+# print('dfPoles_XY_OHcond_matched_xyStart cols: 1', dfPoles_XY_OHcond_matched_xyStart.columns)
 # 2. Isolate remaining unmatched ones to match with xEnd_yEnd
-dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond[dfPoles_XY_OHcond.FEEDERID.isnull()]
+dfPoles_XY_OHcond_xyEnd = dfPolesOHcond[dfPolesOHcond.FEEDERID.isnull()]
+# print('dfPoles_XY_OHcond_xyEnd cols: 1', dfPoles_XY_OHcond_xyEnd.columns)
+# drop cols
+OHcond_XY_dropCols = ['xStart', 'yStart','xEnd', 'yEnd','FEEDERID','xyStart']
 dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, OHcond_XY_dropCols)
+# print('dfPoles_XY_OHcond_xyEnd cols: 2', dfPoles_XY_OHcond_xyEnd.columns)
+# print('dfPolesOHcond cols:', dfPolesOHcond.columns)
+print('dfPoles_XY_OHcond_xyEnd cols:', dfPoles_XY_OHcond_xyEnd.columns)
+
 # 3. Use ML for remaining unmatched ones
 dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyEnd')
+dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, ['xyEnd_x','xyEnd_y'])
+# dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.rename(columns={'xyEnd_y':'xyEnd'})
+print('dfPoles_XY_OHcond_xyEnd cols (after merge):', dfPoles_XY_OHcond_xyEnd.columns)
 dfPoles_XY_OHcond_matched_xyEnd = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.notnull()]
 dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.isnull()]
 
