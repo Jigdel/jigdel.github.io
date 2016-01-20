@@ -495,14 +495,23 @@ print('OH and UG Tx data munging completed')
 # UNDERGROUND SWITCHESS
 #**************************************************************************************************************************************************************
 #**************************************************************************************************************************************************************
-
+# 422/431/321 as SC_ELEC
+# dictSGassetSubclass = {'PMH-3':'AIR_INSULATED_LIVEFRONT_PMH-9','PMH-5':'AIR_INSULATED_LIVEFRONT_PMH-9',
+#                        'PMH-9':'AIR_INSULATED_LIVEFRONT_PMH-9','PMH-11':'AIR_INSULATED_LIVEFRONT_PMH-11',
+#                        'PME-9':'AIR_INSULATED_DEADFRONT_PME-9','PME-10':'AIR_INSULATED_DEADFRONT_PME-9',
+#                        'PME-11':'AIR_INSULATED_DEADFRONT_PME-11','VISTA-321':'SF6_INSULATED_SWITCH_VISTA-321',
+#                        'VISTA-422':'SF6_INSULATED_SWITCH_VISTA-422','VISTA-431':'SF6_INSULATED_SWITCH_VISTA-431',
+#                        '422':'SC_ELEC','431':'SC_ELEC','321':'SC_ELEC','G&W':'GW',
+#                        'NET':'CARTE_ELEC_LTD'}
+# 422/431/321 as VISTA switches
 dictSGassetSubclass = {'PMH-3':'AIR_INSULATED_LIVEFRONT_PMH-9','PMH-5':'AIR_INSULATED_LIVEFRONT_PMH-9',
                        'PMH-9':'AIR_INSULATED_LIVEFRONT_PMH-9','PMH-11':'AIR_INSULATED_LIVEFRONT_PMH-11',
                        'PME-9':'AIR_INSULATED_DEADFRONT_PME-9','PME-10':'AIR_INSULATED_DEADFRONT_PME-9',
                        'PME-11':'AIR_INSULATED_DEADFRONT_PME-11','VISTA-321':'SF6_INSULATED_SWITCH_VISTA-321',
                        'VISTA-422':'SF6_INSULATED_SWITCH_VISTA-422','VISTA-431':'SF6_INSULATED_SWITCH_VISTA-431',
-                       '422':'SC_ELEC','431':'SC_ELEC','321':'SC_ELEC','G&W':'GW',
-                       'NET':'CARTE_ELEC_LTD'}
+                       '422':'SF6_INSULATED_SWITCH_VISTA-422','431':'SF6_INSULATED_SWITCH_VISTA-431','321':'SF6_INSULATED_SWITCH_VISTA-321',
+                       'G&W':'AIR_INSULATED_LIVEFRONT_PMH-11','NET':'CARTE_ELEC_LTD'}
+
 
 #**************************
 # Reading SwitchGears
@@ -554,7 +563,7 @@ numSwitchRows = len(dfUGSwitches['DEVICENUMBER'])
 #*******************
 # UG Switches
 dfUGSwitches['HI'] = new_columns(dfUGSwitches,numSwitchRows, 'HI')
-dfUGSwitches['HI'] ='No'
+dfUGSwitches['HI'] ='NA'
 dfUGSwitches['TX_PHASE'] = new_columns(dfUGSwitches,numSwitchRows, 'TX_PHASE')
 dfUGSwitches['IN_VALLEY'] = new_columns(dfUGSwitches,numSwitchRows, 'IN_VALLEY')
 dfUGSwitches['IN_VALLEY'] = 'No'
@@ -656,6 +665,7 @@ numPolesRows = len(dfPoles['DEVICENUMBER'])
 dfPoles[ASSET_CLASS] = new_columns(dfPoles, numPolesRows,ASSET_CLASS)
 dfPoles[ASSET_SUBCLASS] = new_columns(dfPoles, numPolesRows,ASSET_SUBCLASS)
 dfPoles['HI'] = new_columns(dfPoles, numPolesRows,'HI')
+dfPoles['HI'] = 'NA'
 dfPoles['PHASING'] = new_columns(dfPoles, numPolesRows,'PHASING')
 dfPoles['PRID'] = new_columns(dfPoles, numPolesRows,'PRID')
 dfPoles['TX'] = new_columns(dfPoles, numPolesRows,'TX')
@@ -766,6 +776,7 @@ numCablesRows = len(dfPriUG['INSTALLATIONDATE'])
 dfPriUG[ASSET_CLASS] = new_columns(dfPriUG, numCablesRows, ASSET_CLASS)
 dfPriUG[ASSET_SUBCLASS] = new_columns(dfPriUG, numCablesRows, ASSET_SUBCLASS)
 dfPriUG['HI'] = new_columns(dfPriUG,numCablesRows,'HI')
+dfPriUG['HI'] = 'NA'
 dfPriUG['PRID'] = new_columns(dfPriUG, numCablesRows,'PRID')
 dfPriUG['ARRANGEMENT'] = new_columns(dfPriUG, numCablesRows,'ARRANGEMENT')
 dfPriUG['INSTALLATION'] = new_columns(dfPriUG, numCablesRows,'INSTALLATION')
@@ -782,16 +793,16 @@ dfPriUG['WC_REPLACEMENT'] = new_columns(dfPriUG, numCablesRows,'WC_REPLACEMENT')
 
 # Rename Cable columns
 dfPriUG = dfPriUG.rename(columns={'SHAPE_Length':'ID',
-                                    'SUBTYPECD':'PHASING',
-                                    'INSTALLATIONDATE':'INSTALL_YEAR',
-                                    'FEEDERID':'CIRCUIT',
-                                    'MEASUREDLENGTH':'LENGTH',
-                                    'WIRECOUNT': 'NUM_CABLES',
-                                    'PHASEDESIGNATION':'CABLE_PHASE'})
+								  'SUBTYPECD':'PHASING',
+								  'INSTALLATIONDATE':'INSTALL_YEAR',
+								  'FEEDERID':'CIRCUIT',
+								  'MEASUREDLENGTH':'LENGTH',
+								  'WIRECOUNT': 'NUM_CABLES',
+								  'PHASEDESIGNATION':'CABLE_PHASE'})
 # Separate year
 dfPriUG['INSTALL_YEAR'] = dfPriUG['INSTALL_YEAR'].apply(lambda x: x.year)
 #print(dfPriUG.head(3))
-dfPriUG[ASSET_SUBCLASS] = 'XLPE'
+dfPriUG[ASSET_SUBCLASS] = dfPriUG['INSTALL_YEAR'].apply(lambda x: 'XLPE' if x < 1990 else 'TRXLPE')
 # Replace Asset class and 'SUBTYPECD' with actual tx types
 dictCablesPhasing = {'1':'1','2':'1','3':'1','4':'2','5':'3','6':'Abandon'}
 dictCablesPhase = {'0.0':'', '1.0':'B','2.0':'Y','3.0':'YB','4.0':'R','6.0':'RB','7.0':'RYB','':''}
@@ -818,7 +829,10 @@ with pd.ExcelFile(file_DomainCodes_PriUG) as xls:
     #dfTopology = pd.read_excel(xlsx, 'Topology', index_col=None, na_values=['NA']) # IGNORE for now
     dfPriUGDomainCodes = pd.read_excel(xls, 'Sheet1')
 
-dfPriUG=dfPriUG.merge(dfPriUGDomainCodes, how='left', on='COMPATIBLEUNITID')
+# Drop compatible unit id 421
+dfPriUG = dfPriUG[dfPriUG.COMPATIBLEUNITID != 421]
+
+dfPriUG = dfPriUG.merge(dfPriUGDomainCodes, how='left', on='COMPATIBLEUNITID')
 #print(dfUGTransformers.head(2))
 dropCablesCols2 = ['COMPATIBLEUNITID','Description','Percent']
 dfPriUG = drop_columns(dfPriUG,dropCablesCols2)
@@ -940,7 +954,8 @@ switchXYDropCols = ['FID', 'OBJECTID', 'ANCILLARYR', 'ENABLED', 'WORKORDERI','FI
                     'WORKREQUES', 'DESIGNID', 'WORKLOCATI','WMSID','WORKFLOWST', 'WORKFUNCTI',  'FEEDERINFO','ELECTRICTR', 'LOCATIONID', 'GPSDATE',
                     'GISONUMBER','GISOTYPENB','LABELTEXT', 'OWNERSHIP', 'PHASEDESIG','OPERATINGV', 'NOMINALVOL', 'MAXOPERATI', 'MAXCONTINU', 'PRESENTPOS', 
                     'PRESENTP_1','PRESENTP_2', 'NORMALPOSI', 'NORMALPO_1','NORMALPO_2','SCADACONTR', 'SCADAMONIT', 'PREFERREDC', 'TIESWITCHI', 'GANGOPERAT',
-                    'MANUALLYOP','SourceCoun','Loop', 'Tie','COMPATIBLE','SUBTYPECD','FEEDERID', 'FEEDERID2','HYPERLINK','HYPERLINK_','INSULATOR_','SYMBOLROTA']
+                    'MANUALLYOP','SourceCoun','Loop', 'Tie','COMPATIBLE','SUBTYPECD','FEEDERID', 'FEEDERID2','HYPERLINK','HYPERLINK_','INSULATOR_','SYMBOLROTA',
+                    'FEATURE_ST', 'EnergizedP']
 
 dfUGsw_XY = drop_columns(dfUGsw_XY, switchXYDropCols)
 dfUGsw_XY = dfUGsw_XY.rename(columns={'INSTALLATI':'install_year','DEVICENUMB':'id'})
@@ -959,7 +974,7 @@ dfUGsw_XY_Train = dfUGsw_XY_Train[np.isfinite(dfUGsw_XY_Train['install_year'])] 
 #********************************************
 
 print('*****UG Switches*****')
-print('kNN coefficient: ',3)
+print('kNN coefficient: ',1)
 print('Training number of rows: ',len(dfUGsw_XY_Train['install_year']))
 print('Wrong installation year rows: ',len(dfUGsw_XY_Unknown['install_year']))
 dfUGsw_XY_Unknown.loc[:,'install_year'] = nearest_neighbor(dfUGsw_XY_Train, 'x','y','install_year',1, dfUGsw_XY_Unknown, 'UG Switches')
@@ -973,7 +988,11 @@ dfUGsw_later = dfUGSwitches
 #print('dfUGSwLater: ', dfUGSwLater.columns)
 dfUGsw_later = drop_columns(dfUGsw_later,['install_year'])
 dfUGsw_later = dfUGsw_later.merge(dfSwitches_XY, how='left', on='id')
-dfUGsw_later = dfUGsw_later[dfUGsw_later.asset_subclass_code.isnull()]
+
+# Drop network switch rows and few more columns
+dfUGsw_later = dfUGsw_later[dfUGsw_later.asset_subclass_code.notnull()]
+dfUGsw_later = dfUGsw_later[dfUGsw_later.asset_subclass_code != 'CARTE_ELEC_LTD']
+dfUGsw_later = drop_columns(dfUGsw_later, ['FeederID_1','type'])
 
 MasterFile = pd.ExcelWriter(UG_SWITCHES_TABLE)
 dfUGsw_later.to_excel(MasterFile, 'Sheet1')
@@ -1074,9 +1093,22 @@ dfPriUG_later_XY = dfPriUG_later_XY.drop_duplicates(['x'], take_last=True)
 #*******
 #dfPriUG_later_XY = drop_columns(dfPriUG_later_XY,['install_year_x', 'x','FEEDERID','y'])
 dfPriUG_later_XY = drop_columns(dfPriUG_later_XY,['install_year_x','FEEDERID'])
+
+def concat(*args):
+	strs = [str(arg) for arg in args if not pd.isnull(arg)]
+	return '_'.join(strs) if strs else np.nan
+np_concat = np.vectorize(concat)
+
+dfPriUG_later_XY['id'] = np_concat(dfPriUG_later_XY['x'],dfPriUG_later_XY['y'],dfPriUG_later_XY['xEnd'],dfPriUG_later_XY['yEnd'])
+
 #******
 dfPriUG_later_XY = dfPriUG_later_XY.rename(columns = {'install_year_y': 'install_year'})
+
+#Final data cleanup
 dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.phasing != 'Abandon']
+dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.circuit != 'nan']
+dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.length.notnull()]
+
 #print(dfPriUG_later_XY.columns)
 
 # dfPriUG_later = dfPriUG_later[np.isfinite(dfPriUG_later['install_year'])] #one blank value
@@ -1175,140 +1207,268 @@ dfPolesXY_All.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
 print('Pole installation year matching analysis with OH Tx completed')
 
+
 #*****************************************************************************************************
-# Cell # 6 : Read all CYME feeders to populate dfAllNodes df - tie Poles with respective feeder ids
+# ML to resolve UG Primary Cable unknown PRID
 #*****************************************************************************************************
-# fileName - iterate through entire folder :)
-#fileName = '3S3-1_Crestwood_Feeder_Details.xlsx'
-#input directory
-inputDirectory = 'Metsco_Feeder_Reports'
+#nearest_neighbor(df_filled, 'x','y','OH_FEEDERID',3,df_empty)
+def cable_nearest_neighbor(dfMain, trainX, trainY, trainXend, trainYend, classX, neighborCount, dfUnknown, AssetClass):
+    #https://www.dataquest.io/blog/k-nearest-neighbors/
+    # Randomly shuffle the index of df_filled.
+    random_indices = permutation(dfMain.index)
+    # Set a cutoff for how many items we want in the test set (in this case 1/3 of the items)
+    test_cutoff = math.floor(len(dfMain)/3)
+    # Generate the test set by taking the first 1/3 of the randomly shuffled indices.
+    dfMain_test = dfMain.loc[random_indices[1:test_cutoff]]
+    # Generate the train set with the rest of the data.
+    dfMain_train = dfMain.loc[random_indices[test_cutoff:]]
 
-# define filepath and sort the file list
-filesList = glob(os.path.join(inputDirectory, '*.xlsx'))
-numFiles = len(filesList)
-sortedFileList = sorted(filesList)
+    for k in [1, 2, 3, 5, 10, 20]:
+        knn = KNeighborsClassifier(n_neighbors=k)
+        knn.fit(dfMain_train[[trainX, trainY, trainXend, trainYend]], dfMain_train[classX])
 
-# variables
-dictFeeders = {}
-dfAllNodes_list = pd.DataFrame()
+        predictions = knn.predict(dfMain_test[[trainX,trainY, trainXend, trainYend]])
+        prediction_results = dfMain_test[classX] == predictions
+        #print('With k =  ',k,',a score of: ', prediction_results.mean()*100)
 
-# read text files in tweet_input directory
-for f in sortedFileList:
+    # Let's initialize a classifier
+    knn = KNeighborsClassifier(n_neighbors=neighborCount)
+    # knn.fit takes two parameters # First, the content we want to train on. For us it's height and weight.
+    # Secondly, how we're classifying each element of the training data. We're classifying by position!
+    knn.fit(dfMain_train[[trainX, trainY, trainXend, trainYend]], dfMain_train[classX])
+    predictions = knn.predict(dfMain_test[[trainX,trainY, trainXend, trainYend]])
+    prediction_results = dfMain_test[classX] == predictions
+    print(AssetClass, ' prediction accuracy: ',prediction_results.mean()*100) 
+    # same as mse = (((prediction_results) ** 2).sum()) / len(predictions)
+    predictedValues = knn.predict(dfUnknown[[trainX, trainY, trainXend, trainYend]])
+    return predictedValues
 
-    fileName = os.path.basename(f).split('_')
-    FeederKey = fileName[0]
-    #print(FeederKey)
+# Split the df_filled to train and test data
+#from sklearn.cross_validation import train_test_split
+#X_train, X_test, y_train, y_test = train_test_split(X_wine, y_wine,test_size=0.30, random_state=123)
+# Compute the mean squared error of our predictions.
+# mse = (((predictions - actual) ** 2).sum()) / len(predictions)
+
+file_priUGcable_prid = 'Asset_XY_files/UG_CABLE_PRID.xlsx'
+#Read xlsx file into dataframes
+with pd.ExcelFile(file_priUGcable_prid) as xlsx:
+    dfPriUGcablePRID = pd.read_excel(xlsx, 'Sheet1')
+
+dfPriUGcablePRID_train = dfPriUGcablePRID[dfPriUGcablePRID.prid !=0]
+dfPriUGcablePRID_unknown = dfPriUGcablePRID[dfPriUGcablePRID.prid == 0]
+
+# train the model
+print('*****UG Cable*****')
+print('kNN coefficient: ',3)
+print('Training number of rows: ',len(dfPriUGcablePRID_train['id']))
+print('Unknown number of PRID rows: ',len(dfPriUGcablePRID_unknown['id']))
+dfPriUGcablePRID_unknown.loc[:,'prid'] = cable_nearest_neighbor(dfPriUGcablePRID_train, 'x','y','xEnd', 'yEnd', 'prid',3,dfPriUGcablePRID_unknown,'UG Primary Cable')
+dfPriUGcablePRID_new = pd.concat([dfPriUGcablePRID_train,dfPriUGcablePRID_unknown])
+# Write into the UG cable asset table
+dfPriUGcablePRID_new = drop_columns(dfPriUGcablePRID_new, ['x', 'y','xEnd','yEnd'])
+dfPriUG_later_XY = drop_columns(dfPriUG_later_XY, 'prid')
+dfPriUG_later_XY = pd.merge(dfPriUG_later_XY,dfPriUGcablePRID_new, how='left', on='id')
+
+MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE)
+dfPriUG_later_XY.to_excel(MasterFile, 'Sheet1')
+MasterFile.save()
+print('ML Cables analysis for PRIDs completed')
+
+
+#*****************************************************************************************************
+# January 19 2016: ML to find first circuit for Poles
+#*****************************************************************************************************
+
+PriOHXY_dropCols = ['FID','OBJECTID','ENABLED','WORKORDERI','INSTALLATI','FIELDVERIF','COMMENTS','CREATIONUS','DATECREATE','LASTUSER','DATEMODIFI',
+					'WORKREQUES','DESIGNID','WORKLOCATI','WMSID','WORKFLOWST','WORKFUNCTI','FEEDERID2','FEEDERINFO','ELECTRICTR','LOCATIONID','LENGTHSOUR',
+					'MEASUREDLE','LENGTHUOMC','WIRECOUNT','GISONUMBER','GISOTYPENB','SUBTYPECD','LABELTEXT','COMPATIBLE','OWNERSHIP','PHASEDESIG','OPERATINGV',
+					'NOMINALVOL','ISFEEDERTR','NEUTRALUSE','PHASECONFI','CLEARANCE','FEATURE_ST','TL_DESIGNA','SHAPE_LEN','FeederID_1','EnergizedP',
+					'SourceCoun','Loop']
+
+dfPriOHXY = drop_columns(dfPriOHXY, PriOHXY_dropCols)
+
+# might be an overkill - used dropna :)
+def drop_nan(nan_col):
+	# return nan_col.notnull()
+	return np.isfinite(nan_col)
+
+# FEEDERID xStart	xMid	xEnd	yStart	yMid	yEnd
+# Take xStart, yStart; xMid, yMid, xEnd, yEnd
+#dfPriOHXY= drop_nan(dfPriOHXY['xStart'])
+dfPriOHXY.dropna()
+
+dfPriOHXY['xyStart'] = np_concat(dfPriOHXY['xStart'], dfPriOHXY['yStart'])
+dfPriOHXY['xyEnd'] = np_concat(dfPriOHXY['xEnd'], dfPriOHXY['yEnd'])
+
+dfPoles_XY_OHcond = dfPolesXY_later
+dfPoles_XY_OHcond['xy'] = np_concat(dfPoles_XY_OHcond['x'],dfPoles_XY_OHcond['y'])
+
+OHcond_XY_dropCols = ['xStart', 'yStart','xMid','yMid','xEnd', 'FEEDERID']
+# 1. Match just xStart_yStart with Poles
+dfPoles_XY_OHcond = dfPoles_XY_OHcond.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyStart')
+dfPoles_XY_OHcond_matched_xyStart = dfPoles_XY_OHcond[dfPoles_XY_OHcond.FEEDERID.notnull()]
+
+# 2. Isolate remaining unmatched ones to match with xEnd_yEnd
+dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond[dfPoles_XY_OHcond.FEEDERID.isnull()]
+dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, OHcond_XY_dropCols)
+# 3. Use ML for remaining unmatched ones
+dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyEnd')
+dfPoles_XY_OHcond_matched_xyEnd = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.notnull()]
+dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.isnull()]
+
+# 4. Concat two completed df. Becomes training set
+dfPoles_XY_OHcond_train = pd.concat([dfPoles_XY_OHcond_matched_xyStart, dfPoles_XY_OHcond_matched_xyEnd])
+# 5. kNN to complete other missing set
+dfPoles_XY_OHcond_unMatched
+print('*****POLES*****')
+print('kNN coefficient: ',3)
+print('Training number of rows: ',len(dfPoles_XY_OHcond_train['xy']))
+print('Unknown number of PRID rows: ',len(dfPoles_XY_OHcond_unMatched['xy']))
+#dfPoles_XY_OHcond_unMatched.loc[:,'FEEDERID'] = nearest_neighbor(dfPoles_XY_OHcond_train, 'xStart','yStart','FEEDERID',3,dfPoles_XY_OHcond_unMatched,'Poles')
+
+dfPoles_XY_OHcond_completed = pd.concat([dfPoles_XY_OHcond_train,dfPoles_XY_OHcond_unMatched])
+
+MasterFile = pd.ExcelWriter('POLES_TABLE.xlsx')
+#dfPoles_XY_OHcond_completed.to_excel(MasterFile,'Sheet1')
+dfPoles_XY_OHcond_train.to_excel(MasterFile,'Sheet1')
+dfPoles_XY_OHcond_unMatched.to_excel(MasterFile,'Sheet2')
+MasterFile.save()
+print('Here we go!')
+
+# #*****************************************************************************************************
+# # Cell # 6 : Read all CYME feeders to populate dfAllNodes df - tie Poles with respective feeder ids
+# #*****************************************************************************************************
+# # fileName - iterate through entire folder :)
+# #fileName = '3S3-1_Crestwood_Feeder_Details.xlsx'
+# #input directory
+# inputDirectory = 'Metsco_Feeder_Reports'
+
+# # define filepath and sort the file list
+# filesList = glob(os.path.join(inputDirectory, '*.xlsx'))
+# numFiles = len(filesList)
+# sortedFileList = sorted(filesList)
+
+# # variables
+# dictFeeders = {}
+# dfAllNodes_list = pd.DataFrame()
+
+# # read text files in tweet_input directory
+# for f in sortedFileList:
+
+#     fileName = os.path.basename(f).split('_')
+#     FeederKey = fileName[0]
+#     #print(FeederKey)
     
-    if ('$' not in FeederKey):
-        # Read CYME Feeder xlsx file into dataframes
-        with pd.ExcelFile(f) as xlsx:
-            #dfTopology = pd.read_excel(xlsx, 'Topology', index_col=None, na_values=['NA']) # IGNORE for now
-            dfTopology = pd.read_excel(xlsx, 'Topology') # 280 rows
-            dfSpotLoads = pd.read_excel(xlsx, 'Spot Loads') # Tot:239 - R/Y/B: 116/108/103 values; based on phases
-            dfLoads = pd.read_excel(xlsx, 'Loads') # 239 rows; 'Spot Number\n' col contains unique tx ids
-            dfCables = pd.read_excel(xlsx, 'Cables')
-            dfSwitches = pd.read_excel(xlsx, 'Switches') # 41 items
-            dfNodes = pd.read_excel(xlsx, 'Nodes') # 249 items
-            dfOHlines = pd.read_excel(xlsx, 'OverheadLinesByPhase') #Neutral - 94, Section Id - 381
-            dfFuses = pd.read_excel(xlsx, 'Fuses') # 44 items
+#     if ('$' not in FeederKey):
+#         # Read CYME Feeder xlsx file into dataframes
+#         with pd.ExcelFile(f) as xlsx:
+#             #dfTopology = pd.read_excel(xlsx, 'Topology', index_col=None, na_values=['NA']) # IGNORE for now
+#             dfTopology = pd.read_excel(xlsx, 'Topology') # 280 rows
+#             dfSpotLoads = pd.read_excel(xlsx, 'Spot Loads') # Tot:239 - R/Y/B: 116/108/103 values; based on phases
+#             dfLoads = pd.read_excel(xlsx, 'Loads') # 239 rows; 'Spot Number\n' col contains unique tx ids
+#             dfCables = pd.read_excel(xlsx, 'Cables')
+#             dfSwitches = pd.read_excel(xlsx, 'Switches') # 41 items
+#             dfNodes = pd.read_excel(xlsx, 'Nodes') # 249 items
+#             dfOHlines = pd.read_excel(xlsx, 'OverheadLinesByPhase') #Neutral - 94, Section Id - 381
+#             dfFuses = pd.read_excel(xlsx, 'Fuses') # 44 items
 
-            # # Strip '\n' from column headers
-            dfTopology.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            dfSpotLoads.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            dfLoads.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            dfCables.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            dfSwitches.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            dfNodes.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            dfOHlines.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            dfFuses.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-            #print(dfNodes.columns)
-            #dfAllNodes_list = dfAllNodes_list.append(dfOHlines)
-            dfAllNodes_list = dfAllNodes_list.append(dfNodes)
+#             # # Strip '\n' from column headers
+#             dfTopology.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             dfSpotLoads.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             dfLoads.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             dfCables.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             dfSwitches.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             dfNodes.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             dfOHlines.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             dfFuses.rename(columns=lambda x: x.replace('\n',''), inplace=True)
+#             #print(dfNodes.columns)
+#             #dfAllNodes_list = dfAllNodes_list.append(dfOHlines)
+#             dfAllNodes_list = dfAllNodes_list.append(dfNodes)
 
-print('Number of Feeders: ', numFiles)
-
-
-#*****************************************************************************************************
-# Cell # 7: Finding circuits: For both poles and UG Cables by matching with all nodes 
-#*****************************************************************************************************
-# dfOHtx_XY
-# dfOHtx_later
-# dfUGtx_later
-# dfOHtx_XY
-# dfPoles_later = dfPoles
-
-from collections import defaultdict
-
-#line 1092
-dfPoles_XY = dfPolesXY_later
-
-dfAllNodes_list = dfAllNodes_list.rename(columns={'Network Id': 'CIRCUIT',
-                                                  'Node Id': 'xy'})
-
-dfAllNodes_list['NodeID_x'], dfAllNodes_list['NodeID_y'] = zip(*dfAllNodes_list['xy'].
-                                                               apply(lambda x: x.split('_') if '_' in x else (x, np.nan)))
-
-# Convert circuit ids, fuse ids, switch ids and/or drop them
-#dfAllNodes_list['NodeID_x'] = dfAllNodes_list['NodeID_x'].astype(float)
-dfAllNodes_list.loc[:,'NodeID_x'] = dfAllNodes_list.loc[:,'NodeID_x'].convert_objects(convert_numeric=True)
-dfAllNodes_list.loc[:,'NodeID_y'] = dfAllNodes_list.loc[:,'NodeID_y'].convert_objects(convert_numeric=True)
-
-dfAllNodes_list = dfAllNodes_list[dfAllNodes_list.NodeID_x.notnull()]
-#print(dfAllNodes_XY_remain.isnull().sum())
-dfAllNodes_list = dfAllNodes_list[dfAllNodes_list.NodeID_y.notnull()]
-
-# dfPoles.columns = map(str.lower, dfPoles.columns)
-# polesLatLongDropCols = ['FID', 'OBJECTID', 'WORKORDERI', 'INSTALLATI', 'FIELDVERIF', 'COMMENTS','CREATIONUS', 
-#                         'DATECREATE', 'LASTUSER', 'DATEMODIFI', 'WORKREQUES','DESIGNID', 'WORKLOCATI', 'WMSID', 
-#                         'WORKFLOWST', 'WORKFUNCTI','SYMBOLROTA', 'GPSDATE', 'GISONUMBER', 'GISOTYPENB', 'SUBTYPECD',
-#                         'LABELTEXT', 'OWNERSHIP', 'COMPATIBLE', 'STRUCTUREN', 'FEATURE_ST','STREETLIGH', 'REPLACED_D', 
-#                         'CONDITION', 'CONDITION_','CONDITION1']
-# dfPoles_XY = drop_columns(dfPoles_XY, polesLatLongDropCols)
-# dfPoles_XY = dfPoles_XY.rename(columns={'DEVICENUMB': 'POLE_ID'})
-# dropMoreLatLongCols =['x','y']
-# dropMoreWireLatLongCols =['xStart','yStart','xMid','yMid','xEnd', 'yEnd']
-
-dfPoleIDs = dfPoles_XY['id']
-dictPoleIDs = defaultdict(list)
-
-xDelta = 5
-yDelta = 5
-
-for poleID, Px, Py in zip(dfPoles_XY['id'],dfPoles_XY['x'],dfPoles_XY['y']):
-    for circuitID, Nx, Ny in zip(dfAllNodes_list['CIRCUIT'],dfAllNodes_list['NodeID_x'],dfAllNodes_list['NodeID_y']):
-        if(abs(Px-Nx) < xDelta and abs(Py-Ny) < yDelta):
-            if circuitID not in dictPoleIDs[poleID]:
-                dictPoleIDs[poleID].append(circuitID)
-
-dfPolesNodes = pd.DataFrame.from_dict(dictPoleIDs, orient='index')
-
-#df.reset_index(level=0, inplace=True)
-dfPolesNodes.reset_index(level=0, inplace=True)
-dfPolesNodes = dfPolesNodes.rename(columns={0:'CIRCUIT1', 
-                                            1:'CIRCUIT2',
-                                            2:'CIRCUIT3',
-                                            'index':'POLE_ID'})
-#print(dfPolesNodes.columns) #['POLE_ID', 'CIRCUIT1', 'CIRCUIT2', 'CIRCUIT3']
-
-MasterFile = pd.ExcelWriter('V1_PolesNodes.xlsx')
-dfPolesNodes.to_excel(MasterFile, 'Sheet1')
-MasterFile.save()
-#print('Pole Nodes')
-
-#dfPolesXY_All = dfPolesXY_All.merge(dfPolesNodes, how='left', left_on='id', right_on='POLE_ID')
-dfPolesXY_All = dfPolesXY_All.merge(dfPolesNodes, how='left', left_on='id', right_on='POLE_ID')
-#print(dfPolesXY_All.columns)
-
-#MasterFile = pd.ExcelWriter(POLES_TABLE_TEMPLATE)
-Poles_XY_All_Nodes = 'V1_Poles_XY_All_Nodes.xlsx'
-MasterFile = pd.ExcelWriter(Poles_XY_All_Nodes)
-dfPolesXY_All.to_excel(MasterFile, 'Sheet1')
-MasterFile.save()
-print('Pole installation year matching analysis with nodes completed')
+# print('Number of Feeders: ', numFiles)
 
 
+# #*****************************************************************************************************
+# # Cell # 7: Finding circuits: For both poles and UG Cables by matching with all nodes 
+# #*****************************************************************************************************
+# # dfOHtx_XY
+# # dfOHtx_later
+# # dfUGtx_later
+# # dfOHtx_XY
+# # dfPoles_later = dfPoles
 
-# *******************************************************************************************************************************************************
-# *******************************************************************************************************************************************************
-# *******************************************************************************************************************************************************
+# from collections import defaultdict
+
+# #line 1092
+# dfPoles_XY = dfPolesXY_later
+
+# dfAllNodes_list = dfAllNodes_list.rename(columns={'Network Id': 'CIRCUIT',
+#                                                   'Node Id': 'xy'})
+
+# dfAllNodes_list['NodeID_x'], dfAllNodes_list['NodeID_y'] = zip(*dfAllNodes_list['xy'].
+#                                                                apply(lambda x: x.split('_') if '_' in x else (x, np.nan)))
+
+# # Convert circuit ids, fuse ids, switch ids and/or drop them
+# #dfAllNodes_list['NodeID_x'] = dfAllNodes_list['NodeID_x'].astype(float)
+# dfAllNodes_list.loc[:,'NodeID_x'] = dfAllNodes_list.loc[:,'NodeID_x'].convert_objects(convert_numeric=True)
+# dfAllNodes_list.loc[:,'NodeID_y'] = dfAllNodes_list.loc[:,'NodeID_y'].convert_objects(convert_numeric=True)
+
+# dfAllNodes_list = dfAllNodes_list[dfAllNodes_list.NodeID_x.notnull()]
+# #print(dfAllNodes_XY_remain.isnull().sum())
+# dfAllNodes_list = dfAllNodes_list[dfAllNodes_list.NodeID_y.notnull()]
+
+# # dfPoles.columns = map(str.lower, dfPoles.columns)
+# # polesLatLongDropCols = ['FID', 'OBJECTID', 'WORKORDERI', 'INSTALLATI', 'FIELDVERIF', 'COMMENTS','CREATIONUS', 
+# #                         'DATECREATE', 'LASTUSER', 'DATEMODIFI', 'WORKREQUES','DESIGNID', 'WORKLOCATI', 'WMSID', 
+# #                         'WORKFLOWST', 'WORKFUNCTI','SYMBOLROTA', 'GPSDATE', 'GISONUMBER', 'GISOTYPENB', 'SUBTYPECD',
+# #                         'LABELTEXT', 'OWNERSHIP', 'COMPATIBLE', 'STRUCTUREN', 'FEATURE_ST','STREETLIGH', 'REPLACED_D', 
+# #                         'CONDITION', 'CONDITION_','CONDITION1']
+# # dfPoles_XY = drop_columns(dfPoles_XY, polesLatLongDropCols)
+# # dfPoles_XY = dfPoles_XY.rename(columns={'DEVICENUMB': 'POLE_ID'})
+# # dropMoreLatLongCols =['x','y']
+# # dropMoreWireLatLongCols =['xStart','yStart','xMid','yMid','xEnd', 'yEnd']
+
+# dfPoleIDs = dfPoles_XY['id']
+# dictPoleIDs = defaultdict(list)
+
+# xDelta = 5
+# yDelta = 5
+
+# for poleID, Px, Py in zip(dfPoles_XY['id'],dfPoles_XY['x'],dfPoles_XY['y']):
+#     for circuitID, Nx, Ny in zip(dfAllNodes_list['CIRCUIT'],dfAllNodes_list['NodeID_x'],dfAllNodes_list['NodeID_y']):
+#         if(abs(Px-Nx) < xDelta and abs(Py-Ny) < yDelta):
+#             if circuitID not in dictPoleIDs[poleID]:
+#                 dictPoleIDs[poleID].append(circuitID)
+
+# dfPolesNodes = pd.DataFrame.from_dict(dictPoleIDs, orient='index')
+
+# #df.reset_index(level=0, inplace=True)
+# dfPolesNodes.reset_index(level=0, inplace=True)
+# dfPolesNodes = dfPolesNodes.rename(columns={0:'CIRCUIT1', 
+#                                             1:'CIRCUIT2',
+#                                             2:'CIRCUIT3',
+#                                             'index':'POLE_ID'})
+# #print(dfPolesNodes.columns) #['POLE_ID', 'CIRCUIT1', 'CIRCUIT2', 'CIRCUIT3']
+
+# MasterFile = pd.ExcelWriter('V1_PolesNodes.xlsx')
+# dfPolesNodes.to_excel(MasterFile, 'Sheet1')
+# MasterFile.save()
+# #print('Pole Nodes')
+
+# #dfPolesXY_All = dfPolesXY_All.merge(dfPolesNodes, how='left', left_on='id', right_on='POLE_ID')
+# dfPolesXY_All = dfPolesXY_All.merge(dfPolesNodes, how='left', left_on='id', right_on='POLE_ID')
+# #print(dfPolesXY_All.columns)
+
+# #MasterFile = pd.ExcelWriter(POLES_TABLE_TEMPLATE)
+# Poles_XY_All_Nodes = 'V1_Poles_XY_All_Nodes.xlsx'
+# MasterFile = pd.ExcelWriter(Poles_XY_All_Nodes)
+# dfPolesXY_All.to_excel(MasterFile, 'Sheet1')
+# MasterFile.save()
+# print('Pole installation year matching analysis with nodes completed')
+
+
+
+# # *******************************************************************************************************************************************************
+# # *******************************************************************************************************************************************************
+# # *******************************************************************************************************************************************************
 
