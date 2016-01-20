@@ -802,11 +802,16 @@ dfPriUG = dfPriUG.rename(columns={'SHAPE_Length':'ID',
 # Separate year
 dfPriUG['INSTALL_YEAR'] = dfPriUG['INSTALL_YEAR'].apply(lambda x: x.year)
 dfPriUG = dfPriUG[dfPriUG.INSTALL_YEAR.notnull()]
+dfPriUG['INSTALL_YEAR'] = dfPriUG['INSTALL_YEAR'].astype(int)
 #print(dfPriUG.head(3))
 xlpe = 'XLPLE'
 trxlpe = 'TRXLPE'
 cutOffYr_trxlpe = 1990
-dfPriUG[ASSET_SUBCLASS] = dfPriUG['INSTALL_YEAR'].apply(lambda x: trxlpe if x > 1989 else xlpe)
+dfPriUG[ASSET_SUBCLASS] = 'XLPE'
+print(dfPriUG.dtypes)
+dfPriUG[ASSET_SUBCLASS] = dfPriUG['INSTALL_YEAR'].apply(lambda x: 'TRXLPE' if x >= 1990 else 'XLPE')
+#df.loc[(df["B"] > 50) & (df["C"] == 900), "A"]
+#dfPriUG.loc[(dfPriUG['INSTALL_YEAR'] >= 1990),'ASSET_SUBCLASS'] = 'TRXLPE'
 # Replace Asset class and 'SUBTYPECD' with actual tx types
 dictCablesPhasing = {'1':'1','2':'1','3':'1','4':'2','5':'3','6':'Abandon'}
 dictCablesPhase = {'0.0':'', '1.0':'B','2.0':'Y','3.0':'YB','4.0':'R','6.0':'RB','7.0':'RYB','':''}
@@ -1339,25 +1344,34 @@ print('dfPoles_XY_OHcond_xyEnd cols:', dfPoles_XY_OHcond_xyEnd.columns)
 
 # 3. Use ML for remaining unmatched ones
 dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyEnd')
-dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, ['xyEnd_x','xyEnd_y'])
+dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, ['xyEnd_x','xyEnd_y','xStart', 'yStart'])
 # dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.rename(columns={'xyEnd_y':'xyEnd'})
 print('dfPoles_XY_OHcond_xyEnd cols (after merge):', dfPoles_XY_OHcond_xyEnd.columns)
 dfPoles_XY_OHcond_matched_xyEnd = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.notnull()]
-dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.isnull()]
 
+# df.drop_duplicates(cols='A', take_last=True)
+# df.drop_duplicates(subset=['A', 'C'], keep=False) # False removes all duplicates
 # 4. Concat two completed df. Becomes training set
 dfPoles_XY_OHcond_train = pd.concat([dfPoles_XY_OHcond_matched_xyStart, dfPoles_XY_OHcond_matched_xyEnd])
+dfPoles_XY_OHcond_train.drop_duplicates(cols='xyStart', take_last=True)
+dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.isnull()]
+dfPoles_XY_OHcond_unMatched.drop_duplicates(cols='xy', take_last=True)
+dfPoles_XY_OHcond_unMatched['xStart'], dfPoles_XY_OHcond_unMatched['yStart'] = zip(*dfPoles_XY_OHcond_unMatched['xy'].apply(lambda x: x.split('_')))
+# dfAllNodes_list['NodeID_x'], dfAllNodes_list['NodeID_y'] = zip(*dfAllNodes_list['xy'].
+#                                                                apply(lambda x: x.split('_') if '_' in x else (x, np.nan)))
 # 5. kNN to complete other missing set
 dfPoles_XY_OHcond_unMatched
 print('*****POLES*****')
 print('kNN coefficient: ',3)
 print('Training number of rows: ',len(dfPoles_XY_OHcond_train['xy']))
 print('Unknown number of PRID rows: ',len(dfPoles_XY_OHcond_unMatched['xy']))
-#dfPoles_XY_OHcond_unMatched.loc[:,'FEEDERID'] = nearest_neighbor(dfPoles_XY_OHcond_train, 'xStart','yStart','FEEDERID',3,dfPoles_XY_OHcond_unMatched,'Poles')
+print(dfPoles_XY_OHcond_train.dtypes)
+print(dfPoles_XY_OHcond_unMatched.dtypes)
+dfPoles_XY_OHcond_unMatched.loc[:,'FEEDERID'] = nearest_neighbor(dfPoles_XY_OHcond_train, 'xStart','yStart','FEEDERID',3,dfPoles_XY_OHcond_unMatched,'Poles')
 
 dfPoles_XY_OHcond_completed = pd.concat([dfPoles_XY_OHcond_train,dfPoles_XY_OHcond_unMatched])
 
-MasterFile = pd.ExcelWriter('POLES_TABLE.xlsx')
+MasterFile = pd.ExcelWriter('POLES_TABLE_FINAL.xlsx')
 #dfPoles_XY_OHcond_completed.to_excel(MasterFile,'Sheet1')
 dfPoles_XY_OHcond_train.to_excel(MasterFile,'Sheet1')
 dfPoles_XY_OHcond_unMatched.to_excel(MasterFile,'Sheet2')
