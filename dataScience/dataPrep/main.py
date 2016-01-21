@@ -1067,39 +1067,87 @@ dfPriUG_XY = drop_columns(dfPriUGXY, dropUGcableCols)
 numCablesRows = len(dfPriUGXY['INSTALLATI'])
 
 #dfCables
+#*************************
+# dfPriUG_XY[ASSET_CLASS] = new_columns(dfPriUG_XY, numCablesRows, ASSET_CLASS)
+# dfPriUG_XY[ASSET_SUBCLASS] = new_columns(dfPriUG_XY, numCablesRows, ASSET_SUBCLASS)
+# dfPriUG_XY['HI'] = new_columns(dfPriUG_XY,numCablesRows,'HI')
+# dfPriUG_XY['HI'] = 'NA'
+# dfPriUG_XY['PRID'] = new_columns(dfPriUG_XY, numCablesRows,'PRID')
+# dfPriUG_XY['ARRANGEMENT'] = new_columns(dfPriUG_XY, numCablesRows,'ARRANGEMENT')
+# dfPriUG_XY['ARRANGEMENT'] = 'DB'
+# dfPriUG_XY['INSTALLATION'] = new_columns(dfPriUG_XY, numCablesRows,'INSTALLATION')
+# dfPriUG_XY['INSTALLATION'] = 'DB'
+# dfPriUG_XY['CONFIG'] = new_columns(dfPriUG_XY, numCablesRows,'CONFIG')
+# dfPriUG_XY['NUM_SPLICES'] = new_columns(dfPriUG_XY, numCablesRows,'NUM_SPLICES')
+# dfPriUG_XY['PRID_RESIDENTIAL'] = new_columns(dfPriUG_XY, numCablesRows,'PRID_RESIDENTIAL')
+# dfPriUG_XY['PRID_COMMERCIAL'] = new_columns(dfPriUG_XY, numCablesRows,'PRID_COMMERCIAL')
+# dfPriUG_XY['PRID_INDUSTRIAL'] = new_columns(dfPriUG_XY, numCablesRows,'PRID_INDUSTRIAL')
+# dfPriUG_XY['WC_CATASTROPHIC_RES'] = new_columns(dfPriUG_XY, numCablesRows,'WC_CATASTROPHIC_RES')
+# dfPriUG_XY['WC_CATASTROPHIC_COMM'] = new_columns(dfPriUG_XY, numCablesRows,'WC_CATASTROPHIC_COMM')
+# dfPriUG_XY['WC_CATASTROPHIC_IND'] = new_columns(dfPriUG_XY, numCablesRows,'WC_CATASTROPHIC_IND')
+# dfPriUG_XY['WC_REPLACEMENT'] = new_columns(dfPriUG_XY, numCablesRows,'WC_REPLACEMENT')
+#dfPriUG_XY['CABLE_PHASE'] = new_columns(dfPriUG_XY, numCablesRows,'CABLE_PHASE')
+#*************************
+
+
+#*******EXCEL MODEL******************
 dfPriUG_XY[ASSET_CLASS] = new_columns(dfPriUG_XY, numCablesRows, ASSET_CLASS)
 dfPriUG_XY[ASSET_SUBCLASS] = new_columns(dfPriUG_XY, numCablesRows, ASSET_SUBCLASS)
 dfPriUG_XY['HI'] = new_columns(dfPriUG_XY,numCablesRows,'HI')
-dfPriUG_XY['HI'] = 'NA'
+dfPriUG_XY['HI'] = 'N/A'
 dfPriUG_XY['PRID'] = new_columns(dfPriUG_XY, numCablesRows,'PRID')
 dfPriUG_XY['ARRANGEMENT'] = new_columns(dfPriUG_XY, numCablesRows,'ARRANGEMENT')
 dfPriUG_XY['ARRANGEMENT'] = 'DB'
 dfPriUG_XY['INSTALLATION'] = new_columns(dfPriUG_XY, numCablesRows,'INSTALLATION')
 dfPriUG_XY['INSTALLATION'] = 'DB'
 dfPriUG_XY['CONFIG'] = new_columns(dfPriUG_XY, numCablesRows,'CONFIG')
+dfPriUG_XY['CONFIG'] = 'Radial'
 dfPriUG_XY['NUM_SPLICES'] = new_columns(dfPriUG_XY, numCablesRows,'NUM_SPLICES')
-dfPriUG_XY['PRID_RESIDENTIAL'] = new_columns(dfPriUG_XY, numCablesRows,'PRID_RESIDENTIAL')
-dfPriUG_XY['PRID_COMMERCIAL'] = new_columns(dfPriUG_XY, numCablesRows,'PRID_COMMERCIAL')
-dfPriUG_XY['PRID_INDUSTRIAL'] = new_columns(dfPriUG_XY, numCablesRows,'PRID_INDUSTRIAL')
-dfPriUG_XY['WC_CATASTROPHIC_RES'] = new_columns(dfPriUG_XY, numCablesRows,'WC_CATASTROPHIC_RES')
-dfPriUG_XY['WC_CATASTROPHIC_COMM'] = new_columns(dfPriUG_XY, numCablesRows,'WC_CATASTROPHIC_COMM')
-dfPriUG_XY['WC_CATASTROPHIC_IND'] = new_columns(dfPriUG_XY, numCablesRows,'WC_CATASTROPHIC_IND')
+dfPriUG_XY['NUM_SPLICES'] = 0
 dfPriUG_XY['WC_REPLACEMENT'] = new_columns(dfPriUG_XY, numCablesRows,'WC_REPLACEMENT')
-#dfPriUG_XY['CABLE_PHASE'] = new_columns(dfPriUG_XY, numCablesRows,'CABLE_PHASE')
+dfPriUG_XY['WC_REPLACEMENT'] = 0
+#*new cols for excel model ***
+#dfPriUG_XY['NOMINAL_VOLTAGE'] = new_columns(dfPriUG_XY, numCablesRows,'NOMINAL_VOLTAGE') #domain pri_ug table
+dfPriUG_XY['WC_PRID_CATASTROPHIC_RES'] = new_columns(dfPriUG_XY, numCablesRows,'WC_PRID_CATASTROPHIC_RES')
+dfPriUG_XY['WC_PRID_CATASTROPHIC_RES'] = 0
+dfPriUG_XY['WC_PRID_CATASTROPHIC_IND'] = new_columns(dfPriUG_XY, numCablesRows,'WC_PRID_CATASTROPHIC_IND')
+dfPriUG_XY['WC_PRID_CATASTROPHIC_IND'] = 0
+dfPriUG_XY['WC_PRID_CATASTROPHIC_COMM'] = new_columns(dfPriUG_XY, numCablesRows,'WC_PRID_CATASTROPHIC_COMM')
+dfPriUG_XY['WC_PRID_CATASTROPHIC_COMM'] = 0
+dfPriUG_XY['WC_SWITCHING_RES'] = new_columns(dfPriUG_XY, numCablesRows,'WC_SWITCHING_RES')
+dfPriUG_XY['WC_SWITCHING_RES'] = 0
+dfPriUG_XY['WC_SWITCHING_COMM'] = new_columns(dfPriUG_XY, numCablesRows,'WC_SWITCHING_COMM')
+dfPriUG_XY['WC_SWITCHING_COMM'] = 0
+dfPriUG_XY['WC_SWITCHING_IND'] = new_columns(dfPriUG_XY, numCablesRows,'WC_SWITCHING_IND')
+dfPriUG_XY['WC_SWITCHING_IND'] = 0
+dfPriUG_XY['WC_SWITCHING_DURATION'] = new_columns(dfPriUG_XY, numCablesRows,'WC_SWITCHING_DURATION')
+dfPriUG_XY['WC_SWITCHING_DURATION'] = 0
+dfPriUG_XY['CABLE_TO_NETWORK'] = new_columns(dfPriUG_XY, numCablesRows,'CABLE_TO_NETWORK')
+dfPriUG_XY['CABLE_TO_NETWORK'] = 'No'
+dfPriUG_XY['INJECT_TYPE'] = new_columns(dfPriUG_XY, numCablesRows,'INJECT_TYPE')
+dfPriUG_XY['INJECT_TYPE'] = 'N/A'
+dfPriUG_XY['INJECTION_YEAR'] = new_columns(dfPriUG_XY, numCablesRows,'INJECTION_YEAR')
+dfPriUG_XY['INJECTION_YEAR'] = 'N/A'
+dfPriUG_XY['STATION'] = new_columns(dfPriUG_XY, numCablesRows,'STATION')
+dfPriUG_XY['STATION'] = 'N/A'
+dfPriUG_XY['NEIGHBORHOOD_ID'] = new_columns(dfPriUG_XY, numCablesRows,'NEIGHBORHOOD_ID')
+dfPriUG_XY['NEIGHBORHOOD_ID'] = 'N/A'
+dfPriUG_XY['INJECTABILITY'] = new_columns(dfPriUG_XY, numCablesRows,'INJECTABILITY')
+dfPriUG_XY['INJECTABILITY'] = 'N/A'
+dfPriUG_XY['CUSTOMER_COUNT'] = new_columns(dfPriUG_XY, numCablesRows,'CUSTOMER_COUNT')
+dfPriUG_XY['CUSTOMER_COUNT'] = 0
+
+#*********************ENDS
 
 # Rename Cable columns
 dfPriUG_XY = dfPriUG_XY.rename(columns={'SHAPE_LEN':'ID',
-                  'SUBTYPECD':'PHASING',
-                  'INSTALLATI':'INSTALL_YEAR',
-                  'FEEDERID':'CIRCUIT',
-                  'MEASUREDLE':'LENGTH',
-                  'WIRECOUNT': 'NUM_CABLES',
-                  'PHASEDESIG':'CABLE_PHASE',
-                  'COMPATIBLE':'COMPATIBLEUNITID'})
-
-#dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.INSTALL_YEAR.notnull()]
-#dfPriUG_XY['INSTALL_YEAR'] = dfPriUG_XY['INSTALL_YEAR'].astype(int)
-#print(dfPriUG_XY.head(3))
+                                        'SUBTYPECD':'PHASING',
+                                        'INSTALLATI':'INSTALL_YEAR',
+                                        'FEEDERID':'CIRCUIT',
+                                        'MEASUREDLE':'LENGTH',
+                                        'WIRECOUNT': 'NUM_CABLES',
+                                        'PHASEDESIG':'CABLE_PHASE',
+                                        'COMPATIBLE':'COMPATIBLEUNITID'})
 
 dictCablesPhasing = {'1':'1','2':'1','3':'1','4':'2','5':'3','6':'Abandon'}
 #dictCablesPhase = {'0.0':'', '1.0':'B','2.0':'Y','3.0':'YB','4.0':'R','6.0':'RB','7.0':'RYB','':''}
@@ -1128,71 +1176,120 @@ xlpe = 'XLPLE'
 trxlpe = 'TRXLPE'
 cutOffYr_trxlpe = 1990
 dfPriUG_XY[ASSET_SUBCLASS] = 'XLPE'
-dfPriUG_XY.loc[:, ASSET_SUBCLASS] = dfPriUG_XY['INSTALL_YEAR'].apply(lambda x: 'TRXLPE' if x >= 1990 else 'XLPE')
-#df.loc[(df["B"] > 50) & (df["C"] == 900), "A"]
-#dfPriUG_XY.loc[(dfPriUG_XY['INSTALL_YEAR'] >= 1990),'ASSET_SUBCLASS'] = 'TRXLPE'
-# Replace Asset class and 'SUBTYPECD' with actual tx types
-
-# Cables Domain code tables
-# Read Other Device Numbers into dataframes
-with pd.ExcelFile(file_DomainCodes_PriUG) as xls:
-    #dfTopology = pd.read_excel(xlsx, 'Topology', index_col=None, na_values=['NA']) # IGNORE for now
-    dfPriUG_XYDomainCodes = pd.read_excel(xls, 'Sheet1')
-
-dfPriUG_XY = dfPriUG_XY.merge(dfPriUG_XYDomainCodes, how='left', on='COMPATIBLEUNITID')
-print(dfPriUG_XY.columns)
-#print(dfPriUG_XY.head(2))
-dropCablesCols2 = ['COMPATIBLEUNITID','Description','Percent']
-dfPriUG_XY = drop_columns(dfPriUG_XY,dropCablesCols2)
+# dfPriUG_XY.loc[:, ASSET_SUBCLASS] = dfPriUG_XY['INSTALL_YEAR'].apply(lambda x: 'TRXLPE' if x >= 1990 else 'XLPE')
 
 # Lower case column names
 dfPriUG_XY.columns = map(str.lower, dfPriUG_XY.columns)
 dfPriUG_XY = dfPriUG_XY.rename(columns ={'xstart': 'x', 'ystart':'y'})
 
-MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
-dfPriUG_XY.to_excel(MasterFile, 'Sheet1')
-MasterFile.save()
-print('UG Primary Cable data munging completed')
+#dfPriUG_XY_write = dfPriUG_XY
+#dfPriUG_XY_write = drop_columns(dfPriUG_XY_write, ['x','y','xmid','ymid','xend','yend'])
+# MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
+# dfPriUG_XY.to_excel(MasterFile, 'Sheet1')
+# MasterFile.save()
+# print('UG Primary Cable data munging completed')
+# cableCutoffYr = 2002
+
+# Machine Learning: empty and filled
+#def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown):
+#print('Shape of dfCablesXY: ', dfCablesXY.shape)# (3888, 9)
 
 
-dfPriUG_XY_train = dfPriUG_XY[dfPriUG_XY.install_year.notnull()]
-dfPriUG_XY_unknown = dfPriUG_XY[dfPriUG_XY.install_year.isnull()]
+# *********
+# only four input training variables
+# *********
+# dfPriUG_XY_train = dfPriUG_XY[dfPriUG_XY.install_year.notnull()]
+# dfPriUG_XY_train['install_year'] = dfPriUG_XY_train['install_year'].astype(int)
+# dfPriUG_XY_unknown = dfPriUG_XY[dfPriUG_XY.install_year.isnull()]
+# print('***************************************************')
+# print('*****UG Cable: Install Year Prediction*****')
+# print('kNN coefficient: ',3)
+# print('Training number of rows: ',len(dfPriUG_XY_train['id']))
+# print('Unknown number of install_year rows: ',len(dfPriUG_XY_unknown['id']))
+#dfPriUG_XY_unknown.loc[:,'install_year'] = cable_nearest_neighbor(dfPriUG_XY_train, 'x','y','xend', 'yend', 'install_year',3,dfPriUG_XY_unknown,'UG Primary Cable')
+# ends
+# *********
 
-print('***************************************************')
+# *********
+# only two input training variables
+# *********
+cableCutoffYr = 2002
+dfPriUG_XY_twoInputs = dfPriUG_XY[['x','y','install_year','id']]
+dfPriUG_XY_unknown = dfPriUG_XY_twoInputs.loc[dfPriUG_XY_twoInputs['install_year'] < cableCutoffYr]
+dfPriUG_XY_2002 = dfPriUG_XY_twoInputs.loc[dfPriUG_XY_twoInputs['install_year'] >= cableCutoffYr]
+#print('Shape of dfCablesXY Unknown: ', dfCablesXY_Unknown.shape) #(3853, 9)
+# combine both UG tx and cable installed after 2002
+# earlier only UG tx was considered (hmm..)
+dfPriUG_XY_train = pd.concat([dfUGtx_XY_new, dfPriUG_XY_2002])
+#print('Shape of dfCablesXY_Train: ', dfCablesXY_Train.shape) #(1975, 4)
+dfPriUG_XY_train = dfPriUG_XY_train[np.isfinite(dfPriUG_XY_train['install_year'])] #one NaN value
+dfPriUG_XY_train['install_year'] = dfPriUG_XY_train['install_year'].astype(int)
+
+print('**************************************** ***********')
 print('*****UG Cable: Install Year Prediction*****')
 print('kNN coefficient: ',3)
 print('Training number of rows: ',len(dfPriUG_XY_train['id']))
 print('Unknown number of install_year rows: ',len(dfPriUG_XY_unknown['id']))
-dfPriUG_XY_unknown.loc[:,'install_year'] = cable_nearest_neighbor(dfPriUG_XY_train, 'x','y','xend', 'yend', 'install_year',3,dfPriUG_XY_unknown,'UG Primary Cable')
-
-# only two input training variables
-# dfPriUG_XY_train = drop_columns(dfPriUG_XY_train, ['xend', 'yend'])
-# dfPriUG_XY_unknown = drop_columns(dfPriUG_XY_unknown, ['xend', 'yend'])
-# dfPriUG_XY_unknown.loc[:,'install_year'] = cable_nearest_neighbor(dfPriUG_XY_train, 'x','y','install_year',3,dfPriUG_XY_unknown,'UG Primary Cable')
+dfPriUG_XY_unknown.loc[:,'install_year'] = nearest_neighbor(dfPriUG_XY_train, 'x','y','install_year',3,dfPriUG_XY_unknown,'UG Primary Cable')
 # ends
+# *********
 
-dfPriUG_XY_new = pd.concat([dfPriUG_XY_train,dfPriUG_XY_unknown])
+# 4 input training variables
+#dfPriUG_XY_install_year = pd.concat([dfPriUG_XY_train,dfPriUG_XY_unknown])
+# 2 input training variables
+dfPriUG_XY_ugTX_ugPRI = pd.concat([dfPriUG_XY_train,dfPriUG_XY_unknown])
+print(dfPriUG_XY_ugTX_ugPRI.columns)
+dfPriUG_XY = drop_columns(dfPriUG_XY, ['x','y','install_year'])
+dfPriUG_XY_install_year = dfPriUG_XY.merge(dfPriUG_XY_ugTX_ugPRI, how='left', on='id')
+print('NA in install_year? ',dfPriUG_XY_install_year['install_year'].isnull().values.any())
+#print(dfPriUG_XY_install_year.columns)
 
-MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE)
-dfPriUG_XY_new.to_excel(MasterFile, 'Sheet1')
+with pd.ExcelFile(file_DomainCodes_PriUG) as xls:
+    #dfTopology = pd.read_excel(xlsx, 'Topology', index_col=None, na_values=['NA']) # IGNORE for now
+    dfPriUG_XYDomainCodes = pd.read_excel(xls, 'Sheet1')
+
+#print(dfPriUG_XYDomainCodes.head())
+#print(dfPriUG_XYDomainCodes.dtypes)
+
+dfPriUG_XY_install_year['compatibleunitid'] = dfPriUG_XY_install_year['compatibleunitid'].astype(str)
+dfPriUG_XYDomainCodes['compatibleunitid'] = dfPriUG_XYDomainCodes['compatibleunitid'].astype(str)
+
+dfPriUG_XY_new = pd.merge(dfPriUG_XY_install_year, dfPriUG_XYDomainCodes, how='left', on='compatibleunitid')
+#print(dfPriUG_XY_new.head())
+#print(dfPriUG_XY_new.dtypes)
+
+dropCablesCols2 = ['compatibleunitid','Percent', 'CNSHLD','Description']
+dfPriUG_XY_new = drop_columns(dfPriUG_XY_new,dropCablesCols2)
+#print(dfPriUG_XY_new.head())
+
+dfPriUG_XY_new['x'] = dfPriUG_XY_new['x'].astype(str)
+dfPriUG_XY_new['y'] = dfPriUG_XY_new['y'].astype(str)
+dfPriUG_XY_new['xend'] = dfPriUG_XY_new['xend'].astype(str)
+dfPriUG_XY_new['yend'] = dfPriUG_XY_new['yend'].astype(str)
+dfPriUG_XY_new['id_xy1'] = dfPriUG_XY_new[['x','y']].apply(lambda x: '_'.join(x), axis=1)
+dfPriUG_XY_new['id_xyEnd'] = dfPriUG_XY_new[['xend','yend']].apply(lambda x: '_'.join(x), axis=1)
+dfPriUG_XY_new['id_xy'] = dfPriUG_XY_new[['id_xy1','id_xyEnd']].apply(lambda x: '-'.join(x), axis=1)
+
+# TRXLPE
+dfPriUG_XY_new = dfPriUG_XY_new[dfPriUG_XY_new.install_year.notnull()]
+dfPriUG_XY_new['install_year'] = dfPriUG_XY_new['install_year'].astype(int)
+dfPriUG_XY_new.loc[:, ASSET_SUBCLASS] = dfPriUG_XY_new['install_year'].apply(lambda x: 'TRXLPE' if x >= 1990 else 'XLPE')
+
+dfPriUG_XY_write = dfPriUG_XY_new
+dfPriUG_XY_write = drop_columns(dfPriUG_XY_write, ['x','y','xmid','ymid','xend','yend','id','id_xy1','id_xyEnd','id_xy'])
+
+MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
+dfPriUG_XY_write.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
 print('UG Cable: Install Year prediction complete')
-
-#ID  INSTALL_YEAR  HI  INSULATION  CLASS PHASING PRID  CIRCUIT ARRANGEMENT INSTALLATION  MATERIAL  CABLE_SIZE  CONFIG  LENGTH  NUM_SPLICES NUM_CABLES  NOMINAL_VOLTAGE WC_PRID_CATASTROPHIC_RES  WC_PRID_CATASTROPHIC_COMM WC_PRID_CATASTROPHIC_IND  CABLE_PHASE WC_REPLACEMENT  WC_SWITCHING_RES  WC_SWITCHING_COMM WC_SWITCHING_IND  WC_SWITCHING_DURATION CABLE_TO_NETWORK  INJECT_TYPE INJECTION_YEAR  STATION NEIGHBORHOOD_ID INJECTABILITY CUSTOMER_COUNT
-
-# config  num_splices prid_residential  prid_commercial prid_industrial wc_catastrophic_res wc_catastrophic_comm  wc_catastrophic_ind wc_replacement  cable_size  material  cnshld  nominal_voltage
-
-#*****************************************************************************************************
-# ML to resolve UG Primary Cable unknown PRID
-#*****************************************************************************************************
-#nearest_neighbor(df_filled, 'x','y','OH_FEEDERID',3,df_empty)
 
 file_priUGcable_prid = 'Asset_XY_files/UG_CABLE_PRID.xlsx'
 #Read xlsx file into dataframes
 with pd.ExcelFile(file_priUGcable_prid) as xlsx:
     dfPriUGcablePRID = pd.read_excel(xlsx, 'Sheet1')
-
+#print(dfPriUGcablePRID.head())
 dfPriUGcablePRID.columns = map(str.lower, dfPriUGcablePRID.columns)
+#print(dfPriUGcablePRID.dtypes)
 
 dfPriUGcablePRID_train = dfPriUGcablePRID[dfPriUGcablePRID.prid.notnull()]
 dfPriUGcablePRID_unknown = dfPriUGcablePRID[dfPriUGcablePRID.prid.isnull()]
@@ -1208,12 +1305,57 @@ dfPriUGcablePRID_unknown.loc[:,'prid'] = cable_nearest_neighbor(
 dfPriUGcablePRID_new = pd.concat([dfPriUGcablePRID_train,dfPriUGcablePRID_unknown])
 # Write into the UG cable asset table
 dfPriUGcablePRID_new = drop_columns(dfPriUGcablePRID_new, ['x', 'y','xend','yend'])
-dfPriUG_XY = drop_columns(dfPriUG_XY, 'prid')
-dfPriUG_XY = pd.merge(dfPriUG_XY,dfPriUGcablePRID_new, how='left', on='id')
+dfPriUG_XY_new = drop_columns(dfPriUG_XY_new, ['prid','id'])
 
-MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
-dfPriUG_XY.to_excel(MasterFile, 'Sheet1')
+# dfPriUG_XY_new['x'] = dfPriUG_XY_new['x'].astype(str)
+# dfPriUG_XY_new['y'] = dfPriUG_XY_new['y'].astype(str)
+# dfPriUG_XY_new['id_xy'] = dfPriUG_XY_new[['x','y']].apply(lambda x: '_'.join(x), axis=1)
+
+dfPriUG_XY_new = pd.merge(dfPriUG_XY_new,dfPriUGcablePRID_new, how='left', left_on='id_xy', right_on='id')
+
+dfPriUG_XY_new = drop_columns(dfPriUG_XY_new, ['x','y','xmid','ymid','xend','yend','id_xy','id','id_xy1','id_xyEnd'])
+
+MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE)
+dfPriUG_XY_new.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
+print('UG Cable: Install Year prediction complete')
+
+#ID  INSTALL_YEAR  HI  INSULATION  CLASS PHASING PRID  CIRCUIT ARRANGEMENT INSTALLATION  MATERIAL  CABLE_SIZE  CONFIG  LENGTH  NUM_SPLICES NUM_CABLES  NOMINAL_VOLTAGE WC_PRID_CATASTROPHIC_RES  WC_PRID_CATASTROPHIC_COMM WC_PRID_CATASTROPHIC_IND  CABLE_PHASE WC_REPLACEMENT  WC_SWITCHING_RES  WC_SWITCHING_COMM WC_SWITCHING_IND  WC_SWITCHING_DURATION CABLE_TO_NETWORK  INJECT_TYPE INJECTION_YEAR  STATION NEIGHBORHOOD_ID INJECTABILITY CUSTOMER_COUNT
+
+# config  num_splices  cable_size  material  cnshld  nominal_voltage
+
+#*****************************************************************************************************
+# ML to resolve UG Primary Cable unknown PRID
+#*****************************************************************************************************
+#nearest_neighbor(df_filled, 'x','y','OH_FEEDERID',3,df_empty)
+
+# file_priUGcable_prid = 'Asset_XY_files/UG_CABLE_PRID.xlsx'
+# #Read xlsx file into dataframes
+# with pd.ExcelFile(file_priUGcable_prid) as xlsx:
+#     dfPriUGcablePRID = pd.read_excel(xlsx, 'Sheet1')
+
+# dfPriUGcablePRID.columns = map(str.lower, dfPriUGcablePRID.columns)
+
+# dfPriUGcablePRID_train = dfPriUGcablePRID[dfPriUGcablePRID.prid.notnull()]
+# dfPriUGcablePRID_unknown = dfPriUGcablePRID[dfPriUGcablePRID.prid.isnull()]
+
+# # train the model
+# print('***************************************************')
+# print('*****UG Cable: PRID Prediction*****')
+# print('kNN coefficient: ',3)
+# print('Training number of rows: ',len(dfPriUGcablePRID_train['id']))
+# print('Unknown number of PRID rows: ',len(dfPriUGcablePRID_unknown['id']))
+# dfPriUGcablePRID_unknown.loc[:,'prid'] = cable_nearest_neighbor(
+#                                           dfPriUGcablePRID_train, 'x','y','xend', 'yend', 'prid',3,dfPriUGcablePRID_unknown,'UG Primary Cable')
+# dfPriUGcablePRID_new = pd.concat([dfPriUGcablePRID_train,dfPriUGcablePRID_unknown])
+# # Write into the UG cable asset table
+# dfPriUGcablePRID_new = drop_columns(dfPriUGcablePRID_new, ['x', 'y','xend','yend'])
+# dfPriUG_XY = drop_columns(dfPriUG_XY, 'prid')
+# dfPriUG_XY = pd.merge(dfPriUG_XY,dfPriUGcablePRID_new, how='left', on='id')
+
+# MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
+# dfPriUG_XY.to_excel(MasterFile, 'Sheet1')
+# MasterFile.save()
 print('ML Cables analysis for PRIDs completed')
 
 #*****************************************************************************************************
