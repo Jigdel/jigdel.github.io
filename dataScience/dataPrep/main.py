@@ -600,15 +600,15 @@ numSwitchRows = len(dfUGSwitches['DEVICENUMBER'])
 #*******************
 # UG Switches
 dfUGSwitches['HI'] = new_columns(dfUGSwitches,numSwitchRows, 'HI')
-dfUGSwitches['HI'] ='NA'
+dfUGSwitches['HI'] ='N/A'
 dfUGSwitches['TX_PHASE'] = new_columns(dfUGSwitches,numSwitchRows, 'TX_PHASE')
 dfUGSwitches['IN_VALLEY'] = new_columns(dfUGSwitches,numSwitchRows, 'IN_VALLEY')
 dfUGSwitches['IN_VALLEY'] = 'No'
 dfUGSwitches['PRID'] = new_columns(dfUGSwitches,numSwitchRows, 'PRID')
 dfTransformers['STATION'] = new_columns(dfTransformers, numTxRows,'STATION')
-dfTransformers['STATION'] = 'NA'
+dfTransformers['STATION'] = 'N/A'
 dfTransformers['NEIGHBORHOOD_ID'] = new_columns(dfTransformers, numTxRows,'NEIGHBORHOOD_ID')
-dfTransformers['NEIGHBORHOOD_ID'] = 'NA'
+dfTransformers['NEIGHBORHOOD_ID'] = 'N/A'
 dfTransformers['CUSTOMER_COUNT'] = new_columns(dfTransformers, numTxRows,'CUSTOMER_COUNT')
 dfTransformers['CUSTOMER_COUNT'] = 0
 dfUGSwitches['TIE_FEEDER_PRID'] = new_columns(dfUGSwitches,numSwitchRows, 'TIE_FEEDER_PRID')
@@ -682,224 +682,12 @@ dfUGsw_excel.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
 print('UG Switches data munging completed')
 
-#**************************************************************************************************************************************************************
-#**************************************************************************************************************************************************************
-# POLES
-#**************************************************************************************************************************************************************
-#**************************************************************************************************************************************************************
-# keep only distribution poles
-dfPoles = dfPoles[dfPoles.SUBTYPECD == 1] #1 - Dist(47%), 5-TrafficLights(2%), 7-streetlight(51%)
-
-dropPolesCols = ['SYMBOLROTATION','GPSDATE','SUBTYPECD','LABELTEXT','STRUCTURENUMBER','FEATURE_STATUS',
-                 'STREETLIGHT_FACILITY','REPLACED_DATE_MM_DD_YYYY','CONDITION','CONDITION_STATUS','CONDITION_DATE']
-dfPoles = drop_columns(dfPoles,dropPolesCols)
-#df.drop_duplicates(cols='A', take_last=True)
-#dfPoles = dfPoles.drop_duplicates(cols='DEVICENUMBER', take_last=True)
-dfPoles = dfPoles.drop_duplicates(['DEVICENUMBER'], take_last=True)
-# Add additional columns and fill with NaNs
-#dfPoles[''] = new_columns(dfPoles, numPolesRows,'')
-numPolesRows = len(dfPoles['DEVICENUMBER'])
-dfPoles[ASSET_CLASS] = new_columns(dfPoles, numPolesRows,ASSET_CLASS)
-dfPoles[ASSET_SUBCLASS] = new_columns(dfPoles, numPolesRows,ASSET_SUBCLASS)
-dfPoles['HI'] = new_columns(dfPoles, numPolesRows,'HI')
-dfPoles['HI'] = 'NA'
-dfPoles['PHASING'] = new_columns(dfPoles, numPolesRows,'PHASING')
-dfPoles['PRID'] = new_columns(dfPoles, numPolesRows,'PRID')
-dfPoles['TX'] = new_columns(dfPoles, numPolesRows,'TX')
-dfPoles['TX_TYPE'] = new_columns(dfPoles, numPolesRows,'TX_TYPE')
-dfPoles['CIRCUIT1'] = new_columns(dfPoles, numPolesRows,'CIRCUIT1')
-dfPoles['CIRCUIT2'] = new_columns(dfPoles, numPolesRows,'CIRCUIT2')
-dfPoles['CIRCUIT3'] = new_columns(dfPoles, numPolesRows,'CIRCUIT3')
-dfPoles['CIRCUIT4'] = new_columns(dfPoles, numPolesRows,'CIRCUIT4')
-dfPoles['CIRCUIT5'] = new_columns(dfPoles, numPolesRows,'CIRCUIT5')
-dfPoles['CIRCUIT6'] = new_columns(dfPoles, numPolesRows,'CIRCUIT6')
-dfPoles['CIRCUIT7'] = new_columns(dfPoles, numPolesRows,'CIRCUIT7')
-dfPoles['CIRCUIT8'] = new_columns(dfPoles, numPolesRows,'CIRCUIT8')
-dfPoles['IN_VALLEY'] = new_columns(dfPoles, numPolesRows,'IN_VALLEY')
-dfPoles['TX_RESIDENTIAL'] = new_columns(dfPoles, numPolesRows,'TX_RESIDENTIAL')
-dfPoles['TX_COMMERCIAL'] = new_columns(dfPoles, numPolesRows,'TX_COMMERCIAL')
-dfPoles['TX_INDUSTRIAL'] = new_columns(dfPoles, numPolesRows,'TX_INDUSTRIAL')
-#dfPoles['HEIGHT'] = new_columns(dfPoles, numPolesRows,'HEIGHT')
-dfPoles['NUM_CIRCUITS'] = new_columns(dfPoles, numPolesRows,'NUM_CIRCUITS')
-dfPoles['DEVICE'] = new_columns(dfPoles, numPolesRows,'DEVICE')
-dfPoles['TX_KVA'] = new_columns(dfPoles, numPolesRows,'TX_KVA')
-dfPoles['TX_PHASING'] = new_columns(dfPoles, numPolesRows,'TX_PHASING')
-
-# Fill with values
-dfPoles[ASSET_CLASS] = POLES_ASSET_CLASS
-dfPoles[ASSET_SUBCLASS] = 'WOOD'
-
-# Read domain codes for pole table into file
-with pd.ExcelFile(file_DomainCodes_Poles) as xls:
-    dfPolesClassHeight = pd.read_excel(xls, 'Sheet1') # 280 rows
-
-# Merge tables
-dfPoles = dfPoles.merge(dfPolesClassHeight, how='left', on='COMPATIBLEUNITID')
-
-# Rename Pole columns
-dfPoles = dfPoles.rename(columns={'DEVICENUMBER':'ID',
-                                  'TYPE':'POLE_CLASS',
-                                  'INSTALLATIONDATE':'INSTALL_YEAR'})
-# Separate year
-dfPoles['INSTALL_YEAR'] = dfPoles['INSTALL_YEAR'].apply(lambda x: x.year)
-
-dropPolesCols2 = ['COMPATIBLEUNITID']
-dfPoles = drop_columns(dfPoles, dropPolesCols2)
-dfPoles = dfPoles[dfPoles.ID.notnull()] #drop null ids
-
-# Lower case column names
-dfPoles.columns = map(str.lower, dfPoles.columns)
-
-#******************************************************
-# REARRANGE COLUMNS
-#******************************************************
-# POLES_COLS = ['asset_id','asset_class_code','asset_subclass_code','install_year','hi character','phasing character',
-#               'prid character','pole_class','tx','tx_type','circuit1','circuit2','circuit3','circuit4','in_valley',
-#               'tx_residential','tx_commercial','tx_industrial','height','num_circuits','device','tx_kva','id','prid2',
-#               'prid3','prid4','tx_pcb']
-
-#******************************************************
-# OUTPUT DATAFRAMES TO EXCEL MODEL
-#******************************************************
-# dfPoles_excel = dfPoles
-# # excel_dropUGsw = ['asset_subclass_code', 'fused','asset_class_code']
-# # dfUGsw_excel = drop_columns(dfUGsw_excel, excel_dropUGtx)
-# dfPoles_excel['asset_class_code']='Switch Cubicle'
-# dfPoles_excel = dfPoles_excel.rename(columns={'asset_class_code':'class',
-#                                             'asset_subclass_code':'type'})
-
-
-#*********************
-# OUTPUT DATAFRAMES TO EXCEL FILES
-#*********************
-dfPoles_later = dfPoles
-MasterFile = pd.ExcelWriter(POLES_TABLE_TEMPLATE)
-dfPoles.to_excel(MasterFile, 'Sheet1')
-MasterFile.save()
-print('Poles data munging completed')
-
 
 #**************************************************************************************************************************************************************
 #**************************************************************************************************************************************************************
 # UNDERGROUND PRIMARY CABLES # dfPriUGV1
 #**************************************************************************************************************************************************************
 #**************************************************************************************************************************************************************
-# dfPolesXY
-# dfSwitchesXY
-# dfPriUGXY
-# dfPriOHXY
-# dfTxXY
-
-# dfOHtx_XY = dfOHtx_later
-# dfUGtx_XY = dfUGtx_later 
-# dfUGsw_XY = dfUGsw_later
-# dfPoles_XY = dfPoles_later
-# dfPriUG_XY = dfPriUG_later
-
-#**********************************************************************************
-#DELETE THIS WHEN COMBINING ALL ASSETS
-#**********************************************************************************
-# Cables
-
-#***FROM HERE*****#
-# dropCablesCols = ['ENABLED',  'FEEDERID2', 'FEEDERINFO', 'ELECTRICTRACEWEIGHT', 'LOCATIONID',
-#                   'LENGTHSOURCE',  'LENGTHUOMCODE', 'LABELTEXT', 'OPERATINGVOLTAGE', 'NOMINALVOLTAGE', 
-#                   'ISFEEDERTRUNK', 'NEUTRALUSECD', 'FEATURE_STATUS', 'CONDUCTOR_REJUVENATION']
-# # drop columns not related to Tx
-# dfPriUG = drop_columns(dfPriUG,dropCablesCols)
-
-# # Add additional columns and fill with NaNs
-# numCablesRows = len(dfPriUG['INSTALLATIONDATE'])
-
-# #dfCables
-# dfPriUG[ASSET_CLASS] = new_columns(dfPriUG, numCablesRows, ASSET_CLASS)
-# dfPriUG[ASSET_SUBCLASS] = new_columns(dfPriUG, numCablesRows, ASSET_SUBCLASS)
-# dfPriUG['HI'] = new_columns(dfPriUG,numCablesRows,'HI')
-# dfPriUG['HI'] = 'NA'
-# dfPriUG['PRID'] = new_columns(dfPriUG, numCablesRows,'PRID')
-# dfPriUG['ARRANGEMENT'] = new_columns(dfPriUG, numCablesRows,'ARRANGEMENT')
-# dfPriUG['INSTALLATION'] = new_columns(dfPriUG, numCablesRows,'INSTALLATION')
-# dfPriUG['CONFIG'] = new_columns(dfPriUG, numCablesRows,'CONFIG')
-# dfPriUG['NUM_SPLICES'] = new_columns(dfPriUG, numCablesRows,'NUM_SPLICES')
-# dfPriUG['PRID_RESIDENTIAL'] = new_columns(dfPriUG, numCablesRows,'PRID_RESIDENTIAL')
-# dfPriUG['PRID_COMMERCIAL'] = new_columns(dfPriUG, numCablesRows,'PRID_COMMERCIAL')
-# dfPriUG['PRID_INDUSTRIAL'] = new_columns(dfPriUG, numCablesRows,'PRID_INDUSTRIAL')
-# dfPriUG['WC_CATASTROPHIC_RES'] = new_columns(dfPriUG, numCablesRows,'WC_CATASTROPHIC_RES')
-# dfPriUG['WC_CATASTROPHIC_COMM'] = new_columns(dfPriUG, numCablesRows,'WC_CATASTROPHIC_COMM')
-# dfPriUG['WC_CATASTROPHIC_IND'] = new_columns(dfPriUG, numCablesRows,'WC_CATASTROPHIC_IND')
-# dfPriUG['WC_REPLACEMENT'] = new_columns(dfPriUG, numCablesRows,'WC_REPLACEMENT')
-# #dfPriUG['CABLE_PHASE'] = new_columns(dfPriUG, numCablesRows,'CABLE_PHASE')
-
-# # Rename Cable columns
-# dfPriUG = dfPriUG.rename(columns={'SHAPE_Length':'ID',
-# 								  'SUBTYPECD':'PHASING',
-# 								  'INSTALLATIONDATE':'INSTALL_YEAR',
-# 								  'FEEDERID':'CIRCUIT',
-# 								  'MEASUREDLENGTH':'LENGTH',
-# 								  'WIRECOUNT': 'NUM_CABLES',
-# 								  'PHASEDESIGNATION':'CABLE_PHASE'})
-
-# #dfPriUG = dfPriUG[dfPriUG.INSTALL_YEAR.notnull()]
-# #dfPriUG['INSTALL_YEAR'] = dfPriUG['INSTALL_YEAR'].astype(int)
-# #print(dfPriUG.head(3))
-
-# dictCablesPhasing = {'1':'1','2':'1','3':'1','4':'2','5':'3','6':'Abandon'}
-# dictCablesPhase = {'0.0':'', '1.0':'B','2.0':'Y','3.0':'YB','4.0':'R','6.0':'RB','7.0':'RYB','':''}
-# # Separate year
-# dfPriUG['INSTALL_YEAR'] = dfPriUG['INSTALL_YEAR'].apply(lambda x: x.year)
-
-# # Dropping cable rows:
-# #drop NaN rows in dfPriUG['CABLE_PHASE'] #dfPriUG = dfPriUG[pd.notnull(dfPriUG['CABLE_PHASE'])]
-# print('1. UG cable: ', dfPriUG.shape)
-# dfPriUG = dfPriUG[dfPriUG.CABLE_PHASE.notnull()]
-# print('2. UG cable(after Cable_phase not null) : ', dfPriUG.shape)
-# dfPriUG = dfPriUG[dfPriUG.COMPATIBLEUNITID != 421] # Drop compatible unit id 421
-# print('3. UG cable(after Compt unit not null) : ', dfPriUG.shape)
-# dfPriUG = dfPriUG[dfPriUG.PHASING != 6] # drop 'Abandon' rows
-# print('4. UG cable(after Phasing abandon removed) : ', dfPriUG.shape)
-# dfPriUG = dfPriUG[dfPriUG.LENGTH.notnull()] # drop empty length rows
-# print('5. UG cable(after Length not null) : ', dfPriUG.shape)
-# dfPriUG = dfPriUG[dfPriUG.CIRCUIT != 'nan'] # drop empty length rows
-# print('6. UG cable(after circuit not null) : ', dfPriUG.shape)
-
-# dfPriUG['PHASING'] = dfPriUG['PHASING'].astype(str)
-# dfPriUG['CABLE_PHASE'] = dfPriUG['CABLE_PHASE'].astype(str)
-
-# #Try using .loc[row_indexer,col_indexer] = value instead
-# dfPriUG.loc[:,'PHASING'] = dfPriUG['PHASING'].apply(lambda x: dictCablesPhasing[x])
-# dfPriUG.loc[:,'CABLE_PHASE'] = dfPriUG['CABLE_PHASE'].apply(lambda x: dictCablesPhase[x])
-
-# # Fill in Asset and asset subclass columns
-# dfPriUG[ASSET_CLASS] = UG_PRI_CABLE_ASSET_CLASS
-# xlpe = 'XLPLE'
-# trxlpe = 'TRXLPE'
-# cutOffYr_trxlpe = 1990
-# dfPriUG[ASSET_SUBCLASS] = 'XLPE'
-# print(dfPriUG.shape)
-# #dfPriUG[ASSET_SUBCLASS] = dfPriUG['INSTALL_YEAR'].apply(lambda x: 'TRXLPE' if x >= 1990 else 'XLPE')
-# #df.loc[(df["B"] > 50) & (df["C"] == 900), "A"]
-# #dfPriUG.loc[(dfPriUG['INSTALL_YEAR'] >= 1990),'ASSET_SUBCLASS'] = 'TRXLPE'
-# # Replace Asset class and 'SUBTYPECD' with actual tx types
-
-# # Cables Domain code tables
-
-# # Read Other Device Numbers into dataframes
-# with pd.ExcelFile(file_DomainCodes_PriUG) as xls:
-#     #dfTopology = pd.read_excel(xlsx, 'Topology', index_col=None, na_values=['NA']) # IGNORE for now
-#     dfPriUGDomainCodes = pd.read_excel(xls, 'Sheet1')
-
-# dfPriUG = dfPriUG.merge(dfPriUGDomainCodes, how='left', on='COMPATIBLEUNITID')
-# #print(dfUGTransformers.head(2))
-# dropCablesCols2 = ['COMPATIBLEUNITID','Description','Percent']
-# dfPriUG = drop_columns(dfPriUG,dropCablesCols2)
-
-# # Lower case column names
-# dfPriUG.columns = map(str.lower, dfPriUG.columns)
-# print('7. UG cable(template final) : ', dfPriUG.shape)
-# MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
-# dfPriUG.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
-# print('UG Primary Cable data munging completed')
 
 #***FROM HERE*****#
 #**************************************************************************************************************************************************************
@@ -920,9 +708,11 @@ print('Poles data munging completed')
 # dfPoles_XY = dfPoles_later
 # dfPriUG_XY = dfPriUG_later
 
-#****************
-# Transformers
-#****************
+#**************************************************************************************************************************************************************
+#**************************************************************************************************************************************************************
+# MACHINE LEARNING TO MAP INSTALLATION YEARS both OH and UG Transformers
+#**************************************************************************************************************************************************************
+#**************************************************************************************************************************************************************
 #UG Tx: 2/3/5/7 - 1Ph/Ntwk/Sub/Pad 3Ph [1436,27,4,507: 1642 counts]
 dfUGtx_XY = pd.DataFrame(dfTxXY[(dfTxXY.SUBTYPECD == 2) | 
                                (dfTxXY.SUBTYPECD == 3) |
@@ -940,51 +730,83 @@ txXYDropCols = ['FID', 'OBJECTID', 'ANCILLARYR', 'ENABLED', 'WORKORDERI','FEEDER
                 'GROUNDRESI','MAGNETIZIN', 'MAGNETIZ_1', 'HIGHSIDEGR','HIGHSIDE_1', 'HIGHSIDEPR','LOCATIONTY', 'FAULTINDIC', 'COOLINGTYP', 'FEATURE_ST','KVA', 
                 'UNITS','DEMAND_KVA', 'DEMAND_DAT', 'STREET_LIG', 'HIGHSIDECO','LOWSIDECON', 'LOWSIDEGRO', 'LOWSIDEVOL','LATITUDE', 'LONGITUDE','RATEDKVA', 
                 'FeederID_1', 'EnergizedP', 'SourceCoun', 'Loop','FEEDERID2']
-#Drop columns
-dfOHtx_XY = drop_columns(dfOHtx_XY, txXYDropCols)
-dfUGtx_XY = drop_columns(dfUGtx_XY, txXYDropCols)
-
-#print(dfSwitchesXY.columns) # 'INSTALLATI','DEVICENUMB', 'x', 'y']
-#print(dfTxXY.columns) # 'INSTALLATI','DEVICENUMB', 'x', 'y']
-dfUGtx_XY = dfUGtx_XY.rename(columns={'INSTALLATI':'install_year', 'DEVICENUMB':'id'})
-dfUGtx_XY['install_year'] = dfUGtx_XY['install_year'].apply(lambda x: x.year)
-
 
 #******************************************************
 # UG Tx - 1 tx missing installation years - use k-NN
 #******************************************************
+#Drop columns
+dfUGtx_XY = drop_columns(dfUGtx_XY, txXYDropCols)
+dfUGtx_XY = dfUGtx_XY.rename(columns={'INSTALLATI':'install_year', 'DEVICENUMB':'id'})
+dfUGtx_XY['install_year'] = dfUGtx_XY['install_year'].apply(lambda x: x.year)
 # separate empty and non-empty 'install_year' values
 dfUGtx_XY_Train = dfUGtx_XY[dfUGtx_XY['install_year'].notnull()] 
 dfUGtx_XY_Empty = dfUGtx_XY[dfUGtx_XY['install_year'].isnull()] 
 #print(dfUGTxXY_Empty.shape)
 
 # train the model
+print('*********************************************************************************')
 print('*****UG Transformer*****')
 print('kNN coefficient: ',3)
 print('Training number of rows: ',len(dfUGtx_XY_Train['install_year']))
 print('Wrong installation year rows: ',len(dfUGtx_XY_Empty['install_year']))
 dfUGtx_XY_Empty.loc[:,'install_year'] = nearest_neighbor(dfUGtx_XY_Train, 'x','y','install_year',3,dfUGtx_XY_Empty,'UG Tx')
 dfUGtx_XY_new = pd.concat([dfUGtx_XY_Train,dfUGtx_XY_Empty])
-# fill in empty values
 
 # merge with original df
 dfUGtx_later = drop_columns(dfUGtx_later,'install_year')
 dfUGtx_later = dfUGtx_later.merge(dfUGtx_XY_new, how='left', on='id')
 dfUGtx_later = drop_columns(dfUGtx_later,['x','y'])
-
-dfUGtx_later = dfUGtx_later[dfUGtx_later['prid'].notnull()]
-#
-# There are about eight ug tx without prids, need to find the upstream device.
-#
+dfUGtx_later = dfUGtx_later[dfUGtx_later['prid'].notnull()] # eight ug tx without prids, need to find the upstream device.
 # Overwrite original UG Tx file
 #dfOHTxLater = dfOHTransformers
 MasterFile = pd.ExcelWriter(UG_TX_TABLE)
 dfUGtx_later.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
+print('UG Transformers: Install Year prediction complete')
 
-#****************
-# UG Switches
-#****************
+#******************************************************
+# OH Tx - 3 tx missing installation years - use k-NN
+#******************************************************
+#Drop columns
+dfOHtx_XY = drop_columns(dfOHtx_XY, txXYDropCols)
+dfOHtx_XY = dfOHtx_XY.rename(columns={'INSTALLATI':'install_year', 'DEVICENUMB':'id'})
+dfOHtx_XY['install_year'] = dfOHtx_XY['install_year'].apply(lambda x: x.year)
+# print('Blank OH Install years:', dfOHtx_XY['install_year'].isnull().sum()) # print number of blank rows
+# separate empty and non-empty 'install_year' values
+dfOHtx_XY_Train = dfOHtx_XY[dfOHtx_XY['install_year'].notnull()] 
+dfOHtx_XY_Empty = dfOHtx_XY[dfOHtx_XY['install_year'].isnull()] 
+#print(dfUGTxXY_Empty.shape)
+
+# train the model
+print('*********************************************************************************')
+print('*****OH Transformer*****')
+print('kNN coefficient: ',3)
+print('Training number of rows: ',len(dfOHtx_XY_Train['install_year']))
+print('Wrong installation year rows: ',len(dfOHtx_XY_Empty['install_year']))
+dfOHtx_XY_Empty.loc[:,'install_year'] = nearest_neighbor(dfOHtx_XY_Train, 'x','y','install_year',3,dfOHtx_XY_Empty,'UG Tx')
+dfOHtx_XY_new = pd.concat([dfOHtx_XY_Train,dfOHtx_XY_Empty])
+
+# merge with original df
+dfOHtx_later = drop_columns(dfOHtx_later,'install_year')
+dfOHtx_later = dfOHtx_later.merge(dfOHtx_XY_new, how='left', on='id')
+
+# df for pole attachments: relate OH Tx to Poles to find circuits and PRIDs
+dfOHtx_later_XY = dfOHtx_later[['x','y','id','install_year','circuit', 'prid', 'phasing','kva','tx_residential','tx_commercial',
+                                'tx_industrial', 'primary_voltage', 'secondary_voltage']]
+
+dfOHtx_later = drop_columns(dfOHtx_later,['x','y'])
+dfOHtx_later = dfOHtx_later[dfOHtx_later['prid'].notnull()] # eight ug tx without prids, need to find the upstream device.
+# Overwrite original UG Tx file
+#dfOHTxLater = dfOHTransformers
+MasterFile = pd.ExcelWriter(OH_TX_TABLE)
+dfOHtx_later.to_excel(MasterFile, 'Sheet1')
+MasterFile.save()
+print('OH Transformers: Install Year prediction complete')
+
+
+#******************************************************
+# UG Switches - 48 missing installation years - use k-NN
+#******************************************************
 # select only UG switches
 dfUGsw_XY = dfSwitchesXY[dfSwitchesXY.SUBTYPECD == 6]
 
@@ -1002,24 +824,24 @@ dfUGsw_XY['install_year'] = dfUGsw_XY['install_year'].apply(lambda x: x.year)
 # make sure to have UG Switches only
 # Machine Learning: empty and filled
 #def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown):
-dfUGsw_XY_Unknown = dfUGsw_XY.loc[dfUGsw_XY['install_year'] == 1900]
-dfUGsw_XY_Train = dfUGsw_XY.loc[dfUGsw_XY['install_year'] != 1900]
+dfUGsw_XY_Unknown = dfUGsw_XY.loc[dfUGsw_XY['install_year'] == 1900] #48 rows
+dfUGsw_XY_Train = dfUGsw_XY.loc[dfUGsw_XY['install_year'] != 1900] #212 rows
 
-# combining UG Tx and UG SW with relatively correct installation years
-# check prediction accuracy with UG tx removed
-dfUGsw_XY_Train = pd.concat([dfUGtx_XY_new,dfUGsw_XY_Train]) #4093 rows
+# 51% - accuracy prediction when both UG tx and UG sw combined
+# 82% - accuracy prediction when just UG sw 
+#dfUGsw_XY_Train = pd.concat([dfUGtx_XY_new,dfUGsw_XY_Train]) #2187 rows
 dfUGsw_XY_Train = dfUGsw_XY_Train[np.isfinite(dfUGsw_XY_Train['install_year'])] # drop NaNs
-print('SW UG Tx train cols: ', dfUGsw_XY_Train.columns)
+#print('SW UG Tx train cols: ', dfUGsw_XY_Train.columns)
 #********************************************
-
+print('*********************************************************************************')
 print('*****UG Switches*****')
 print('kNN coefficient: ',1)
 print('Training number of rows: ',len(dfUGsw_XY_Train['install_year']))
 print('Wrong installation year rows: ',len(dfUGsw_XY_Unknown['install_year']))
 dfUGsw_XY_Unknown.loc[:,'install_year'] = nearest_neighbor(dfUGsw_XY_Train, 'x','y','install_year',1, dfUGsw_XY_Unknown, 'UG Switches')
 # 60% accuracy
-dfUGsw_XY_Unknown = drop_columns(dfUGsw_XY_Unknown, ['x','y'])
-dfUGsw_XY_Train = drop_columns(dfUGsw_XY_Train, ['x','y'])
+# dfUGsw_XY_Unknown = drop_columns(dfUGsw_XY_Unknown, ['x','y'])
+# dfUGsw_XY_Train = drop_columns(dfUGsw_XY_Train, ['x','y'])
 dfSwitches_XY = pd.concat([dfUGsw_XY_Unknown,dfUGsw_XY_Train])
 
 # # overwrite template file: Merge with NGN dfSwitches on Device
@@ -1028,15 +850,17 @@ dfUGsw_later = dfUGSwitches
 dfUGsw_later = drop_columns(dfUGsw_later,['install_year'])
 dfUGsw_later = dfUGsw_later.merge(dfSwitches_XY, how='left', on='id')
 
+# df for pole attachments later  DUH IT"S UNDERGROUND!!!!
+#dfUGsw_later_XY = dfUGsw_later[['x','y','id','circuit','tie_feeder']]
+
 # Drop network switch rows and few more columns
 dfUGsw_later = dfUGsw_later[dfUGsw_later.asset_subclass_code.notnull()]
 dfUGsw_later = dfUGsw_later[dfUGsw_later.asset_subclass_code != 'CARTE_ELEC_LTD']
-dfUGsw_later = drop_columns(dfUGsw_later, ['FeederID_1','type'])
+dfUGsw_later = drop_columns(dfUGsw_later, ['FeederID_1','type', 'x','y'])
 
 MasterFile = pd.ExcelWriter(UG_SWITCHES_TABLE)
 dfUGsw_later.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
-
 
 # Pole data hack
 # with pd.ExcelFile('IN_POLES_TEMPLATE_former.xlsx') as xls:
@@ -1158,7 +982,7 @@ dfPriUG_XY['INSTALL_YEAR'] = dfPriUG_XY['INSTALL_YEAR'].apply(lambda x: x.year)
 # Dropping cable rows:
 #drop NaN rows in dfPriUG_XY['CABLE_PHASE'] #dfPriUG_XY = dfPriUG_XY[pd.notnull(dfPriUG_XY['CABLE_PHASE'])]
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.CABLE_PHASE.notnull()]
-dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.COMPATIBLEUNITID != 421] # Drop compatible unit id 421
+#dfPriUG_XY['COMPATIBLEUNITID'] = dfPriUG_XY['COMPATIBLEUNITID'].apply(lambda x: '232' if not x else x) # Drop compatible unit id 421
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.PHASING != 6] # drop 'Abandon' rows
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.LENGTH.notnull()] # drop empty length rows
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.CIRCUIT != 'nan'] # drop empty length rows
@@ -1182,18 +1006,12 @@ dfPriUG_XY[ASSET_SUBCLASS] = 'XLPE'
 dfPriUG_XY.columns = map(str.lower, dfPriUG_XY.columns)
 dfPriUG_XY = dfPriUG_XY.rename(columns ={'xstart': 'x', 'ystart':'y'})
 
-#dfPriUG_XY_write = dfPriUG_XY
-#dfPriUG_XY_write = drop_columns(dfPriUG_XY_write, ['x','y','xmid','ymid','xend','yend'])
-# MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
-# dfPriUG_XY.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
-# print('UG Primary Cable data munging completed')
-# cableCutoffYr = 2002
 
+#*****************************************************************************************************
+# ML to resolve UG Primary Cable incorrect installation years
+#*****************************************************************************************************
 # Machine Learning: empty and filled
 #def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown):
-#print('Shape of dfCablesXY: ', dfCablesXY.shape)# (3888, 9)
-
 
 # *********
 # only four input training variables
@@ -1213,19 +1031,43 @@ dfPriUG_XY = dfPriUG_XY.rename(columns ={'xstart': 'x', 'ystart':'y'})
 # *********
 # only two input training variables
 # *********
-cableCutoffYr = 2002
+
 dfPriUG_XY_twoInputs = dfPriUG_XY[['x','y','install_year','id']]
-dfPriUG_XY_unknown = dfPriUG_XY_twoInputs.loc[dfPriUG_XY_twoInputs['install_year'] < cableCutoffYr]
-dfPriUG_XY_2002 = dfPriUG_XY_twoInputs.loc[dfPriUG_XY_twoInputs['install_year'] >= cableCutoffYr]
-#print('Shape of dfCablesXY Unknown: ', dfCablesXY_Unknown.shape) #(3853, 9)
-# combine both UG tx and cable installed after 2002
-# earlier only UG tx was considered (hmm..)
-dfPriUG_XY_train = pd.concat([dfUGtx_XY_new, dfPriUG_XY_2002])
-#print('Shape of dfCablesXY_Train: ', dfCablesXY_Train.shape) #(1975, 4)
+
+#*****Just one filter: UG cable installed before 2002 *******#
+# cableCutoffYr = 2002
+# dfPriUG_XY_unknown = dfPriUG_XY_twoInputs.loc[dfPriUG_XY_twoInputs['install_year'] < cableCutoffYr]
+# dfPriUG_XY_known = dfPriUG_XY_twoInputs.loc[dfPriUG_XY_twoInputs['install_year'] >= cableCutoffYr]
+#************ (2237 train, 2523 unknown - 50.78% accuracy predictin *******#
+
+#**** Filter more years: 1900, 1997, 1998, 2000, 2001
+#********(2330 train, 2340 unknown - 47.3%)********
+#Grab DataFrame rows where column has certain values
+# valuelist = ['value1', 'value2', 'value3']
+# df = df[df.column.isin(value_list)]
+# didn't work
+# value_list = ['1900','1997','1998','2000','2001']
+# dfPriUG_XY_unknown = dfPriUG_XY_twoInputs[dfPriUG_XY_twoInputs.install_year.isin(value_list)]
+# dfPriUG_XY_known = dfPriUG_XY_twoInputs[~dfPriUG_XY_twoInputs.install_year.isin(value_list)]
+dfPriUG_XY_unknown = dfPriUG_XY_twoInputs.loc[(dfPriUG_XY_twoInputs.install_year == 1900) |
+                                              (dfPriUG_XY_twoInputs.install_year == 1997) |
+                                              (dfPriUG_XY_twoInputs.install_year == 1998) |
+                                              (dfPriUG_XY_twoInputs.install_year == 2000) |
+                                              (dfPriUG_XY_twoInputs.install_year == 2001)]
+dfPriUG_XY_known = dfPriUG_XY_twoInputs.loc[(dfPriUG_XY_twoInputs.install_year != 1900) &
+                                            (dfPriUG_XY_twoInputs.install_year != 1997) &
+                                            (dfPriUG_XY_twoInputs.install_year != 1998) &
+                                            (dfPriUG_XY_twoInputs.install_year != 2000) &
+                                            (dfPriUG_XY_twoInputs.install_year != 2001)]
+
+# combine both UG tx and cable installed (2237 train, 2523 unknown - 50.78%)
+dfPriUG_XY_train = pd.concat([dfUGtx_XY_new, dfPriUG_XY_known])
+# just UG cable - missing years in value_list
+
 dfPriUG_XY_train = dfPriUG_XY_train[np.isfinite(dfPriUG_XY_train['install_year'])] #one NaN value
 dfPriUG_XY_train['install_year'] = dfPriUG_XY_train['install_year'].astype(int)
 
-print('**************************************** ***********')
+print('*********************************************************************************')
 print('*****UG Cable: Install Year Prediction*****')
 print('kNN coefficient: ',3)
 print('Training number of rows: ',len(dfPriUG_XY_train['id']))
@@ -1262,6 +1104,10 @@ dropCablesCols2 = ['compatibleunitid','Percent', 'CNSHLD','Description']
 dfPriUG_XY_new = drop_columns(dfPriUG_XY_new,dropCablesCols2)
 #print(dfPriUG_XY_new.head())
 
+#Concatenate two DataFrame columns into a new, single column
+#(useful when dealing with composite keys, for example)
+# df['newcol'] = df['col1'].map(str) + df['col2'].map(str)
+
 dfPriUG_XY_new['x'] = dfPriUG_XY_new['x'].astype(str)
 dfPriUG_XY_new['y'] = dfPriUG_XY_new['y'].astype(str)
 dfPriUG_XY_new['xend'] = dfPriUG_XY_new['xend'].astype(str)
@@ -1276,13 +1122,17 @@ dfPriUG_XY_new['install_year'] = dfPriUG_XY_new['install_year'].astype(int)
 dfPriUG_XY_new.loc[:, ASSET_SUBCLASS] = dfPriUG_XY_new['install_year'].apply(lambda x: 'TRXLPE' if x >= 1990 else 'XLPE')
 
 dfPriUG_XY_write = dfPriUG_XY_new
-dfPriUG_XY_write = drop_columns(dfPriUG_XY_write, ['x','y','xmid','ymid','xend','yend','id','id_xy1','id_xyEnd','id_xy'])
+dfPriUG_XY_write = drop_columns(dfPriUG_XY_write, ['x','y','xmid','ymid','xend','yend','id','id_xy1','id_xyEnd'])
+dfPriUG_XY_write = dfPriUG_XY_write.rename(columns = {'id_xy':'id'})
 
 MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
 dfPriUG_XY_write.to_excel(MasterFile, 'Sheet1')
 MasterFile.save()
 print('UG Cable: Install Year prediction complete')
 
+#*****************************************************************************************************
+# ML to resolve UG Primary Cable unknown PRID
+#*****************************************************************************************************
 file_priUGcable_prid = 'Asset_XY_files/UG_CABLE_PRID.xlsx'
 #Read xlsx file into dataframes
 with pd.ExcelFile(file_priUGcable_prid) as xlsx:
@@ -1295,7 +1145,7 @@ dfPriUGcablePRID_train = dfPriUGcablePRID[dfPriUGcablePRID.prid.notnull()]
 dfPriUGcablePRID_unknown = dfPriUGcablePRID[dfPriUGcablePRID.prid.isnull()]
 
 # train the model
-print('***************************************************')
+print('*********************************************************************************')
 print('*****UG Cable: PRID Prediction*****')
 print('kNN coefficient: ',3)
 print('Training number of rows: ',len(dfPriUGcablePRID_train['id']))
@@ -1313,50 +1163,273 @@ dfPriUG_XY_new = drop_columns(dfPriUG_XY_new, ['prid','id'])
 
 dfPriUG_XY_new = pd.merge(dfPriUG_XY_new,dfPriUGcablePRID_new, how='left', left_on='id_xy', right_on='id')
 
-dfPriUG_XY_new = drop_columns(dfPriUG_XY_new, ['x','y','xmid','ymid','xend','yend','id_xy','id','id_xy1','id_xyEnd'])
+dfPriUG_XY_new = drop_columns(dfPriUG_XY_new, ['x','y','xmid','ymid','xend','yend','id_xy','id_xy1','id_xyEnd'])
+dfPriUG_XY_new = dfPriUG_XY_new.rename(columns = {'id_xy':'id'})
+dfPriUG_XY_new = dfPriUG_XY_new[dfPriUG_XY_new.prid.notnull()]
 
+dfPriUG_XY_new_insulation = dfPriUG_XY_new
+dfPriUG_XY_new_insulation = dfPriUG_XY_new_insulation.rename(columns = {ASSET_SUBCLASS:'insulation',
+                                                                        ASSET_CLASS: 'class'})
 MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE)
-dfPriUG_XY_new.to_excel(MasterFile, 'Sheet1')
+dfPriUG_XY_new_insulation.to_excel(MasterFile, 'Sheet1') # using insulation col header, not asset subclass code
 MasterFile.save()
-print('UG Cable: Install Year prediction complete')
-
-#ID  INSTALL_YEAR  HI  INSULATION  CLASS PHASING PRID  CIRCUIT ARRANGEMENT INSTALLATION  MATERIAL  CABLE_SIZE  CONFIG  LENGTH  NUM_SPLICES NUM_CABLES  NOMINAL_VOLTAGE WC_PRID_CATASTROPHIC_RES  WC_PRID_CATASTROPHIC_COMM WC_PRID_CATASTROPHIC_IND  CABLE_PHASE WC_REPLACEMENT  WC_SWITCHING_RES  WC_SWITCHING_COMM WC_SWITCHING_IND  WC_SWITCHING_DURATION CABLE_TO_NETWORK  INJECT_TYPE INJECTION_YEAR  STATION NEIGHBORHOOD_ID INJECTABILITY CUSTOMER_COUNT
-
-# config  num_splices  cable_size  material  cnshld  nominal_voltage
-
-#*****************************************************************************************************
-# ML to resolve UG Primary Cable unknown PRID
-#*****************************************************************************************************
-#nearest_neighbor(df_filled, 'x','y','OH_FEEDERID',3,df_empty)
-
-# file_priUGcable_prid = 'Asset_XY_files/UG_CABLE_PRID.xlsx'
-# #Read xlsx file into dataframes
-# with pd.ExcelFile(file_priUGcable_prid) as xlsx:
-#     dfPriUGcablePRID = pd.read_excel(xlsx, 'Sheet1')
-
-# dfPriUGcablePRID.columns = map(str.lower, dfPriUGcablePRID.columns)
-
-# dfPriUGcablePRID_train = dfPriUGcablePRID[dfPriUGcablePRID.prid.notnull()]
-# dfPriUGcablePRID_unknown = dfPriUGcablePRID[dfPriUGcablePRID.prid.isnull()]
-
-# # train the model
-# print('***************************************************')
-# print('*****UG Cable: PRID Prediction*****')
-# print('kNN coefficient: ',3)
-# print('Training number of rows: ',len(dfPriUGcablePRID_train['id']))
-# print('Unknown number of PRID rows: ',len(dfPriUGcablePRID_unknown['id']))
-# dfPriUGcablePRID_unknown.loc[:,'prid'] = cable_nearest_neighbor(
-#                                           dfPriUGcablePRID_train, 'x','y','xend', 'yend', 'prid',3,dfPriUGcablePRID_unknown,'UG Primary Cable')
-# dfPriUGcablePRID_new = pd.concat([dfPriUGcablePRID_train,dfPriUGcablePRID_unknown])
-# # Write into the UG cable asset table
-# dfPriUGcablePRID_new = drop_columns(dfPriUGcablePRID_new, ['x', 'y','xend','yend'])
-# dfPriUG_XY = drop_columns(dfPriUG_XY, 'prid')
-# dfPriUG_XY = pd.merge(dfPriUG_XY,dfPriUGcablePRID_new, how='left', on='id')
-
-# MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE_TEMPLATE)
-# dfPriUG_XY.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
 print('ML Cables analysis for PRIDs completed')
+
+#**************************************************************************************************************************************************************
+#**************************************************************************************************************************************************************
+# POLES
+#**************************************************************************************************************************************************************
+#**************************************************************************************************************************************************************
+# keep only distribution poles
+dfPoles = dfPoles[dfPoles.SUBTYPECD == 1] #1 - Dist(47%), 5-TrafficLights(2%), 7-streetlight(51%)
+
+dropPolesCols = ['SYMBOLROTATION','GPSDATE','SUBTYPECD','LABELTEXT','STRUCTURENUMBER','FEATURE_STATUS',
+                 'STREETLIGHT_FACILITY','REPLACED_DATE_MM_DD_YYYY','CONDITION','CONDITION_STATUS','CONDITION_DATE']
+dfPoles = drop_columns(dfPoles,dropPolesCols)
+#df.drop_duplicates(cols='A', take_last=True)
+#dfPoles = dfPoles.drop_duplicates(cols='DEVICENUMBER', take_last=True)
+dfPoles = dfPoles.drop_duplicates(['DEVICENUMBER'], take_last=True)
+# Add additional columns and fill with NaNs
+#dfPoles[''] = new_columns(dfPoles, numPolesRows,'')
+numPolesRows = len(dfPoles['DEVICENUMBER'])
+dfPoles[ASSET_CLASS] = new_columns(dfPoles, numPolesRows,ASSET_CLASS)
+dfPoles[ASSET_SUBCLASS] = new_columns(dfPoles, numPolesRows,ASSET_SUBCLASS)
+dfPoles['HI'] = new_columns(dfPoles, numPolesRows,'HI')
+dfPoles['HI'] = 'N/A'
+dfPoles['PHASING'] = new_columns(dfPoles, numPolesRows,'PHASING')
+dfPoles['PRID'] = new_columns(dfPoles, numPolesRows,'PRID')
+dfPoles['TX'] = new_columns(dfPoles, numPolesRows,'TX')
+dfPoles['TX_TYPE'] = new_columns(dfPoles, numPolesRows,'TX_TYPE')
+dfPoles['CIRCUIT1'] = new_columns(dfPoles, numPolesRows,'CIRCUIT1')
+dfPoles['CIRCUIT2'] = new_columns(dfPoles, numPolesRows,'CIRCUIT2')
+dfPoles['CIRCUIT3'] = new_columns(dfPoles, numPolesRows,'CIRCUIT3')
+dfPoles['CIRCUIT4'] = new_columns(dfPoles, numPolesRows,'CIRCUIT4')
+dfPoles['CIRCUIT5'] = new_columns(dfPoles, numPolesRows,'CIRCUIT5')
+dfPoles['CIRCUIT6'] = new_columns(dfPoles, numPolesRows,'CIRCUIT6')
+dfPoles['CIRCUIT7'] = new_columns(dfPoles, numPolesRows,'CIRCUIT7')
+dfPoles['CIRCUIT8'] = new_columns(dfPoles, numPolesRows,'CIRCUIT8')
+dfPoles['IN_VALLEY'] = new_columns(dfPoles, numPolesRows,'IN_VALLEY')
+dfPoles['TX_RESIDENTIAL'] = new_columns(dfPoles, numPolesRows,'TX_RESIDENTIAL')
+dfPoles['TX_COMMERCIAL'] = new_columns(dfPoles, numPolesRows,'TX_COMMERCIAL')
+dfPoles['TX_INDUSTRIAL'] = new_columns(dfPoles, numPolesRows,'TX_INDUSTRIAL')
+#dfPoles['HEIGHT'] = new_columns(dfPoles, numPolesRows,'HEIGHT')
+dfPoles['NUM_CIRCUITS'] = new_columns(dfPoles, numPolesRows,'NUM_CIRCUITS')
+dfPoles['DEVICE'] = new_columns(dfPoles, numPolesRows,'DEVICE')
+dfPoles['TX_KVA'] = new_columns(dfPoles, numPolesRows,'TX_KVA')
+dfPoles['TX_PHASING'] = new_columns(dfPoles, numPolesRows,'TX_PHASING')
+
+# Fill with values
+dfPoles[ASSET_CLASS] = POLES_ASSET_CLASS
+dfPoles[ASSET_SUBCLASS] = 'WOOD'
+
+# Read domain codes for pole table into file
+with pd.ExcelFile(file_DomainCodes_Poles) as xls:
+    dfPolesClassHeight = pd.read_excel(xls, 'Sheet1') # 280 rows
+
+# Merge tables
+dfPoles = dfPoles.merge(dfPolesClassHeight, how='left', on='COMPATIBLEUNITID')
+
+# Rename Pole columns
+dfPoles = dfPoles.rename(columns={'DEVICENUMBER':'ID',
+                                  'TYPE':'POLE_CLASS',
+                                  'INSTALLATIONDATE':'INSTALL_YEAR'})
+# Separate year
+dfPoles['INSTALL_YEAR'] = dfPoles['INSTALL_YEAR'].apply(lambda x: x.year)
+
+dropPolesCols2 = ['COMPATIBLEUNITID']
+dfPoles = drop_columns(dfPoles, dropPolesCols2)
+dfPoles = dfPoles[dfPoles.ID.notnull()] #drop null ids
+
+# Lower case column names
+dfPoles.columns = map(str.lower, dfPoles.columns)
+
+#******************************************************
+# REARRANGE COLUMNS
+#******************************************************
+# POLES_COLS = ['asset_id','asset_class_code','asset_subclass_code','install_year','hi character','phasing character',
+#               'prid character','pole_class','tx','tx_type','circuit1','circuit2','circuit3','circuit4','in_valley',
+#               'tx_residential','tx_commercial','tx_industrial','height','num_circuits','device','tx_kva','id','prid2',
+#               'prid3','prid4','tx_pcb']
+
+#******************************************************
+# OUTPUT DATAFRAMES TO EXCEL MODEL
+#******************************************************
+# dfPoles_excel = dfPoles
+# # excel_dropUGsw = ['asset_subclass_code', 'fused','asset_class_code']
+# # dfUGsw_excel = drop_columns(dfUGsw_excel, excel_dropUGtx)
+# dfPoles_excel['asset_class_code']='Switch Cubicle'
+# dfPoles_excel = dfPoles_excel.rename(columns={'asset_class_code':'class',
+#                                             'asset_subclass_code':'type'})
+
+
+#*********************
+# OUTPUT DATAFRAMES TO EXCEL FILES
+#*********************
+dfPoles_later = dfPoles
+MasterFile = pd.ExcelWriter(POLES_TABLE_TEMPLATE)
+dfPoles.to_excel(MasterFile, 'Sheet1')
+MasterFile.save()
+print('Poles data munging completed')
+
+
+# #**********************************************************************
+# # Match poles with OH Tx: Fix installation years
+# #**********************************************************************
+polesXYDropCols = ['FID', 'OBJECTID', 'WORKORDERI','FIELDVERIF', 'COMMENTS','CREATIONUS', 'DATECREATE', 'LASTUSER', 'DATEMODIFI', 'WORKREQUES','DESIGNID', 
+                 'WORKLOCATI', 'WMSID','WORKFLOWST', 'WORKFUNCTI','SYMBOLROTA', 'GPSDATE', 'GISONUMBER', 'GISOTYPENB', 'SUBTYPECD','LABELTEXT', 'OWNERSHIP', 
+                 'COMPATIBLE', 'STRUCTUREN', 'FEATURE_ST','STREETLIGH', 'REPLACED_D','CONDITION', 'CONDITION_','CONDITION1']
+
+dfPolesXY = drop_columns(dfPolesXY, polesXYDropCols)
+dfPolesXY = dfPolesXY.rename(columns={'DEVICENUMB': 'id','INSTALLATI':'install_year'})
+#dfOHTxXY = dfOHTxXY.rename(columns={'DEVICENUMB': 'tx','INSTALLATI':'install_year'})
+dfPolesXY = dfPolesXY.drop_duplicates(['id'], take_last=True)
+dfPolesXY_later = dfPolesXY
+
+dfPolesXY = dfPolesXY[dfPolesXY.id.notnull()]
+dfPolesXY['install_year'] = dfPolesXY['install_year'].apply(lambda x: x.year)
+
+#df = df[(df.one > 0) | (df.two > 0) | (df.three > 0) & (df.four < 1)]
+# dfPolesXY_unknown = dfPolesXY.loc[(dfPolesXY.install_year == 1997) |
+#                                   (dfPolesXY.install_year == 1998) |
+#                                   (dfPolesXY.install_year == 1999) |
+#                                   (dfPolesXY.install_year == 2000) |
+#                                   (dfPolesXY.install_year.isnull())]
+dfPolesXY_unknown = dfPolesXY.loc[((dfPolesXY.install_year >= 1997) & (dfPolesXY.install_year <= 2000)) | (dfPolesXY.install_year.isnull())]
+dfPolesXY_known = dfPolesXY.loc[(dfPolesXY.install_year < 1997) | (dfPolesXY.install_year > 2000)]
+print(dfPolesXY_unknown.shape) #4830, 4
+print(dfPolesXY_known.shape) #4771, 4
+
+# Training set: OH Tx and Poles data; OH conductor data not accurate enough
+# 40.29% accuracy predictions (1643 OH Tx, 4830 uknowns)
+# dfPolesXY_train = dfOHtx_XY_new
+# 45.78% % accuracy predictions (5618 rows, 4830 uknowns)
+dfPolesXY_train = pd.concat([dfOHtx_XY_new,dfPolesXY_known])
+print('Poles training cols: ', dfPolesXY_train.columns)
+print('Poles unknown cols: ', dfPolesXY_unknown.columns)
+
+# check why NaNs exist here
+dfPolesXY_train = dfPolesXY_train[np.isfinite(dfPolesXY_train['install_year'])] # drop NaNs
+
+print('*********************************************************************************')
+print('*****POLES*****')
+print('kNN coefficient: ',3)
+print('Training Poles rows: ',len(dfPolesXY_train['install_year']))
+print('Wrong Poles rows: ',len(dfPolesXY_unknown['install_year']))
+dfPolesXY_unknown.loc[:,'install_year'] = nearest_neighbor(dfPolesXY_train, 'x','y','install_year',3, dfPolesXY_unknown, 'Poles')
+
+#dfPolesXY_unknown = drop_columns(dfPolesXY_unknown, ['x','y'])
+dfPolesXY_merged = dfPoles.merge(dfPolesXY_unknown, how='left', on='id', suffixes=('_all', '_uk'))
+dfPolesXY_merged['install_year'] = dfPolesXY_merged['install_year_uk'].where(dfPolesXY_merged['install_year_uk']> 0,
+                                                                     dfPolesXY_merged['install_year_all'])
+# for pole attachments
+dfPoles_attachments = dfPolesXY_merged[['x','y','id','install_year']]
+# print(dfPoles_attachments.columns)
+# print(dfPoles_attachments.shape)
+dfPolesXY_merged = drop_columns(dfPolesXY_merged, ['install_year_uk','install_year_all','x','y'])
+# # 40% accuracy
+
+#dfPolesXY_YY = dfPolesXY_merged
+# Overwrite original pole template file?
+OH_trained_Poles = 'V2_OH_trained_Poles.xlsx'
+MasterFile = pd.ExcelWriter(OH_trained_Poles)
+dfPolesXY_merged.to_excel(MasterFile, 'Sheet1')
+MasterFile.save()
+print('Pole installation year matching analysis with OH Tx completed')
+
+#*****************************************************************************************************
+# Cell # 7.0: Pole attachments: Poles XY with TX, Switches
+#*****************************************************************************************************
+
+dropMoreXYcols =['x','y']
+
+# dfPoles_attachments = dfPolesXY_merged[['x','y','id','install_year']]
+
+#Change datatype to str for concatenation
+dfPoles_attachments['x'] = dfPoles_attachments['x'].astype(str)
+dfPoles_attachments['y'] = dfPoles_attachments['y'].astype(str)
+dfPoles_attachments['xy'] = dfPoles_attachments['x']+'-'+dfPoles_attachments['y']
+# ['DEVICENUMB', 'x', 'y', 'xy']
+#dfPolesLatLong = dfPolesLatLong.rename(columns={'DEVICENUMB': 'POLE_ID'})
+#dropMoreWireLatLongCols =['x','y','xMid','yMid','xEnd', 'yEnd']
+#dfPolesLatLong = drop_columns(dfPolesLatLong, dropMoreLatLongCols) # drop attachment assets XY instead
+
+#SWITCHES
+swXYDropCols = ['FID', 'OBJECTID', 'ANCILLARYR', 'ENABLED', 'WORKORDERI', 'FIELDVERIF', 'COMMENTS','CREATIONUS', 'DATECREATE', 'LASTUSER','DATEMODIFI',
+                'WORKREQUES', 'DESIGNID', 'WORKLOCATI','WMSID','WORKFLOWST', 'WORKFUNCTI',  'FEEDERINFO','ELECTRICTR', 'LOCATIONID', 'GPSDATE',
+                'GISONUMBER', 'GISOTYPENB','LABELTEXT', 'OWNERSHIP', 'PHASEDESIG','OPERATINGV', 'NOMINALVOL','MAXOPERATI', 'MAXCONTINU', 'PRESENTPOS', 
+                'PRESENTP_1', 'PRESENTP_2', 'NORMALPOSI', 'NORMALPO_1','NORMALPO_2','SCADACONTR', 'SCADAMONIT', 'PREFERREDC', 'TIESWITCHI', 'GANGOPERAT',
+                'MANUALLYOP', 'FEATURE_ST', 'HYPERLINK', 'HYPERLINK_','SYMBOLROTA', 'INSULATOR_', 'FeederID_1', 'EnergizedP','SourceCoun','Loop', 'Tie']
+
+#'INSTALLATI','SUBTYPECD','COMPATIBLE',
+dfOHswXY= drop_columns(dfSwitchesXY, swXYDropCols)
+dfOHswXY = dfOHswXY[dfOHswXY.SUBTYPECD != 6] # not UG switches
+dfOHswXY = drop_columns(dfOHswXY, ['SUBTYPECD', 'COMPATIBLE']) # compatible just in case we need it near future
+
+dfOHswXY = dfOHswXY.rename(columns={'DEVICENUMB': 'device',
+                                    'FEEDERID': 'CIRCUIT1',
+                                    'FEEDERID2': 'CIRCUIT2',
+                                    'INSTALLATI': 'install_year_SW'})
+
+dfOHswXY['install_year_SW'] = dfOHswXY['install_year_SW'].apply(lambda x: x.year)
+
+#Change datatype to str for concatenation
+dfOHswXY['x'] = dfOHswXY['x'].astype(str)
+dfOHswXY['y'] = dfOHswXY['y'].astype(str)
+dfOHswXY['xy'] = dfOHswXY['x']+'-'+dfOHswXY['y']
+dfOHswXY = drop_columns(dfOHswXY, dropMoreXYcols)
+
+# Poles and Switch match - 98 matches
+dfPolesSwitch_XY = dfPoles_attachments.merge(dfOHswXY, how='left', on='xy')
+
+print('*********************************************************************************')
+print('*****POLES ATTACHMENTS: OH SWITCHES*****')
+print('OH Switches total: ', len(dfOHswXY.device))
+print('OH Switches matched: ',dfPolesSwitch_XY.device.notnull().sum())
+# Pole-Switch Output
+MasterFile = pd.ExcelWriter('V2_PolesSwitches.xlsx')
+dfPolesSwitch_XY.to_excel(MasterFile, 'Sheet1')
+MasterFile.save()
+
+#**********************************************************************
+# Tx
+#**********************************************************************
+# dfOHtx_later_XY = dfOHtx_later[['x','y','id','install_year','circuit', 'prid', 'phasing','kva',
+#                                 'tx_residential','tx_commercial','tx_industrial','primary_voltage', 'secondary_voltage']]
+dfOHtx_later_XY = dfOHtx_later_XY.rename(columns={'install_year':'install_year_TX'})
+#print(dfTxLatLong.isnull().sum())
+dfOHtx_later_XY = dfOHtx_later_XY.rename(columns={'feeder_residential_load':'tx_residential', 
+                                          'feeder_small_med_commercial_load':'tx_commercial',
+                                          'feeder_large_commercial_load':'tx_industrial'})
+
+#print('dfTxLatLong',dfTxLatLong.columns)
+#print(dfTxLatLong.head())
+#Change datatype to str for concatenation
+dfOHtx_later_XY['x'] = dfOHtx_later_XY['x'].astype(str)
+dfOHtx_later_XY['y'] = dfOHtx_later_XY['y'].astype(str)
+dfOHtx_later_XY['xy'] = dfOHtx_later_XY['x']+'-'+dfOHtx_later_XY['y']
+
+#['FEEDERID','DEVICENUMB', 'x','y', 'xy']
+dfOHtx_later_XY = drop_columns(dfOHtx_later_XY, dropMoreXYcols)
+dfOHtx_later_XY = dfOHtx_later_XY.rename(columns={'circuit': 'circuit_tx', 'id':'TX'})
+
+dfPoles_SW_TX_XY = dfPolesSwitch_XY.merge(dfOHtx_later_XY, how='left', on='xy') # Poles and Tx match - 1553 matches out of 1642 [89 no matches ~ 5%]
+
+print('*********************************************************************************')
+print('*****POLES ATTACHMENTS: OH TX****')
+print('OH TX total: ', len(dfOHtx_later_XY.TX))
+print('OH TX matched: ',dfPoles_SW_TX_XY.TX.notnull().sum())
+
+#print('dfPolesTxLatLong',dfPolesTxLatLong.columns)
+# will merge each df independently
+dfPoles_SW_TX_XY = drop_columns(dfPoles_SW_TX_XY, ['xy','CIRCUIT1'])
+
+# Pole-Switch Output
+MasterFile = pd.ExcelWriter('V2_PolesSwitchTx.xlsx')
+dfPoles_SW_TX_XY.to_excel(MasterFile, 'Sheet1')
+MasterFile.save()
+print('*****POLES ATTACHMENTS: OH Switches and OH TX completed ****')
+#dfPolesXY_aa = drop_columns(dfPolesXY_aa, ['tx_residential', 'tx_commercial', 'tx_industrial'])
+
 
 #*****************************************************************************************************
 # ML to resolve UG Primary Cable unknown PRID
@@ -1367,202 +1440,13 @@ print('ML Cables analysis for PRIDs completed')
 # 				   'MEASUREDLE', 'LENGTHUOMC','WIRECOUNT','GISONUMBER', 'GISOTYPENB', 'LABELTEXT', 'COMPATIBLE','OWNERSHIP','PHASEDESIG', 'OPERATINGV', 
 # 				   'NOMINALVOL', 'ISFEEDERTR','NEUTRALUSE', 'FEATURE_ST', 'CONDUCTOR_','SHAPE_LEN', 'FeederID_1','EnergizedP', 'SourceCoun', 'Loop']
 
-# dfPriUG_XY = drop_columns(dfPriUG_XY, PriUGXYDropCols)
-# dfPriUG_XY = dfPriUG_XY.rename(columns={'xStart': 'x','yStart': 'y','INSTALLATI':'install_year'})
-
-# # use UG tx to train and test, fill cable where years <=2002
-# cableCutoffYr = 2002
-
-# #df[~df.C.str.contains("XYZ")] # Remove all 'abandon' phasing
-# #dfCablesXY = dfCablesXY[dfCablesXY.SUBTYPECD != 6]
-# dfPriUG_XY['install_year'] = dfPriUG_XY['install_year'].apply(lambda x: x.year)
-
-# # Machine Learning: empty and filled
-# #def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown):
-# #print('Shape of dfCablesXY: ', dfCablesXY.shape)# (3888, 9)
-# dfPriUG_XY_Unknown = dfPriUG_XY.loc[dfPriUG_XY['install_year'] < cableCutoffYr]
-# dfPriUG_XY_2002 = dfPriUG_XY.loc[dfPriUG_XY['install_year'] >= cableCutoffYr]
-# #print('Shape of dfCablesXY Unknown: ', dfCablesXY_Unknown.shape) #(3853, 9)
-
-# # combine both UG tx and cable installed after 2002
-# # earlier only UG tx was considered (hmm..)
-# dfPriUG_XY_Train = pd.concat([dfUGtx_XY_new, dfPriUG_XY_2002])
-# #print('Shape of dfCablesXY_Train: ', dfCablesXY_Train.shape) #(1975, 4)
-# # print('Before Year NaNs: ', dfCablesXY_Train.shape)
-# dfPriUG_XY_Train = dfPriUG_XY_Train[np.isfinite(dfPriUG_XY_Train['install_year'])] #one NaN value
-# # print('After Year NaNs: ', dfCablesXY_Train.shape)
-
-# # if combined both UGtx and UGCable > 2002 ~ 45-50% prediction accuracy
-# # dfCablesXY_Train = dfCablesXY.loc[dfCablesXY['install_year'] == cableCutoffYr]
-# # dfCablesXY_Train = pd.concat([dfUGTxXY,dfCablesXY_Train]) #4093 rows
-# # dfCablesXY_Train = dfCablesXY_Train[np.isfinite(dfCablesXY_Train['install_year'])] # drop NaNs
-# #dfCablesXY_Train = dfCablesXY_Train[np.isfinite(dfCablesXY_Train['FEEDERID'])] # drop NaNs, mostly 'Abandon' phasing
-
-# print('*****Primary Cable*****')
-# print('kNN coefficient: ',3)
-# print('Training number of rows: ',len(dfPriUG_XY_Train['install_year']))
-# print('Wrong installation year rows: ',len(dfPriUG_XY_Unknown['install_year']))
-# dfPriUG_XY_Unknown.loc[:,'install_year'] = nearest_neighbor(dfPriUG_XY_Train, 'x','y','install_year',3,dfPriUG_XY_Unknown, 'UG Primary Cable')
-# # 60% accuracy
-
-# # cablesXYdropCol = ['xEnd','yEnd','xMid','yMid','SUBTYPECD']
-# # dfCablesXY_Unknown = drop_columns(dfCablesXY_Unknown, cablesXYdropCol)
-# # MasterFile = pd.ExcelWriter('V6.1Cables_test.xlsx')
-# # dfCablesXY_Unknown.to_excel(MasterFile, 'Sheet1')
-# # MasterFile.save()
-# # uncomment if UGCable included in training set
-# # dfCablesXY_Train = drop_columns(dfCablesXY_Train, cablesXYdropCol)
-
-# dfPriUG_XY_all = pd.concat([dfPriUG_XY_Unknown,dfPriUG_XY_2002])
-# print(dfPriUG_XY_all.shape)
-# print(dfPriUG_XY_all.columns)
-# #print(dfCablesXY_all.head(4)) # FEEDERID   id  install_year          x   y
-
-# #dfPriUG_XY_uniqueX = pd.DataFrame(pd.unique(dfPriUG_XY_all[['x']].values.ravel()))
-# #print("all: ",dfCablesXY_all.shape)
-
-# dfPriUG_later_XY = dfPriUG
-
-# #dfPriUG_later_XY['x'] = new_columns(dfPriUG_later_XY,numCablesRows,'x')
-# #print('After: ',dfCablesLater.columns)
-
-# #print('1:',dfCablesLater.shape) #(3865, 27) | (7869, 50) only if both UGTx and UG cable joined - not recommended
-# # print(dfCablesXY.shape) # (3888, 8) (3750, 9)
-# #dfPriUG_later_XY['x']= dfPriUG_XY_uniqueX[0].apply(lambda x: x)
-# #'install_year', 'FEEDERID', 'SUBTYPECD', 'x', 'y', 'xMid', 'yMid', 'xEnd', 'yEnd'
-
-# #******
-# # comment out for Excel model purposes
-# #******
-# #dfPriUG_XY_all = drop_columns(dfPriUG_XY_all, ['xMid', 'yMid', 'xEnd', 'yEnd','SUBTYPECD'])
-# dfPriUG_XY_all = drop_columns(dfPriUG_XY_all, ['xMid', 'yMid', 'SUBTYPECD'])
-# #******
-# dfPriUG_later_XY = dfPriUG_later_XY.merge(dfPriUG_XY_all, how='left', on='x')
-# #dfPriUG_later_XY = dfPriUG_later_XY.drop_duplicates(['x'], take_last=True)
-
-# #used for finding cable installation years with poles in CYME node
-# # dfPriUG_later_XY = dfPriUG_later
-# # dfPriUG_later_XY = drop_columns(dfPriUG_later_XY,['install_year_x', 'x','FEEDERID','y'])
-# # dfPriUG_later_XY = dfPriUG_later_XY.rename(columns = {'install_year_y': 'install_year'})
-
-# #Final cleanup
-# #Final data cleanup
-# dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.phasing != 'Abandon']
-# dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.circuit != 'nan']
-# dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.length.notnull()]
-# dfPriUG_later_XY = dfPriUG_later_XY[dfPriUG_later_XY.install_year.notnull()]
-# #******
-# # comment out for Excel model purposes
-# #*******
-# #dfPriUG_later_XY = drop_columns(dfPriUG_later_XY,['install_year_x', 'x','FEEDERID','y'])
-# dfPriUG_later_XY = drop_columns(dfPriUG_later_XY,['install_year_x','FEEDERID'])
-
-# dfPriUG_later_XY['id'] = np_concat(dfPriUG_later_XY['x'],dfPriUG_later_XY['y'],dfPriUG_later_XY['xEnd'],dfPriUG_later_XY['yEnd'])
-
-# #******
-# dfPriUG_later_XY = dfPriUG_later_XY.rename(columns = {'install_year_y': 'install_year'})
-
-
-# #print(dfPriUG_later_XY.columns)
-
-# # dfPriUG_later = dfPriUG_later[np.isfinite(dfPriUG_later['install_year'])] #one blank value
-# #print('After duplicate:',dfCablesLater.shape)
-# #print(dfCablesXY.columns)
-# MasterFile = pd.ExcelWriter(UG_PRI_CABLE_TABLE)
-# dfPriUG_later_XY.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
-# print('ML Cables analysis completed')
-# # print('Before:', dfCablesLatLongV1.shape) # Before: (3888, 50)
-# # dfCablesLatLongV1 = dfCablesLatLongV1.drop_duplicates(['xStart'], take_last=True)
-# # print('After:', dfCablesLatLongV1.shape) # After: (3188, 50)
-
 # # **********************************************************************
 # # Poles Match with installation years - over 54% installed 97-2000
 # #**********************************************************************
 
-# #******************************************************
-# # OH Tx - 3 tx missing installation years - use k-NN
-# #******************************************************
-# # separate empty and non-empty 'install_year' values
-# dfOHtx_XY = dfOHtx_XY.rename(columns={'INSTALLATI':'install_year', 'DEVICENUMB':'id'})
-# dfOHtx_XY['install_year'] = dfOHtx_XY['install_year'].apply(lambda x: x.year)
-# dfOHtx_XY_Train = dfOHtx_XY[dfOHtx_XY['install_year'].notnull()] 
-# dfOHtx_XY_Empty = dfOHtx_XY[dfOHtx_XY['install_year'].isnull()] 
-
-# print('*****OH Tx*****')
-# print('kNN coefficient: ',3)
-# print('Training OH Tx rows: ',len(dfOHtx_XY_Train['install_year']))
-# print('Null OH Tx rows: ',len(dfOHtx_XY_Empty['install_year']))
-# # train the model
-
-# dfOHtx_XY_Empty.loc[:,'install_year'] = nearest_neighbor(dfOHtx_XY_Train, 'x','y','install_year',3,dfOHtx_XY_Empty,'OH Tx')
-# dfOHtx_XY_New = pd.concat([dfOHtx_XY_Train,dfOHtx_XY_Empty])
-# # fill in empty values
-
-# # merge with original df
-# dfOHtx_later = drop_columns(dfOHtx_later,'install_year')
-# dfOHtx_later = dfOHtx_later.merge(dfOHtx_XY_New, how='left', on='id')
-# dfOHtx_later = drop_columns(dfOHtx_later,['x','y'])
-
 # #**********************************************************************
 # # Match poles with OH Tx
 # #**********************************************************************
-# polesXYDropCols = ['FID', 'OBJECTID', 'WORKORDERI','FIELDVERIF', 'COMMENTS','CREATIONUS', 'DATECREATE', 'LASTUSER', 'DATEMODIFI', 'WORKREQUES','DESIGNID', 
-# 				   'WORKLOCATI', 'WMSID','WORKFLOWST', 'WORKFUNCTI','SYMBOLROTA', 'GPSDATE', 'GISONUMBER', 'GISOTYPENB', 'SUBTYPECD','LABELTEXT', 'OWNERSHIP', 
-# 				   'COMPATIBLE', 'STRUCTUREN', 'FEATURE_ST','STREETLIGH', 'REPLACED_D','CONDITION', 'CONDITION_','CONDITION1']
-
-# dfPolesXY = drop_columns(dfPolesXY, polesXYDropCols)
-# dfPolesXY = dfPolesXY.rename(columns={'DEVICENUMB': 'id','INSTALLATI':'install_year'})
-# #dfOHTxXY = dfOHTxXY.rename(columns={'DEVICENUMB': 'tx','INSTALLATI':'install_year'})
-# dfPolesXY = dfPolesXY.drop_duplicates(['id'], take_last=True)
-# dfPolesXY_later = dfPolesXY
-
-# dfPolesXY = dfPolesXY[dfPolesXY.id.notnull()]
-# dfPolesXY['install_year'] = dfPolesXY['install_year'].apply(lambda x: x.year)
-
-# #df = df[(df.one > 0) | (df.two > 0) | (df.three > 0) & (df.four < 1)]
-# dfPolesXY_Unknown = dfPolesXY.loc[(dfPolesXY.install_year == 1997) |
-#                                   (dfPolesXY.install_year == 1998) |
-#                                   (dfPolesXY.install_year == 1999) |
-#                                   (dfPolesXY.install_year == 2000) |
-#                                   (dfPolesXY.install_year.isnull())]
-
-# #print(dfPolesXY_Unknown.shape) #4771, 4
-
-# dfPolesXY_Train = dfOHtx_XY_New
-
-# # check why NaNs exist here
-# dfPolesXY_Train = dfPolesXY_Train[np.isfinite(dfPolesXY_Train['install_year'])] # drop NaNs
-
-# print('*****POLES*****')
-# print('kNN coefficient: ',3)
-# print('Training Poles rows: ',len(dfPolesXY_Train['install_year']))
-# print('Wrong Poles rows: ',len(dfPolesXY_Unknown['install_year']))
-# dfPolesXY_Unknown.loc[:,'install_year'] = nearest_neighbor(dfPolesXY_Train, 'x','y','install_year',3, dfPolesXY_Unknown, 'Poles')
-
-# dfPolesXY_Unknown = drop_columns(dfPolesXY_Unknown, ['x','y'])
-# dfPolesXY_All = dfPoles.merge(dfPolesXY_Unknown, how='left', on='id', suffixes=('_all', '_uk'))
-# dfPolesXY_All['install_year'] = dfPolesXY_All['install_year_uk'].where(dfPolesXY_All['install_year_uk']> 0,
-#                                                                      dfPolesXY_All['install_year_all'])
-# dfPolesXY_All = drop_columns(dfPolesXY_All, ['install_year_uk','install_year_all'])
-# # # 40% accuracy
-
-# # Overwrite original OH Tx file
-# #dfOHTxLater = dfOHTransformers
-# MasterFile = pd.ExcelWriter(OH_TX_TABLE_TEMPLATE)
-# dfOHtx_later.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
-
-# #dfPolesXY_YY = dfPolesXY_All
-# # Overwrite original pole template file?
-# OH_trained_Poles = 'V1_OH_trained_Poles.xlsx'
-# MasterFile = pd.ExcelWriter(OH_trained_Poles)
-# dfPolesXY_All.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
-# print('Pole installation year matching analysis with OH Tx completed')
-
-
-
 
 #*****************************************************************************************************
 # January 19 2016: ML to find first circuit for Poles
