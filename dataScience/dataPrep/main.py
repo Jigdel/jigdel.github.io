@@ -1633,21 +1633,27 @@ dfPoles_Final = drop_columns(dfPoles_Final, ['install_year'])
 dfPoles_Final = dfPoles_Final.merge(Poles_XY_All_merge_later, how='left', on='id')
 print('dfPoles_Final pole counts: ', len(dfPoles_Final['install_year']))
 dfPoles_Final = dfPoles_Final.rename(columns={'TX': 'tx', 'phasing':'tx_phasing','kva':'tx_kva'})
-dfPoles_Final['tx_type'] = dfPoles_Final['tx'].apply(lamdba x: 'Aerial Transformer' if x else ' ')
 dfPoles_Final = dfPoles_Final[dfPoles_Final.install_year.notnull()] # remove 6 poles missing install_year
 dfPoles_Final = dfPoles_Final[dfPoles_Final.pole_class.notnull()] # remove 4 poles missing pole_class
 dfPoles_Final.columns = map(str.lower, dfPoles_Final.columns)
 
 # Number of circuits
-def isCircuit(c1, c2, c3):
-    if c3:
-        return 3
-    elif c2:
-        return 2
-    else:
+# def isCircuit(c1, c2, c3):
+#     if c3:
+#         return 3
+#     elif c2:
+#         return 2
+#     else:
+#         return 1
+def isCircuit(c1, c2):
+    if not c2:
         return 1
+    else:
+        return 2
     
-dfPoles_Final['num_circuits'] = dfPoles_Final.apply(lambda row: isCircuit(row['circuit1'],row['circuit2'],row['circuit3']), axis=1)
+# dfPoles_Final['num_circuits'] = dfPoles_Final.apply(lambda row: isCircuit(row['circuit1'],row['circuit2'],row['circuit3']), axis=1)
+dfPoles_Final['num_circuits'] = dfPoles_Final.apply(lambda row: isCircuit(row['circuit1'],row['circuit2']), axis=1)
+
 
 dfPoles_Final = dfPoles_Final[['id','install_year','asset_class_code','asset_subclass_code','hi','circuit1','circuit2','circuit3','circuit4','circuit5','circuit6','circuit7','circuit8',
                                'in_valley','num_circuits','height','pole_class','device','prid','tx','tx_kva','tx_type','tx_phasing','tx_residential','tx_commercial','tx_industrial',
@@ -1657,7 +1663,18 @@ dfPoles_Final = dfPoles_Final[['id','install_year','asset_class_code','asset_sub
 
 dfPoles_Final = drop_columns(dfPoles_Final, ['circuit5', 'circuit6', 'circuit7', 'circuit8'])
 
+# rename cols
+dfPoles_Final = dfPoles_Final.rename(columns={'asset_class_code':'class',
+                                              'asset_subclass_code':'type'})
+
+# modify values
+dfPoles_Final['class'] = 'POLE'
+dfPoles_Final['type'] = 'WOOD'
+dfPoles_Final['tx_type'] = dfPoles_Final['tx_kva'].apply(lambda x: 'Aerial Transformer' if x > 0 else '')
+dfPoles_Final['tx_subtype'] = dfPoles_Final['tx_kva'].apply(lambda x: 'POLE_TOP' if x > 0 else '')
+
 # new cols
+dfPoles_Final['phasing'] = dfPoles_Final['tx_phasing']
 dfPoles_Final['prid2'] = ''
 dfPoles_Final['prid3'] = ''
 dfPoles_Final['prid4'] = ''
@@ -1666,10 +1683,6 @@ dfPoles_Final['tx_banking'] = 'Single'
 dfPoles_Final['station'] = 'N/A'
 dfPoles_Final['neighborhood_id'] = 'N/A'
 dfPoles_Final['customer_count'] = 0
-
-# rename cols
-dfPoles_Final = dfPoles_Final.rename(columns={'asset_class_code':'class',
-                                              'asset_subclass_code':'type'})
 
 #******END OF EXCEL MODEL *****
 
