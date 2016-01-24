@@ -70,8 +70,9 @@ file_Switches_XY = 'Asset_XY_files/V2_LatLongSwitches.xls'
 file_PriOH_XY = 'Asset_XY_files/V2_LatLongPriOH.xls'
 file_PriUG_XY = 'Asset_XY_files/V2_LatLongPriUG.xls'
 file_Tx_XY = 'Asset_XY_files/V2_LatLongTx.xls'
-file_PRID_Tx = 'V6_PRID_TX_LOOKUP.xlsx'
-
+file_PRID_Tx = 'Asset_XY_files/V6_PRID_TX_LOOKUP.xlsx'
+file_PRID_OHcond = 'Asset_XY_files/OH_COND_PRID.xlsx'
+file_PRID_Switch = 'Asset_XY_files/SW_PRID.xlsx'
 #**************************
 # Reading SwitchGears
 #***************************
@@ -1288,12 +1289,16 @@ dfPolesXY = drop_columns(dfPolesXY, polesXYDropCols)
 dfPolesXY = dfPolesXY.rename(columns={'DEVICENUMB': 'id','INSTALLATI':'install_year'})
 dfPolesXY['install_year'] = dfPolesXY['install_year'].apply(lambda x: x.year)
 
-dfPolesXY = dfPolesXY.drop_duplicates(['id'], take_last=True)
-#print('ID counts (duplicates dropped): ', len(dfPolesXY.id))
+#df.drop_duplicates('b', inplace = True)
+# dfPolesXY = dfPolesXY.drop_duplicates('id')
+print('ID counts: ', len(dfPolesXY.id))
+dfPolesXY.drop_duplicates('id', inplace=True)
+print('ID counts (duplicates dropped): ', len(dfPolesXY.id))
 dfPolesXY = dfPolesXY[dfPolesXY.id.notnull()]
 #print('ID counts (Null dropped): ', len(dfPolesXY.id))
 
-dfPolesXY_later = dfPolesXY
+dfPolesXY_OHcond_later = dfPolesXY
+print('dfPolesXY_OHcond_later ID counts: ', len(dfPolesXY_OHcond_later.id))
 
 #df = df[(df.one > 0) | (df.two > 0) | (df.three > 0) & (df.four < 1)]
 # dfPolesXY_unknown = dfPolesXY.loc[(dfPolesXY.install_year == 1997) |
@@ -1603,7 +1608,7 @@ print('Unmatched Pole circuits: ', Poles_XY_All_merge.CIRCUIT1.isnull().sum()) #
 print('Matched Pole circuits: ', Poles_XY_All_merge.CIRCUIT1.notnull().sum()) # 7156
 
 
-#*****************************************************************************************************#**************************************
+# #*****************************************************************************************************#**************************************
 # dfOHtx_later_XY = dfOHtx_later[]
 # 'x','y','id', 'tx_type = 'POLE-TOP'
 poles_tx_dup_cols = ['install_year','circuit1', 'circuit2','prid','tx_residential','tx_commercial','tx_industrial','device', 'tx','tx_kva', 
@@ -1660,7 +1665,6 @@ dfPoles_Final = dfPoles_Final[['id','install_year','asset_class_code','asset_sub
                                'primary_voltage','secondary_voltage']]
 
 # EXCEL MODEL OUTPUT 
-
 dfPoles_Final = drop_columns(dfPoles_Final, ['circuit5', 'circuit6', 'circuit7', 'circuit8'])
 
 # rename cols
@@ -1687,23 +1691,22 @@ dfPoles_Final['customer_count'] = 0
 #******END OF EXCEL MODEL *****
 
 #Final Pole Table Output
-MasterFile = pd.ExcelWriter(POLES_TABLE)
-dfPoles_Final.to_excel(MasterFile, 'Sheet1')
-MasterFile.save()
-print('*****POLES FINAL TABLE YES! ****')
+# MasterFile = pd.ExcelWriter(POLES_TABLE)
+# dfPoles_Final.to_excel(MasterFile, 'Sheet1')
+# MasterFile.save()
+# print('*****POLES FINAL TABLE YES! ****')
 
 #*****************************************************************************************************
 # January 19 2016: ML to find first circuit for Poles
 #*****************************************************************************************************
 
+PriOHXY_dropCols = ['FID','OBJECTID','ENABLED','WORKORDERI','INSTALLATI','FIELDVERIF','COMMENTS','CREATIONUS','DATECREATE','LASTUSER','DATEMODIFI',
+                  'WORKREQUES','DESIGNID','WORKLOCATI','WMSID','WORKFLOWST','WORKFUNCTI','FEEDERID2','FEEDERINFO','ELECTRICTR','LOCATIONID','LENGTHSOUR',
+                  'MEASUREDLE','LENGTHUOMC','WIRECOUNT','GISONUMBER','GISOTYPENB','SUBTYPECD','LABELTEXT','COMPATIBLE','OWNERSHIP','PHASEDESIG','OPERATINGV',
+                  'NOMINALVOL','ISFEEDERTR','NEUTRALUSE','PHASECONFI','CLEARANCE','FEATURE_ST','TL_DESIGNA','SHAPE_LEN','FeederID_1','EnergizedP',
+                  'SourceCoun','Loop', 'xMid','yMid', 'FEEDERID']
 
-# PriOHXY_dropCols = ['FID','OBJECTID','ENABLED','WORKORDERI','INSTALLATI','FIELDVERIF','COMMENTS','CREATIONUS','DATECREATE','LASTUSER','DATEMODIFI',
-#                   'WORKREQUES','DESIGNID','WORKLOCATI','WMSID','WORKFLOWST','WORKFUNCTI','FEEDERID2','FEEDERINFO','ELECTRICTR','LOCATIONID','LENGTHSOUR',
-#                   'MEASUREDLE','LENGTHUOMC','WIRECOUNT','GISONUMBER','GISOTYPENB','SUBTYPECD','LABELTEXT','COMPATIBLE','OWNERSHIP','PHASEDESIG','OPERATINGV',
-#                   'NOMINALVOL','ISFEEDERTR','NEUTRALUSE','PHASECONFI','CLEARANCE','FEATURE_ST','TL_DESIGNA','SHAPE_LEN','FeederID_1','EnergizedP',
-#                   'SourceCoun','Loop', 'xMid','yMid']
-
-# dfPriOHXY = drop_columns(dfPriOHXY, PriOHXY_dropCols)
+dfPriOHXY = drop_columns(dfPriOHXY, PriOHXY_dropCols)
 
 # # might be an overkill - used dropna :)
 # def drop_nan(nan_col):
@@ -1713,367 +1716,98 @@ print('*****POLES FINAL TABLE YES! ****')
 # # FEEDERID xStart xEnd    yStart yEnd
 # # Take xStart, yStart; xMid, yMid, xEnd, yEnd
 # #dfPriOHXY= drop_nan(dfPriOHXY['xStart'])
-# dfPriOHXY.dropna()
+#dfPriOHXY.dropna()
 
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['xStart'].notnull()]
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['yStart'].notnull()]
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['xEnd'].notnull()]
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['yEnd'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['xStart'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['yStart'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['xEnd'].notnull()]
+dfPriOHXY = dfPriOHXY[dfPriOHXY['yEnd'].notnull()]
 # dfPriOHXY = dfPriOHXY[dfPriOHXY['FEEDERID'].notnull()]
 
+#Change datatype to str and concatenate
+dfPriOHXY['xyStart'] = dfPriOHXY['xStart'].map(str)+'_'+dfPriOHXY['yStart'].map(str)
+dfPriOHXY['xyEnd'] = dfPriOHXY['xEnd'].map(str)+'_'+dfPriOHXY['yEnd'].map(str)
 # dfPriOHXY['xyStart'] = np_concat(dfPriOHXY['xStart'], dfPriOHXY['yStart'])
 # dfPriOHXY['xyEnd'] = np_concat(dfPriOHXY['xEnd'], dfPriOHXY['yEnd'])
-# # print('dfPriOHXY cols: ', dfPriOHXY.columns)
+# print('dfPriOHXY cols: ', dfPriOHXY.columns)
 
-# dfPoles_XY_OHcond = dfPolesXY_later
-# # print(dfPoles_XY_OHcond.columns) #['install_year', 'id', 'x', 'y']
+# dfPolesXY_OHcond = dfPolesXY_later
+dfPolesXY_OHcond = dfPolesXY_OHcond_later
+print('dfPolesXY_OHcond ID counts: ', len(dfPolesXY_OHcond.id))
+
+#dfPolesXY_OHcond = dfPolesXY_OHcond.drop_duplicates(['id'], take_last=True)
+# print(dfPoles_XY_OHcond.columns) #['install_year', 'id', 'x', 'y']
+dfPolesXY_OHcond['xyPoles'] = dfPolesXY_OHcond['x'].map(str)+'_'+dfPolesXY_OHcond['y'].map(str)
 # dfPoles_XY_OHcond['xy'] = np_concat(dfPoles_XY_OHcond['x'],dfPoles_XY_OHcond['y'])
 
-# #dfPoles_XY_OHcond['x'] = dfPoles_XY_OHcond['x'].astype(str)
-# #dfPoles_XY_OHcond['y'] = dfPoles_XY_OHcond['y'].astype(str)
-# #dfPoles_XY_OHcond['xy'] = dfPoles_XY_OHcond[['x','y']].apply(lambda x: '_'.join(x), axis=1)
+dfPolesXY_OHcond = drop_columns(dfPolesXY_OHcond, ['install_year'])
+# 1. Match just xStart_yStart with Poles
+# print('dfPoles_XY_OHcond cols 1 :', dfPoles_XY_OHcond.columns)
+dfPolesOHcond = dfPolesXY_OHcond.merge(dfPriOHXY, how='left', left_on='xyPoles', right_on='xyStart')
+print('dfPolesXY_OHcond ID 2 counts: ', len(dfPolesXY_OHcond.id))
 
-# dfPoles_XY_OHcond = drop_columns(dfPoles_XY_OHcond, ['install_year','x','y'])
-# # 1. Match just xStart_yStart with Poles
-# # print('dfPoles_XY_OHcond cols 1 :', dfPoles_XY_OHcond.columns)
-# dfPolesOHcond = dfPoles_XY_OHcond.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyStart')
+dfPolesOHcond_unknown = dfPolesOHcond[dfPolesOHcond.xyStart.isnull()]
+print('Unknowns: ', dfPolesOHcond_unknown.xyStart.isnull().sum())
+dfPolesOHcond_known = dfPolesOHcond[dfPolesOHcond.xyStart.notnull()]
+print('Knowns: ', dfPolesOHcond_known.xyStart.notnull().sum())
 
-# # print('dfPolesOHcond cols: 2', dfPolesOHcond.columns)
-# dfPoles_XY_OHcond_matched_xyStart = dfPolesOHcond[dfPolesOHcond.FEEDERID.notnull()]
-# # print('dfPoles_XY_OHcond_matched_xyStart cols: 1', dfPoles_XY_OHcond_matched_xyStart.columns)
-# # 2. Isolate remaining unmatched ones to match with xEnd_yEnd
-# dfPoles_XY_OHcond_xyEnd = dfPolesOHcond[dfPolesOHcond.FEEDERID.isnull()]
-# # print('dfPoles_XY_OHcond_xyEnd cols: 1', dfPoles_XY_OHcond_xyEnd.columns)
-# # drop cols
-# OHcond_XY_dropCols = ['xStart', 'yStart','xEnd', 'yEnd','FEEDERID','xyStart']
-# dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, OHcond_XY_dropCols)
-# # print('dfPoles_XY_OHcond_xyEnd cols: 2', dfPoles_XY_OHcond_xyEnd.columns)
-# # print('dfPolesOHcond cols:', dfPolesOHcond.columns)
-# print('dfPoles_XY_OHcond_xyEnd cols:', dfPoles_XY_OHcond_xyEnd.columns)
 
-# # 3. Use ML for remaining unmatched ones
-# dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyEnd')
-# dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, ['xyEnd_x','xyEnd_y','xStart', 'yStart'])
-# # dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.rename(columns={'xyEnd_y':'xyEnd'})
-# print('dfPoles_XY_OHcond_xyEnd cols (after merge):', dfPoles_XY_OHcond_xyEnd.columns)
-# dfPoles_XY_OHcond_matched_xyEnd = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.notnull()]
+dfPolesOHcond_unknown = drop_columns(dfPolesOHcond_unknown, ['xStart','xEnd','yStart','yEnd','xyStart','xyEnd'])
+dfPolesOHcond_unknown = dfPolesOHcond_unknown.merge(dfPriOHXY, how='left', left_on='xyPoles', right_on='xyEnd')
+print('dfPolesXY_OHcond ID 3 counts: ', len(dfPolesXY_OHcond.id))
+print('Unknowns: xyEnd : ', dfPolesOHcond_unknown.xyStart.isnull().sum())
 
-# # df.drop_duplicates(cols='A', take_last=True)
-# # df.drop_duplicates(subset=['A', 'C'], keep=False) # False removes all duplicates
-# # 4. Concat two completed df. Becomes training set
-# dfPoles_XY_OHcond_train = pd.concat([dfPoles_XY_OHcond_matched_xyStart, dfPoles_XY_OHcond_matched_xyEnd])
-# dfPoles_XY_OHcond_train = dfPoles_XY_OHcond_train.drop_duplicates('id')
-# dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.isnull()]
-# dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_unMatched.drop_duplicates('id')
+dfPolesXY_OHcond_final = pd.concat([dfPolesOHcond_known, dfPolesOHcond_unknown])
+dfPolesXY_OHcond_final.drop_duplicates('id', inplace=True)
+print('dfPolesXY_OHcond ID 4 counts: ', len(dfPolesXY_OHcond_final.id))
 
-# dfPoles_XY_OHcond_unMatched['xStart'], dfPoles_XY_OHcond_unMatched['yStart'] = zip(*dfPoles_XY_OHcond_unMatched['xy'].apply(lambda x: x.split('_')))
-# dfPoles_XY_OHcond_unMatched['xStart'] = dfPoles_XY_OHcond_unMatched['xStart'].astype(float)
-# dfPoles_XY_OHcond_unMatched['yStart'] = dfPoles_XY_OHcond_unMatched['yStart'].astype(float)
-# dfPoles_XY_OHcond_train['FEEDERID'] = dfPoles_XY_OHcond_train['FEEDERID'].astype(str)
-# dfPoles_XY_OHcond_unMatched['FEEDERID'] = dfPoles_XY_OHcond_unMatched['FEEDERID'].astype(str)
+print('Knowns: ', dfPolesXY_OHcond_final.xyStart.notnull().sum()) # 6781 77%
+print('Unknowns: ', dfPolesXY_OHcond_final.xyStart.isnull().sum()) # 2024
 
-# # dfAllNodes_list['NodeID_x'], dfAllNodes_list['NodeID_y'] = zip(*dfAllNodes_list['xy'].
-# #                                                                apply(lambda x: x.split('_') if '_' in x else (x, np.nan)))
-# # 5. kNN to complete other missing set
-# dfPoles_XY_OHcond_unMatched
-# print('*****POLES*****')
-# print('kNN coefficient: ',3)
-# print('Training number of rows: ',len(dfPoles_XY_OHcond_train['xy']))
-# print('Unknown number of PRID rows: ',len(dfPoles_XY_OHcond_unMatched['xy']))
-# #print(dfPoles_XY_OHcond_train.dtypes)
-# #print(dfPoles_XY_OHcond_unMatched.dtypes)
-# print(dfPoles_XY_OHcond_train.shape) # 6781,9
-# print(dfPoles_XY_OHcond_unMatched.shape) # 2024,8
-# dfPoles_XY_OHcond_train = drop_columns(dfPoles_XY_OHcond_train, ['xEnd', 'xy', 'yEnd', 'xyStart', 'xyEnd'])
-# dfPoles_XY_OHcond_unMatched = drop_columns(dfPoles_XY_OHcond_unMatched, ['xEnd', 'xy', 'yEnd', 'xyStart'])
-# dfPoles_XY_OHcond_unMatched['FEEDERID'] = ''
-# # remaining cols: 'FEEDERID', 'id', 'xStart','yStart'
-# print(dfPoles_XY_OHcond_train.shape) # 6781,4
-# print(dfPoles_XY_OHcond_unMatched.shape) # 2024,4
-# dfPoles_XY_OHcond_unMatched.loc[:,'FEEDERID'] = nearest_neighbor(dfPoles_XY_OHcond_train,'xStart','yStart','FEEDERID',3,dfPoles_XY_OHcond_unMatched,'Poles')
-# #nearest_neighbor(df_filled, 'x','y','OH_FEEDERID',3,df_empty)
-# #def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown, AssetClass):
-# dfPoles_XY_OHcond_completed = pd.concat([dfPoles_XY_OHcond_train,dfPoles_XY_OHcond_unMatched])
-# #dfPoles_XY_OHcond_completed = dfPoles_XY_OHcond_completed.drop_duplicates('id')
+dfPoles_XY_OHcond_train = dfPolesXY_OHcond_final[dfPolesXY_OHcond_final.xyStart.notnull()]
+dfPoles_XY_OHcond_unMatched = dfPolesXY_OHcond_final[dfPolesXY_OHcond_final.xyStart.isnull()]
+
+#['id','xyPoles','xStart','xEnd','yStart','yEnd','xyStart','xyEnd']
+print('*****POLES OH CONDUCTOR LINKAGE *****')
+print('kNN coefficient: ',3)
+print('Training number of rows: ',len(dfPoles_XY_OHcond_train['xyStart']))
+print('Unknown number of OH Cond rows: ',len(dfPoles_XY_OHcond_unMatched['xyStart']))
+dfPoles_XY_OHcond_train=dfPoles_XY_OHcond_train[dfPoles_XY_OHcond_train.xStart.notnull()]
+dfPoles_XY_OHcond_train=dfPoles_XY_OHcond_train[dfPoles_XY_OHcond_train.yStart.notnull()]
+
+dfPoles_XY_OHcond_unMatched.loc[:,'xyStart'] = nearest_neighbor(dfPoles_XY_OHcond_train,'x','y','xyPoles',3,dfPoles_XY_OHcond_unMatched,'Poles OH Cond Linkage')
+dfPoles_XY_OHcond_completed = pd.concat([dfPoles_XY_OHcond_train,dfPoles_XY_OHcond_unMatched])
 # print(dfPoles_XY_OHcond_completed.shape)
 
-# MasterFile = pd.ExcelWriter('POLES_TABLE_FINAL_ML.xlsx')
-# #dfPoles_XY_OHcond_completed.to_excel(MasterFile,'Sheet1')
-# dfPoles_XY_OHcond_train.to_excel(MasterFile,'Sheet1')
-# dfPoles_XY_OHcond_unMatched.to_excel(MasterFile,'Sheet2')
-# dfPoles_XY_OHcond_completed.to_excel(MasterFile,'Sheet3')
-# MasterFile.save()
-# print('Here we go!')
+MasterFile = pd.ExcelWriter('V2_POLES_OH_CONDUCTOR.xlsx')
+dfPoles_XY_OHcond_completed.to_excel(MasterFile,'Sheet1')
+MasterFile.save()
+print('Here we go!')
+
+# Not linked auotmatically
+#PRIDs to OH Conductor match
+with pd.ExcelFile(file_PRID_OHcond) as xls:
+  dfPRID_OHcond = pd.read_excel(xls, 'Sheet1')
+
+#remove the column and rename it in near future
+#id  xyPoles device  prid
+dfPRID_OHcond = drop_columns(dfPRID_OHcond, ['xyPoles','device'])
+dfPoles_Final = drop_columns(dfPoles_Final, ['prid'])
+
+dfPoles_Final = dfPoles_Final.merge(dfPRID_OHcond, how='left', on='id')
+
+with pd.ExcelFile(file_PRID_Switch) as xls:
+  dfPRID_Switch = pd.read_excel(xls, 'Sheet1')
+
+# PRID_SW cols: Network Id  To Node device  Upstream 1  prid2
+dfPRID_Switch = drop_columns(dfPRID_Switch, ['Netword Id','To Node', 'Upstream 1'])
+dfPoles_Final = drop_columns(dfPoles_Final, ['prid2'])
+dfPoles_Final = dfPoles_Final.merge(dfPRID_Switch, how='left', on='device')
 
 
-# *******************************************************************************************************************************************************
-# *******************************************************************************************************************************************************
-# *******************************************************************************************************************************************************
-#dfPolesXY_aa = drop_columns(dfPolesXY_aa, ['tx_residential', 'tx_commercial', 'tx_industrial'])
-
-
-#*****************************************************************************************************
-# ML to resolve UG Primary Cable unknown PRID
-#*****************************************************************************************************
-
-# PriUGXYDropCols = ['FID', 'OBJECTID', 'ENABLED', 'WORKORDERI',  'FIELDVERIF','COMMENTS', 'CREATIONUS', 'DATECREATE','LASTUSER', 'DATEMODIFI','WORKREQUES', 
-# 				   'DESIGNID', 'WORKLOCATI', 'WMSID', 'WORKFLOWST','WORKFUNCTI','FEEDERID2', 'FEEDERINFO', 'ELECTRICTR','LOCATIONID', 'LENGTHSOUR', 
-# 				   'MEASUREDLE', 'LENGTHUOMC','WIRECOUNT','GISONUMBER', 'GISOTYPENB', 'LABELTEXT', 'COMPATIBLE','OWNERSHIP','PHASEDESIG', 'OPERATINGV', 
-# 				   'NOMINALVOL', 'ISFEEDERTR','NEUTRALUSE', 'FEATURE_ST', 'CONDUCTOR_','SHAPE_LEN', 'FeederID_1','EnergizedP', 'SourceCoun', 'Loop']
-
-# # **********************************************************************
-# # Poles Match with installation years - over 54% installed 97-2000
-# #**********************************************************************
-
-# #**********************************************************************
-# # Match poles with OH Tx
-# #**********************************************************************
-
-#*****************************************************************************************************
-# January 19 2016: ML to find first circuit for Poles
-#*****************************************************************************************************
-
-# PriOHXY_dropCols = ['FID','OBJECTID','ENABLED','WORKORDERI','INSTALLATI','FIELDVERIF','COMMENTS','CREATIONUS','DATECREATE','LASTUSER','DATEMODIFI',
-# 					'WORKREQUES','DESIGNID','WORKLOCATI','WMSID','WORKFLOWST','WORKFUNCTI','FEEDERID2','FEEDERINFO','ELECTRICTR','LOCATIONID','LENGTHSOUR',
-# 					'MEASUREDLE','LENGTHUOMC','WIRECOUNT','GISONUMBER','GISOTYPENB','SUBTYPECD','LABELTEXT','COMPATIBLE','OWNERSHIP','PHASEDESIG','OPERATINGV',
-# 					'NOMINALVOL','ISFEEDERTR','NEUTRALUSE','PHASECONFI','CLEARANCE','FEATURE_ST','TL_DESIGNA','SHAPE_LEN','FeederID_1','EnergizedP',
-# 					'SourceCoun','Loop', 'xMid','yMid']
-
-# dfPriOHXY = drop_columns(dfPriOHXY, PriOHXY_dropCols)
-
-# # might be an overkill - used dropna :)
-# def drop_nan(nan_col):
-# 	# return nan_col.notnull()
-# 	return np.isfinite(nan_col)
-
-# # FEEDERID xStart xEnd	yStart yEnd
-# # Take xStart, yStart; xMid, yMid, xEnd, yEnd
-# #dfPriOHXY= drop_nan(dfPriOHXY['xStart'])
-# dfPriOHXY.dropna()
-
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['xStart'].notnull()]
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['yStart'].notnull()]
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['xEnd'].notnull()]
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['yEnd'].notnull()]
-# dfPriOHXY = dfPriOHXY[dfPriOHXY['FEEDERID'].notnull()]
-
-# dfPriOHXY['xyStart'] = np_concat(dfPriOHXY['xStart'], dfPriOHXY['yStart'])
-# dfPriOHXY['xyEnd'] = np_concat(dfPriOHXY['xEnd'], dfPriOHXY['yEnd'])
-# # print('dfPriOHXY cols: ', dfPriOHXY.columns)
-# dfPoles_XY_OHcond = dfPolesXY_later
-# # print(dfPoles_XY_OHcond.columns) #['install_year', 'id', 'x', 'y']
-# dfPoles_XY_OHcond['xy'] = np_concat(dfPoles_XY_OHcond['x'],dfPoles_XY_OHcond['y'])
-
-# #dfPoles_XY_OHcond['x'] = dfPoles_XY_OHcond['x'].astype(str)
-# #dfPoles_XY_OHcond['y'] = dfPoles_XY_OHcond['y'].astype(str)
-# #dfPoles_XY_OHcond['xy'] = dfPoles_XY_OHcond[['x','y']].apply(lambda x: '_'.join(x), axis=1)
-
-# dfPoles_XY_OHcond = drop_columns(dfPoles_XY_OHcond, ['install_year','x','y'])
-# # 1. Match just xStart_yStart with Poles
-# # print('dfPoles_XY_OHcond cols 1 :', dfPoles_XY_OHcond.columns)
-# dfPolesOHcond = dfPoles_XY_OHcond.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyStart')
-
-# # print('dfPolesOHcond cols: 2', dfPolesOHcond.columns)
-# dfPoles_XY_OHcond_matched_xyStart = dfPolesOHcond[dfPolesOHcond.FEEDERID.notnull()]
-# # print('dfPoles_XY_OHcond_matched_xyStart cols: 1', dfPoles_XY_OHcond_matched_xyStart.columns)
-# # 2. Isolate remaining unmatched ones to match with xEnd_yEnd
-# dfPoles_XY_OHcond_xyEnd = dfPolesOHcond[dfPolesOHcond.FEEDERID.isnull()]
-# # print('dfPoles_XY_OHcond_xyEnd cols: 1', dfPoles_XY_OHcond_xyEnd.columns)
-# # drop cols
-# OHcond_XY_dropCols = ['xStart', 'yStart','xEnd', 'yEnd','FEEDERID','xyStart']
-# dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, OHcond_XY_dropCols)
-# # print('dfPoles_XY_OHcond_xyEnd cols: 2', dfPoles_XY_OHcond_xyEnd.columns)
-# # print('dfPolesOHcond cols:', dfPolesOHcond.columns)
-# print('dfPoles_XY_OHcond_xyEnd cols:', dfPoles_XY_OHcond_xyEnd.columns)
-
-# # 3. Use ML for remaining unmatched ones
-# dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.merge(dfPriOHXY, how='left', left_on='xy', right_on='xyEnd')
-# dfPoles_XY_OHcond_xyEnd = drop_columns(dfPoles_XY_OHcond_xyEnd, ['xyEnd_x','xyEnd_y','xStart', 'yStart'])
-# # dfPoles_XY_OHcond_xyEnd = dfPoles_XY_OHcond_xyEnd.rename(columns={'xyEnd_y':'xyEnd'})
-# print('dfPoles_XY_OHcond_xyEnd cols (after merge):', dfPoles_XY_OHcond_xyEnd.columns)
-# dfPoles_XY_OHcond_matched_xyEnd = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.notnull()]
-
-# # df.drop_duplicates(cols='A', take_last=True)
-# # df.drop_duplicates(subset=['A', 'C'], keep=False) # False removes all duplicates
-# # 4. Concat two completed df. Becomes training set
-# dfPoles_XY_OHcond_train = pd.concat([dfPoles_XY_OHcond_matched_xyStart, dfPoles_XY_OHcond_matched_xyEnd])
-# dfPoles_XY_OHcond_train = dfPoles_XY_OHcond_train.drop_duplicates('id')
-# dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_xyEnd[dfPoles_XY_OHcond_xyEnd.FEEDERID.isnull()]
-# dfPoles_XY_OHcond_unMatched = dfPoles_XY_OHcond_unMatched.drop_duplicates('id')
-
-# dfPoles_XY_OHcond_unMatched['xStart'], dfPoles_XY_OHcond_unMatched['yStart'] = zip(*dfPoles_XY_OHcond_unMatched['xy'].apply(lambda x: x.split('_')))
-# dfPoles_XY_OHcond_unMatched['xStart'] = dfPoles_XY_OHcond_unMatched['xStart'].astype(float)
-# dfPoles_XY_OHcond_unMatched['yStart'] = dfPoles_XY_OHcond_unMatched['yStart'].astype(float)
-# dfPoles_XY_OHcond_train['FEEDERID'] = dfPoles_XY_OHcond_train['FEEDERID'].astype(str)
-# dfPoles_XY_OHcond_unMatched['FEEDERID'] = dfPoles_XY_OHcond_unMatched['FEEDERID'].astype(str)
-
-# # dfAllNodes_list['NodeID_x'], dfAllNodes_list['NodeID_y'] = zip(*dfAllNodes_list['xy'].
-# #                                                                apply(lambda x: x.split('_') if '_' in x else (x, np.nan)))
-# # 5. kNN to complete other missing set
-# dfPoles_XY_OHcond_unMatched
-# print('*****POLES*****')
-# print('kNN coefficient: ',3)
-# print('Training number of rows: ',len(dfPoles_XY_OHcond_train['xy']))
-# print('Unknown number of PRID rows: ',len(dfPoles_XY_OHcond_unMatched['xy']))
-# #print(dfPoles_XY_OHcond_train.dtypes)
-# #print(dfPoles_XY_OHcond_unMatched.dtypes)
-# print(dfPoles_XY_OHcond_train.shape) # 6781,9
-# print(dfPoles_XY_OHcond_unMatched.shape) # 2024,8
-# dfPoles_XY_OHcond_train = drop_columns(dfPoles_XY_OHcond_train, ['xEnd', 'xy', 'yEnd', 'xyStart', 'xyEnd'])
-# dfPoles_XY_OHcond_unMatched = drop_columns(dfPoles_XY_OHcond_unMatched, ['xEnd', 'xy', 'yEnd', 'xyStart'])
-# dfPoles_XY_OHcond_unMatched['FEEDERID'] = ''
-# # remaining cols: 'FEEDERID', 'id', 'xStart','yStart'
-# print(dfPoles_XY_OHcond_train.shape) # 6781,4
-# print(dfPoles_XY_OHcond_unMatched.shape) # 2024,4
-# dfPoles_XY_OHcond_unMatched.loc[:,'FEEDERID'] = nearest_neighbor(dfPoles_XY_OHcond_train,'xStart','yStart','FEEDERID',3,dfPoles_XY_OHcond_unMatched,'Poles')
-# #nearest_neighbor(df_filled, 'x','y','OH_FEEDERID',3,df_empty)
-# #def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown, AssetClass):
-# dfPoles_XY_OHcond_completed = pd.concat([dfPoles_XY_OHcond_train,dfPoles_XY_OHcond_unMatched])
-# #dfPoles_XY_OHcond_completed = dfPoles_XY_OHcond_completed.drop_duplicates('id')
-# print(dfPoles_XY_OHcond_completed.shape)
-
-# MasterFile = pd.ExcelWriter('POLES_TABLE_FINAL_ML.xlsx')
-# #dfPoles_XY_OHcond_completed.to_excel(MasterFile,'Sheet1')
-# dfPoles_XY_OHcond_train.to_excel(MasterFile,'Sheet1')
-# dfPoles_XY_OHcond_unMatched.to_excel(MasterFile,'Sheet2')
-# dfPoles_XY_OHcond_completed.to_excel(MasterFile,'Sheet3')
-# MasterFile.save()
-# print('Here we go!')
-
-# #*****************************************************************************************************
-# # Cell # 6 : Read all CYME feeders to populate dfAllNodes df - tie Poles with respective feeder ids
-# #*****************************************************************************************************
-# # fileName - iterate through entire folder :)
-# #fileName = '3S3-1_Crestwood_Feeder_Details.xlsx'
-# #input directory
-# inputDirectory = 'Metsco_Feeder_Reports'
-
-# # define filepath and sort the file list
-# filesList = glob(os.path.join(inputDirectory, '*.xlsx'))
-# numFiles = len(filesList)
-# sortedFileList = sorted(filesList)
-
-# # variables
-# dictFeeders = {}
-# dfAllNodes_list = pd.DataFrame()
-
-# # read text files in tweet_input directory
-# for f in sortedFileList:
-
-#     fileName = os.path.basename(f).split('_')
-#     FeederKey = fileName[0]
-#     #print(FeederKey)
-    
-#     if ('$' not in FeederKey):
-#         # Read CYME Feeder xlsx file into dataframes
-#         with pd.ExcelFile(f) as xlsx:
-#             #dfTopology = pd.read_excel(xlsx, 'Topology', index_col=None, na_values=['NA']) # IGNORE for now
-#             dfTopology = pd.read_excel(xlsx, 'Topology') # 280 rows
-#             dfSpotLoads = pd.read_excel(xlsx, 'Spot Loads') # Tot:239 - R/Y/B: 116/108/103 values; based on phases
-#             dfLoads = pd.read_excel(xlsx, 'Loads') # 239 rows; 'Spot Number\n' col contains unique tx ids
-#             dfCables = pd.read_excel(xlsx, 'Cables')
-#             dfSwitches = pd.read_excel(xlsx, 'Switches') # 41 items
-#             dfNodes = pd.read_excel(xlsx, 'Nodes') # 249 items
-#             dfOHlines = pd.read_excel(xlsx, 'OverheadLinesByPhase') #Neutral - 94, Section Id - 381
-#             dfFuses = pd.read_excel(xlsx, 'Fuses') # 44 items
-
-#             # # Strip '\n' from column headers
-#             dfTopology.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             dfSpotLoads.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             dfLoads.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             dfCables.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             dfSwitches.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             dfNodes.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             dfOHlines.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             dfFuses.rename(columns=lambda x: x.replace('\n',''), inplace=True)
-#             #print(dfNodes.columns)
-#             #dfAllNodes_list = dfAllNodes_list.append(dfOHlines)
-#             dfAllNodes_list = dfAllNodes_list.append(dfNodes)
-
-# print('Number of Feeders: ', numFiles)
-
-
-# #*****************************************************************************************************
-# # Cell # 7: Finding circuits: For both poles and UG Cables by matching with all nodes 
-# #*****************************************************************************************************
-# # dfOHtx_XY
-# # dfOHtx_later
-# # dfUGtx_later
-# # dfOHtx_XY
-# # dfPoles_later = dfPoles
-
-# from collections import defaultdict
-
-# #line 1092
-# dfPoles_XY = dfPolesXY_later
-
-# dfAllNodes_list = dfAllNodes_list.rename(columns={'Network Id': 'CIRCUIT',
-#                                                   'Node Id': 'xy'})
-
-# dfAllNodes_list['NodeID_x'], dfAllNodes_list['NodeID_y'] = zip(*dfAllNodes_list['xy'].
-#                                                                apply(lambda x: x.split('_') if '_' in x else (x, np.nan)))
-
-# # Convert circuit ids, fuse ids, switch ids and/or drop them
-# #dfAllNodes_list['NodeID_x'] = dfAllNodes_list['NodeID_x'].astype(float)
-# dfAllNodes_list.loc[:,'NodeID_x'] = dfAllNodes_list.loc[:,'NodeID_x'].convert_objects(convert_numeric=True)
-# dfAllNodes_list.loc[:,'NodeID_y'] = dfAllNodes_list.loc[:,'NodeID_y'].convert_objects(convert_numeric=True)
-
-# dfAllNodes_list = dfAllNodes_list[dfAllNodes_list.NodeID_x.notnull()]
-# #print(dfAllNodes_XY_remain.isnull().sum())
-# dfAllNodes_list = dfAllNodes_list[dfAllNodes_list.NodeID_y.notnull()]
-
-# # dfPoles.columns = map(str.lower, dfPoles.columns)
-# # polesLatLongDropCols = ['FID', 'OBJECTID', 'WORKORDERI', 'INSTALLATI', 'FIELDVERIF', 'COMMENTS','CREATIONUS', 
-# #                         'DATECREATE', 'LASTUSER', 'DATEMODIFI', 'WORKREQUES','DESIGNID', 'WORKLOCATI', 'WMSID', 
-# #                         'WORKFLOWST', 'WORKFUNCTI','SYMBOLROTA', 'GPSDATE', 'GISONUMBER', 'GISOTYPENB', 'SUBTYPECD',
-# #                         'LABELTEXT', 'OWNERSHIP', 'COMPATIBLE', 'STRUCTUREN', 'FEATURE_ST','STREETLIGH', 'REPLACED_D', 
-# #                         'CONDITION', 'CONDITION_','CONDITION1']
-# # dfPoles_XY = drop_columns(dfPoles_XY, polesLatLongDropCols)
-# # dfPoles_XY = dfPoles_XY.rename(columns={'DEVICENUMB': 'POLE_ID'})
-# # dropMoreLatLongCols =['x','y']
-# # dropMoreWireLatLongCols =['xStart','yStart','xMid','yMid','xEnd', 'yEnd']
-
-# dfPoleIDs = dfPoles_XY['id']
-# dictPoleIDs = defaultdict(list)
-
-# xDelta = 5
-# yDelta = 5
-
-# for poleID, Px, Py in zip(dfPoles_XY['id'],dfPoles_XY['x'],dfPoles_XY['y']):
-#     for circuitID, Nx, Ny in zip(dfAllNodes_list['CIRCUIT'],dfAllNodes_list['NodeID_x'],dfAllNodes_list['NodeID_y']):
-#         if(abs(Px-Nx) < xDelta and abs(Py-Ny) < yDelta):
-#             if circuitID not in dictPoleIDs[poleID]:
-#                 dictPoleIDs[poleID].append(circuitID)
-
-# dfPolesNodes = pd.DataFrame.from_dict(dictPoleIDs, orient='index')
-
-# #df.reset_index(level=0, inplace=True)
-# dfPolesNodes.reset_index(level=0, inplace=True)
-# dfPolesNodes = dfPolesNodes.rename(columns={0:'CIRCUIT1', 
-#                                             1:'CIRCUIT2',
-#                                             2:'CIRCUIT3',
-#                                             'index':'POLE_ID'})
-# #print(dfPolesNodes.columns) #['POLE_ID', 'CIRCUIT1', 'CIRCUIT2', 'CIRCUIT3']
-
-# MasterFile = pd.ExcelWriter('V1_PolesNodes.xlsx')
-# dfPolesNodes.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
-# #print('Pole Nodes')
-
-# #dfPolesXY_All = dfPolesXY_All.merge(dfPolesNodes, how='left', left_on='id', right_on='POLE_ID')
-# dfPolesXY_All = dfPolesXY_All.merge(dfPolesNodes, how='left', left_on='id', right_on='POLE_ID')
-# #print(dfPolesXY_All.columns)
-
-# #MasterFile = pd.ExcelWriter(POLES_TABLE_TEMPLATE)
-# Poles_XY_All_Nodes = 'V1_Poles_XY_All_Nodes.xlsx'
-# MasterFile = pd.ExcelWriter(Poles_XY_All_Nodes)
-# dfPolesXY_All.to_excel(MasterFile, 'Sheet1')
-# MasterFile.save()
-# print('Pole installation year matching analysis with nodes completed')
-
-
-
-# # *******************************************************************************************************************************************************
-# # *******************************************************************************************************************************************************
-# # *******************************************************************************************************************************************************
-
+#Final Pole Table Output
+# print('N/A counts: ', len(dfPoles_Final.prid.isnull().sum()))
+MasterFile = pd.ExcelWriter(POLES_TABLE)
+dfPoles_Final.to_excel(MasterFile, 'Sheet1')
+MasterFile.save()
+print('*****POLES FINAL TABLE YES! ****')
