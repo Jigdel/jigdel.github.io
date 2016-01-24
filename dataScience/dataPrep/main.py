@@ -73,6 +73,7 @@ file_Tx_XY = 'Asset_XY_files/V2_LatLongTx.xls'
 file_PRID_Tx = 'Asset_XY_files/V6_PRID_TX_LOOKUP.xlsx'
 file_PRID_OHcond = 'Asset_XY_files/OH_COND_PRID.xlsx'
 file_PRID_Switch = 'Asset_XY_files/SW_PRID.xlsx'
+OH_COND_PRID_COMPLETE ='Asset_XY_files/OH_COND_PRID_COMPLETE.xlsx'
 #**************************
 # Reading SwitchGears
 #***************************
@@ -1789,22 +1790,49 @@ print('Here we go!')
 with pd.ExcelFile(file_PRID_OHcond) as xls:
   dfPRID_OHcond = pd.read_excel(xls, 'Sheet1')
 
+# separate '#N/A' and known PRIDs
+dfPRID_OHcond_train = dfPRID_OHcond[dfPRID_OHcond.prid.notnull()]
+dfPRID_OHcond_NA = dfPRID_OHcond[dfPRID_OHcond.prid.isnull()]
+
+#N/A
+# Train for using 'x' and 'y' as inputs
+print('Knowns: ', dfPRID_OHcond_train.id.notnull().sum()) # 6297 71%
+print('NAs: ', dfPRID_OHcond_NA.id.isnull().sum()) # 2508
+
+print('*****POLES OH CONDUCTOR NA PRIDs *****')
+print('kNN coefficient: ',3)
+print('Training number of rows: ',len(dfPRID_OHcond_train.id))
+print('Unknown number of PRID OH Cond rows: ',len(dfPRID_OHcond_NA.id))
+
+dfPRID_OHcond_NA.loc[:,'prid'] = nearest_neighbor(dfPRID_OHcond_train,'x','y','prid',3,dfPRID_OHcond_NA,'Poles OH Cond PRIDs')
+
 #remove the column and rename it in near future
-#id  xyPoles device  prid
-dfPRID_OHcond = drop_columns(dfPRID_OHcond, ['xyPoles','device'])
+#dfPoles_Final = drop_columns(dfPoles_Final, ['prid'])
+
+dfPRID_OHcond_Final = pd.concat([dfPRID_OHcond_train, dfPRID_OHcond_NA])
+
+MasterFile = pd.ExcelWriter(OH_COND_PRID_COMPLETE)
+dfPRID_OHcond_Final.to_excel(MasterFile,'Sheet1')
+MasterFile.save()
+print('OH Cond PRIDs matched')
+
+#remove the column and rename it in near future
+#dfPRID_OHcond cols: id xyPoles x   y   device  prid
+dfPRID_OHcond_Final = drop_columns(dfPRID_OHcond_Final, ['xyPoles','device','x','y'])
 dfPoles_Final = drop_columns(dfPoles_Final, ['prid'])
 
-dfPoles_Final = dfPoles_Final.merge(dfPRID_OHcond, how='left', on='id')
+dfPoles_Final = dfPoles_Final.merge(dfPRID_OHcond_Final, how='left', on='id')
 
 with pd.ExcelFile(file_PRID_Switch) as xls:
   dfPRID_Switch = pd.read_excel(xls, 'Sheet1')
 
 # PRID_SW cols: Network Id  To Node device  Upstream 1  prid2
-dfPRID_Switch = drop_columns(dfPRID_Switch, ['Netword Id','To Node', 'Upstream 1'])
+dfPRID_Switch = drop_columns(dfPRID_Switch, ['Network Id','To Node', 'Upstream 1'])
 dfPoles_Final = drop_columns(dfPoles_Final, ['prid2'])
 dfPoles_Final = dfPoles_Final.merge(dfPRID_Switch, how='left', on='device')
 
-
+dfPoles_Final.drop_duplicates('id', inplace=True)
+print('Count of Pole ids: ', len(dfPoles_Final.id))
 #Final Pole Table Output
 # print('N/A counts: ', len(dfPoles_Final.prid.isnull().sum()))
 MasterFile = pd.ExcelWriter(POLES_TABLE)
