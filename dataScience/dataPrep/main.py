@@ -984,18 +984,19 @@ dictCablesPhasing = {'1':'1','2':'1','3':'1','4':'2','5':'3','6':'Abandon'}
 dictCablesPhase_XY = {'0':'', '1':'B','2':'Y','3':'YB','4':'R','6':'RB','7':'RYB','':''}
 # Separate year
 dfPriUG_XY['INSTALL_YEAR'] = dfPriUG_XY['INSTALL_YEAR'].apply(lambda x: x.year)
-
+print('1. Total length:', dfPriUG_XY.LENGTH.sum())
 # Dropping cable rows:
 #drop NaN rows in dfPriUG_XY['CABLE_PHASE'] #dfPriUG_XY = dfPriUG_XY[pd.notnull(dfPriUG_XY['CABLE_PHASE'])]
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.CABLE_PHASE.notnull()]
 #dfPriUG_XY['COMPATIBLEUNITID'] = dfPriUG_XY['COMPATIBLEUNITID'].apply(lambda x: '232' if not x else x) # Drop compatible unit id 421
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.PHASING != 6] # drop 'Abandon' rows
+print('2. Total length:', dfPriUG_XY.LENGTH.sum())
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.LENGTH.notnull()] # drop empty length rows
+print('3. Total length:', dfPriUG_XY.LENGTH.sum())
 dfPriUG_XY = dfPriUG_XY[dfPriUG_XY.CIRCUIT != 'nan'] # drop empty length rows
 
 dfPriUG_XY['PHASING'] = dfPriUG_XY['PHASING'].astype(str)
 dfPriUG_XY['CABLE_PHASE'] = dfPriUG_XY['CABLE_PHASE'].astype(str)
-
 #Try using .loc[row_indexer,col_indexer] = value instead
 dfPriUG_XY.loc[:,'PHASING'] = dfPriUG_XY['PHASING'].apply(lambda x: dictCablesPhasing[x])
 dfPriUG_XY.loc[:,'CABLE_PHASE'] = dfPriUG_XY['CABLE_PHASE'].apply(lambda x: dictCablesPhase_XY[x])
@@ -1012,33 +1013,11 @@ dfPriUG_XY[ASSET_SUBCLASS] = 'XLPE'
 dfPriUG_XY.columns = map(str.lower, dfPriUG_XY.columns)
 dfPriUG_XY = dfPriUG_XY.rename(columns ={'xstart': 'x', 'ystart':'y'})
 
-
-#*****************************************************************************************************
-# ML to resolve UG Primary Cable incorrect installation years
-#*****************************************************************************************************
-# Machine Learning: empty and filled
-#def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown):
-
-# *********
-# only four input training variables
-# *********
-# dfPriUG_XY_train = dfPriUG_XY[dfPriUG_XY.install_year.notnull()]
-# dfPriUG_XY_train['install_year'] = dfPriUG_XY_train['install_year'].astype(int)
-# dfPriUG_XY_unknown = dfPriUG_XY[dfPriUG_XY.install_year.isnull()]
-# print('***************************************************')
-# print('*****UG Cable: Install Year Prediction*****')
-# print('kNN coefficient: ',3)
-# print('Training number of rows: ',len(dfPriUG_XY_train['id']))
-# print('Unknown number of install_year rows: ',len(dfPriUG_XY_unknown['id']))
-#dfPriUG_XY_unknown.loc[:,'install_year'] = cable_nearest_neighbor(dfPriUG_XY_train, 'x','y','xend', 'yend', 'install_year',3,dfPriUG_XY_unknown,'UG Primary Cable')
-# ends
-# *********
-
 # *********
 # only two input training variables
 # *********
 
-dfPriUG_XY_twoInputs = dfPriUG_XY[['x','y','install_year','id']]
+dfPriUG_XY_twoInputs = dfPriUG_XY[['x','y','install_year','id','length']]
 
 #*****Just one filter: UG cable installed before 2002 *******#
 # cableCutoffYr = 2002
@@ -1059,18 +1038,24 @@ dfPriUG_XY_unknown = dfPriUG_XY_twoInputs.loc[(dfPriUG_XY_twoInputs.install_year
                                               (dfPriUG_XY_twoInputs.install_year == 1997) |
                                               (dfPriUG_XY_twoInputs.install_year == 1998) |
                                               (dfPriUG_XY_twoInputs.install_year == 2000) |
-                                              (dfPriUG_XY_twoInputs.install_year == 2001)]
+                                              (dfPriUG_XY_twoInputs.install_year == 2001) |
+                                              (dfPriUG_XY_twoInputs.install_year.isnull())]
 dfPriUG_XY_known = dfPriUG_XY_twoInputs.loc[(dfPriUG_XY_twoInputs.install_year != 1900) &
                                             (dfPriUG_XY_twoInputs.install_year != 1997) &
                                             (dfPriUG_XY_twoInputs.install_year != 1998) &
                                             (dfPriUG_XY_twoInputs.install_year != 2000) &
                                             (dfPriUG_XY_twoInputs.install_year != 2001)]
 
+print('Known cable length: ', dfPriUG_XY_known.length.sum())
+print('Known cable count: ', len(dfPriUG_XY_known.install_year))
+print('Unknown cable rows: ', dfPriUG_XY_unknown.length.sum())
+print('Unknown cable rows: ', len(dfPriUG_XY_unknown.install_year))
 # combine both UG tx and cable installed (2237 train, 2523 unknown - 50.78%)
 dfPriUG_XY_train = pd.concat([dfUGtx_XY_new, dfPriUG_XY_known])
 # just UG cable - missing years in value_list
 
 dfPriUG_XY_train = dfPriUG_XY_train[np.isfinite(dfPriUG_XY_train['install_year'])] #one NaN value
+# print(dfPriUG_XY_train.head())
 dfPriUG_XY_train['install_year'] = dfPriUG_XY_train['install_year'].astype(int)
 
 print('*********************************************************************************')
@@ -1078,6 +1063,8 @@ print('*****UG Cable: Install Year Prediction*****')
 print('kNN coefficient: ',3)
 print('Training number of rows: ',len(dfPriUG_XY_train['id']))
 print('Unknown number of install_year rows: ',len(dfPriUG_XY_unknown['id']))
+print('Length: ',dfPriUG_XY_train.length.notnull().sum()) # account for UG tx data
+print('Length: ',sum(dfPriUG_XY_unknown['length']))
 dfPriUG_XY_unknown.loc[:,'install_year'] = nearest_neighbor(dfPriUG_XY_train, 'x','y','install_year',3,dfPriUG_XY_unknown,'UG Primary Cable')
 # ends
 # *********
@@ -1085,10 +1072,16 @@ dfPriUG_XY_unknown.loc[:,'install_year'] = nearest_neighbor(dfPriUG_XY_train, 'x
 # 4 input training variables
 #dfPriUG_XY_install_year = pd.concat([dfPriUG_XY_train,dfPriUG_XY_unknown])
 # 2 input training variables
-dfPriUG_XY_ugTX_ugPRI = pd.concat([dfPriUG_XY_train,dfPriUG_XY_unknown])
-print(dfPriUG_XY_ugTX_ugPRI.columns)
+dfPriUG_XY_known = drop_columns(dfPriUG_XY_known, ['length'])
+dfPriUG_XY_unknown = drop_columns(dfPriUG_XY_unknown, ['length'])
+dfPriUG_XY_ugTX_ugPRI = pd.concat([dfPriUG_XY_known,dfPriUG_XY_unknown])
+print('****Null install_year values in merged file: ', dfPriUG_XY_ugTX_ugPRI.install_year.isnull().sum())
+# print(dfPriUG_XY_ugTX_ugPRI.columns)
 dfPriUG_XY = drop_columns(dfPriUG_XY, ['x','y','install_year'])
 dfPriUG_XY_install_year = dfPriUG_XY.merge(dfPriUG_XY_ugTX_ugPRI, how='left', on='id')
+print('2.5 Sum of length(after install_year merge): ', dfPriUG_XY_install_year.length.sum())
+print()
+# print(dfPriUG_XY_install_year.columns)
 print('NA in install_year? ',dfPriUG_XY_install_year['install_year'].isnull().values.any())
 #print(dfPriUG_XY_install_year.columns)
 
@@ -1103,31 +1096,27 @@ dfPriUG_XY_install_year['compatibleunitid'] = dfPriUG_XY_install_year['compatibl
 dfPriUG_XYDomainCodes['compatibleunitid'] = dfPriUG_XYDomainCodes['compatibleunitid'].astype(str)
 
 dfPriUG_XY_new = pd.merge(dfPriUG_XY_install_year, dfPriUG_XYDomainCodes, how='left', on='compatibleunitid')
+print('3. Sum of length(after CU merge): ', dfPriUG_XY_new.length.sum())
+# print(dfPriUG_XY_new.columns)
 #print(dfPriUG_XY_new.head())
 #print(dfPriUG_XY_new.dtypes)
 
 dropCablesCols2 = ['compatibleunitid','Percent', 'CNSHLD','Description']
 dfPriUG_XY_new = drop_columns(dfPriUG_XY_new,dropCablesCols2)
-#print(dfPriUG_XY_new.head())
 
-#Concatenate two DataFrame columns into a new, single column
-#(useful when dealing with composite keys, for example)
-# df['newcol'] = df['col1'].map(str) + df['col2'].map(str)
-
-dfPriUG_XY_new['x'] = dfPriUG_XY_new['x'].astype(str)
-dfPriUG_XY_new['y'] = dfPriUG_XY_new['y'].astype(str)
-dfPriUG_XY_new['xend'] = dfPriUG_XY_new['xend'].astype(str)
-dfPriUG_XY_new['yend'] = dfPriUG_XY_new['yend'].astype(str)
-dfPriUG_XY_new['id_xy1'] = dfPriUG_XY_new[['x','y']].apply(lambda x: '_'.join(x), axis=1)
-dfPriUG_XY_new['id_xyEnd'] = dfPriUG_XY_new[['xend','yend']].apply(lambda x: '_'.join(x), axis=1)
+dfPriUG_XY_new['id_xy1'] = dfPriUG_XY_new['x'].map(str)+'_'+ dfPriUG_XY_new['y'].map(str)
+dfPriUG_XY_new['id_xyEnd'] = dfPriUG_XY_new['xend'].map(str)+'_'+ dfPriUG_XY_new['yend'].map(str)
 dfPriUG_XY_new['id_xy'] = dfPriUG_XY_new[['id_xy1','id_xyEnd']].apply(lambda x: '-'.join(x), axis=1)
 
 # TRXLPE
 dfPriUG_XY_new = dfPriUG_XY_new[dfPriUG_XY_new.install_year.notnull()]
+print('3.5 Sum of length(after dropping install_year not null): ', dfPriUG_XY_new.length.sum())
 dfPriUG_XY_new['install_year'] = dfPriUG_XY_new['install_year'].astype(int)
 dfPriUG_XY_new.loc[:, ASSET_SUBCLASS] = dfPriUG_XY_new['install_year'].apply(lambda x: 'TRXLPE' if x >= 1990 else 'XLPE')
 
 dfPriUG_XY_write = dfPriUG_XY_new
+# print(dfPriUG_XY_new.columns)
+
 dfPriUG_XY_write = drop_columns(dfPriUG_XY_write, ['x','y','xmid','ymid','xend','yend','id','id_xy1','id_xyEnd'])
 dfPriUG_XY_write = dfPriUG_XY_write.rename(columns = {'id_xy':'id'})
 
@@ -1166,11 +1155,13 @@ dfPriUG_XY_new = drop_columns(dfPriUG_XY_new, ['prid','id'])
 # dfPriUG_XY_new['x'] = dfPriUG_XY_new['x'].astype(str)
 # dfPriUG_XY_new['y'] = dfPriUG_XY_new['y'].astype(str)
 # dfPriUG_XY_new['id_xy'] = dfPriUG_XY_new[['x','y']].apply(lambda x: '_'.join(x), axis=1)
-
-dfPriUG_XY_new = pd.merge(dfPriUG_XY_new,dfPriUGcablePRID_new, how='left', left_on='id_xy', right_on='id')
-
+# print(dfPriUG_XY_new.columns)
+print('4. Sum of length(before final merge with PRIDs): ', dfPriUG_XY_new.length.sum())
+dfPriUG_XY_new = dfPriUG_XY_new.merge(dfPriUGcablePRID_new, how='left', left_on='id_xy', right_on='id')
+# print(dfPriUG_XY_new.columns)
 dfPriUG_XY_new = drop_columns(dfPriUG_XY_new, ['x','y','xmid','ymid','xend','yend','id_xy','id_xy1','id_xyEnd'])
 dfPriUG_XY_new = dfPriUG_XY_new.rename(columns = {'id_xy':'id'})
+print('5. Sum of length: ', dfPriUG_XY_new.length.sum())
 dfPriUG_XY_new = dfPriUG_XY_new[dfPriUG_XY_new.prid.notnull()]
 
 dfPriUG_XY_new_insulation = dfPriUG_XY_new
