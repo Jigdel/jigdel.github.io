@@ -132,6 +132,8 @@ def nearest_neighbor(dfMain, trainX, trainY, classX, neighborCount, dfUnknown, A
 
         predictions = knn.predict(dfMain_test[[trainX,trainY]])
         prediction_results = dfMain_test[classX] == predictions
+
+
         #print('With k =  ',k,',a score of: ', prediction_results.mean()*100)
 
     # Let's initialize a classifier
@@ -242,9 +244,7 @@ print(dfSummary)
 
 #************************************
 # ASSET TABLES
-#************************************
 #***********************************
-# Asset class specific dictionaries
 #***********************************
 # OPERATING VOLTAGE 190=8kv, 250=13.8kv, 1267 = 0kv, 1237 = 138kv
 operatingVoltageDict = {'190':'8000','250':'13800','1267':'0','1237':'138000'}
@@ -307,12 +307,6 @@ dfTransformers['DEVICE_COMMERCIAL'] = new_columns(dfTransformers, numTxRows,'DEV
 dfTransformers['DEVICE_INDUSTRIAL'] = new_columns(dfTransformers, numTxRows,'DEVICE_INDUSTRIAL')
 dfTransformers['UPSTREAM_DEVICE'] = new_columns(dfTransformers, numTxRows,'UPSTREAM_DEVICE')
 #dfTransformers[''] = new_columns(dfTransformers, numTxRows,'')
-
-# Commented out as PRID table join makes these columns redundant
-# dfTransformers['PRID'] = new_columns(dfTransformers, numTxRows,'PRID')
-# dfTransformers['TX_RESIDENTIAL'] = new_columns(dfTransformers, numTxRows,'TX_RESIDENTIAL')
-# dfTransformers['TX_COMMERCIAL'] = new_columns(dfTransformers, numTxRows,'TX_COMMERCIAL')
-# dfTransformers['TX_INDUSTRIAL'] = new_columns(dfTransformers, numTxRows,'TX_INDUSTRIAL')
 
 #******************************************************
 # FILTER OUT ASSET CLASSES WITH THEIR RESPECTIVE SUBTYPES
@@ -379,9 +373,6 @@ dfUGTxDomainCodes['COMPATIBLEUNITID'] = dfUGTxDomainCodes['COMPATIBLEUNITID'].as
 dfOHTransformers=dfOHTransformers.merge(dfOHTxDomainCodes, how='left', on='COMPATIBLEUNITID')
 dfUGTransformers=dfUGTransformers.merge(dfUGTxDomainCodes, how='left', on='COMPATIBLEUNITID')
 #print(dfUGTransformers.head(2))
-
-#dropOHTxCols = ['COMPATIBLEUNITID','Description','PRIMARY_VOLTAGE','NAMEPLATE','PHASING','FAULTINDICATOR','UNITS','Tx_type_counts']
-#dropUGTxCols = ['COMPATIBLEUNITID','Description','PRIMARY_VOLTAGE','NAMEPLATE','PHASING','FAULTINDICATOR','UNITS','Tx_type_counts']
 dropOHTxCols = ['COMPATIBLEUNITID','Description','PRIMARY_VOLTAGE','NAMEPLATE','FAULTINDICATOR','UNITS','Tx_type_counts']
 dropUGTxCols = ['COMPATIBLEUNITID','Description','PRIMARY_VOLTAGE','NAMEPLATE','FAULTINDICATOR','UNITS','Tx_type_counts']
 #'Fused','UNITS',
@@ -439,11 +430,6 @@ PRIDdropCols = [RES_LOAD,MED_COM_LOAD,LARGE_LOAD]
 dfOHTransformers = drop_columns(dfOHTransformers, PRIDdropCols)
 dfUGTransformers = drop_columns(dfUGTransformers, PRIDdropCols)
 
-# dfPRID_OHtx = dfPRID_OHtx.rename(columns={RES_LOAD:'tx_residential',
-#                                           MED_COM_LOAD:'tx_med_com_load',
-#                                           LARGE_LOAD:'tx_large_commercial_load',
-#                                           'PRID':'prid'})
-
 #'secondary_voltage','fused','banking'
 dfOHTransformers['kva'] = dfOHTransformers['kva'].astype(float)
 dfUGTransformers['kva'] = dfUGTransformers['kva'].astype(float)
@@ -477,14 +463,6 @@ dfUGTransformers['tx_industrial'] = dfUGTransformers.apply(lambda row: phasing_k
 dfOHTransformers.index.name = 'asset_id'
 dfUGTransformers.index.name = 'asset_id'
 
-# dfPRID_OHtx = dfPRID_OHtx[['asset_class_code','id','circuit','install_year','asset_subclass_code','hi','phasing',
-#                            'primary_voltage','kva','tx_residential','tx_commercial','tx_industrial','device_residential',
-#                            'device_commercial','device_industrial','upstream_device','prid','in_valley','pcb','banking',
-#                            'secondary_voltage','fused']]
-# dfPRID_UGtx = dfPRID_UGtx[['asset_subclass_code','asset_class_code','install_year','hi','phasing','prid','circuit',
-#                            'primary_voltage','kva','tx_residential','tx_commercial','tx_industrial','device_residential',
-#                            'device_commercial','device_industrial','upstream_device','pcb','pedestal','switchable',
-#                            'switch_type','id','secondary_voltage','fused','banking']]
 #Here
 #******************************************************
 # REARRANGE COLUMNS
