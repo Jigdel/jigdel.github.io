@@ -3,7 +3,7 @@
 # Python 2.7
 
 # Example of kNN implemented from Scratch in Python
-
+just check
 import csv
 import random
 import math

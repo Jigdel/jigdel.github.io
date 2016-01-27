@@ -5,9 +5,9 @@ import pandas as pd
 import numpy as np
 import re
 from collections import defaultdict
-
+check
 # Excel model:
-# customer count as '0' 
+# customer count as '0'  
 # OH_TX to 'Aerial Transformer'
 # Banking 'Single'
 # S-170 '1 vs 3' phase: should be 1 (50kVA)
@@ -19,6 +19,7 @@ from collections import defaultdict
 
 ## Variables
 #output table names
+OH_SWITCHES_TABLE_1 = 'IN_OH_SW.xlsx'
 OH_SWITCHES_TABLE = 'IN_OH_SW.xlsx'
 UG_SWITCHES_TABLE = 'IN_UG_SW.xlsx'
 OH_TX_TABLE = 'IN_OH_TX.xlsx'
