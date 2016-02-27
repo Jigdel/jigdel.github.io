@@ -61,7 +61,7 @@ function dist_controller()
 	// current_dist_au_v2s = current_dist_au_v2s[0] + '.' + current_dist_au_v2s[1].substring(0,8);
 	
 	current_dist_lt_v1 = current_dist_km_v1 * 2 / 299792.458;
-	current_dist_lt_v2 = current_dist_km_v2 * 2 / 299792.458;
+	// current_dist_lt_v2 = current_dist_km_v2 * 2 / 299792.458;
 
 	document.getElementById('voy1_km').innerHTML = addCommas( Math.round(current_dist_km_v1) + " KM" );
 	// document.getElementById('voy1_au').innerHTML = addCommas( current_dist_au_v1 ) + " AU";
