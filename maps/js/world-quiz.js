@@ -91,7 +91,7 @@ function showscore(){
 		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/2.png" height="150px" width="135"></h2>');
 	}else if (correctanswers == 13){
 		scoretitle = "Am I thaaat distracting?";
-		scoredescr = "Was I distracting you during this map of "+quizcontinent+"? ;)";scoredescr = " "+quizcontinent+" f";
+		scoredescr = "Was I distracting you during this map of "+quizcontinent+" quiz? ;)";
 		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/smile.jpg" height="150px" width="135"></h2>');
 	}else if (correctanswers == 12){
 		scoretitle = "I blame it on the chipmunks!";
@@ -108,15 +108,15 @@ function showscore(){
 	}else if (correctanswers == 9){
 		scoretitle = "Here's a kiss for your favorite number.";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/4.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/4.png" height="150px" width="135"></h2>');
 	}else if (correctanswers == 8){
 		scoretitle = "Just a random laugh picture, why not marah?";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/1.png" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/1.png" height="200px" width="155"></h2>');
 	}else if (correctanswers == 7){
 		scoretitle = "Someone needs to try harder ..";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/harder.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/tryharder.jpg" height="150px" width="135"></h2>');
 	}else if (correctanswers == 6){
 		scoretitle = "6 is bollywood breeze time!";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
@@ -124,15 +124,15 @@ function showscore(){
 	}else if (correctanswers == 5){
 		scoretitle = "Five is red jacket on fire..";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/uhuh.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/uhuh.jpg" height="200px" width="155"></h2>');
 	}else if (correctanswers == 4){
 		scoretitle = "4 is 4 freezing on Liberty!";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
 		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/liberty.jpg" height="150px" width="135"></h2>');
 	}else if (correctanswers == 3){
-		scoretitle = "Threellled shot! ";
+		scoretitle = "Three times in the rain! ";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/1.png" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/rain.jpg" height="150px" width="135"></h2>');
 	}else if (correctanswers == 2){
 		scoretitle = "2 of us on train!";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
@@ -140,7 +140,7 @@ function showscore(){
 	}else if (correctanswers == 1){
 		scoretitle = "Maybe we need to study world map again.";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/world.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/world.jpg" height="200px" width="155"></h2>');
 	}else{
 		scoretitle = "What happened :( but I still love you more ";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
