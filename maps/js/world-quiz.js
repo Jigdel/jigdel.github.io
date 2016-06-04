@@ -80,31 +80,31 @@ function showscore(){
 	if (correctanswers == 16){
 		scoretitle = "Tamdin you're map genius! Your pala would have been proud of you :)";
 		scoredescr = "You answered every question correct. You know "+quizcontinent+" inside and out!";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/11.png" height="150px" width="260"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/11.png" height="170" width="260"></h2>');
 	}else if (correctanswers == 15){
 		scoretitle = "So close but you expected that marah.";
 		scoredescr = "Maybe you'll get the full score on "+quizcontinent+" maps in the next try!";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/noworries.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/noworries.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 14){
 		scoretitle = "Such a map nerd, Tamdin! Go ahead jump now :)";
 		scoredescr = "Not surprised you know the maps of "+quizcontinent+" fairly well.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/2.png" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/2.png" height="150px" width="185"></h2>');
 	}else if (correctanswers == 13){
 		scoretitle = "Am I thaaat distracting?";
 		scoredescr = "Was I distracting you during this map of "+quizcontinent+" quiz? ;)";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/smile.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/smile.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 12){
 		scoretitle = "I blame it on the chipmunks!";
 		scoredescr = "Sure you'll do well in this "+quizcontinent+" maps next round.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/chipmunks.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/chipmunks.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 11){
 		scoretitle = "Not a bad score, you don't need to run.";
 		scoredescr = "Sure you'll do well in this "+quizcontinent+" maps next round.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/run.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/run.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 10){
 		scoretitle = "Not a bad score, why so serious?";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/serious.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/serious.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 9){
 		scoretitle = "Here's a kiss for your favorite number.";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
@@ -116,11 +116,11 @@ function showscore(){
 	}else if (correctanswers == 7){
 		scoretitle = "Someone needs to try harder ..";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/tryharder.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/tryharder.jpg" height="150px" width="265"></h2>');
 	}else if (correctanswers == 6){
 		scoretitle = "6 is bollywood breeze time!";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/breeze.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/breeze.jpg" height="150px" width="215"></h2>');
 	}else if (correctanswers == 5){
 		scoretitle = "Five is red jacket on fire..";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
@@ -128,15 +128,15 @@ function showscore(){
 	}else if (correctanswers == 4){
 		scoretitle = "4 is 4 freezing on Liberty!";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/liberty.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/liberty.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 3){
 		scoretitle = "Three times in the rain! ";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/rain.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/rain.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 2){
 		scoretitle = "2 of us on train!";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/train.jpg" height="150px" width="135"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/train.jpg" height="150px" width="205"></h2>');
 	}else if (correctanswers == 1){
 		scoretitle = "Maybe we need to study world map again.";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
@@ -144,7 +144,7 @@ function showscore(){
 	}else{
 		scoretitle = "What happened :( but I still love you more ";
 		scoredescr = "I'm sure you just did this on "+quizcontinent+" quiz to see the picture.";
-		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/6.jpg" height="150px" width="250"></h2>');
+		$("#quiz-area").append('<h2 class="text-center score-title"><img src="img/6.jpg" height="160px" width="284"></h2>');
 	}
 
 /*	if (correctanswers == 16){
