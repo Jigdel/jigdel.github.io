@@ -1,0 +1,160 @@
+/*!
+ * Start Bootstrap - Portfolio Item HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+body {
+    padding-top: 0px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+
+.portfolio-item {
+    margin-bottom: 25px;
+}
+
+.form_pc.ng-valid {
+	background-color: #5CB85C;
+}
+.form_pc.ng-dirty.ng-invalid-required {
+	background-color: #FE2E2E;
+}
+.form_pc.ng-dirty.ng-invalid-minlength {
+	background-color: #F5A9BC;
+}
+.form_pc.ng-dirty.ng-invalid-maxlength {
+	background-color: #F5A9BC;
+}
+
+.form_pc.ng-dirty.ng-invalid-pattern {
+	background-color: #F5A9BC;
+}
+
+.animate-show {
+  line-height: 20px;
+  opacity: 1;
+  padding: 10px;
+  background: white;
+}
+
+.animate-show.ng-hide-add.ng-hide-add-active,
+.animate-show.ng-hide-remove.ng-hide-remove-active {
+  -webkit-transition: all linear 0.5s;
+  transition: all linear 0.5s;
+}
+
+.animate-show.ng-hide {
+  line-height: 0;
+  opacity: 0;
+  padding: 0 10px;
+}
+
+.mpp-result {
+  padding: 10px;
+  background: white;
+}
+
+.img-circle {
+    border-radius: 50%;
+        border-top-left-radius: 50%;
+        border-top-right-radius: 50%;
+        border-bottom-right-radius: 50%;
+        border-bottom-left-radius: 50%;
+}
+
+.pfblock-header2 {
+    text-align: center;
+    margin: 0px 0px 40px;
+}
+
+.calltoaction-btn1 {
+	text-align: center;
+}
+
+.calltoaction-btn1 > .btn1 {
+  background: rgba(255, 255, 255, .8);
+  color: #111;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.calltoaction-btn1 > .btn1:hover{
+    background: #fff
+}
+
+/* ---------------------------------------------- /*
+ * Titlebox Infographic
+/* ---------------------------------------------- */
+
+.titlebox {
+	background: transparent;
+	border-bottom: 0px solid #d4d4d4;
+	text-align: left;
+	padding: 0px 6px;
+	margin: 0 0 10px;
+}
+
+.titlebox-icon {
+	margin: 0 0 15px;
+	font-size: 32px;
+	color: #222;
+}
+
+.titlebox-title {
+	margin: 0 0 15px;
+	padding: 0;
+  /*text-align: center; */
+}
+
+.info-list-form {
+	text-align: left;
+  font-size: 16px;
+  padding-left: 10px;
+
+}
+.info-list {
+  text-align: left;
+  font-size: 14px;
+}
+
+.dollarValue {
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.dollarValueBig {
+  font-weight: 600;
+  font-size: 16px;
+}
+/* ---------------------------------------------- /*
+ * Skills
+/* ---------------------------------------------- */
+
+.titlechart {
+    display: inline-block;
+    height: 140px;
+    margin: 50px 0;
+    position: relative;
+    text-align: center;
+    width: 140px;
+}
+.titlechart canvas {
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+.percent {
+    display: inline-block;
+    font-size: 25px;
+    font-weight: 300;
+    line-height: 140px;
+    z-index: 2;
+}
+.percent:after {
+    content: "%";
+    font-size: 50%;
+    margin-left: 0.1em;
+}
+
+
+footer {
+    margin: 50px 0;
+}
