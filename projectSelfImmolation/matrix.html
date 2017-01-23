@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>Self Immolation in Tibet</title>
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			body {
+				background-color: #000000;
+				margin: 0;
+				font-family: Helvetica, sans-serif;;
+				overflow: hidden;
+			}
+
+			a {
+				color: #ffffff;
+			}
+
+			#info {
+				position: absolute;
+				width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family: Monospace;
+				font-size: 20px;
+				font-weight: bold;
+				text-align: center;
+				z-index: 1;
+			}
+			#analysisCredits {
+				position: absolute;
+				width: 100%;
+				color: #ffffff;
+				padding: 28px;
+				font-family: Monospace;
+				font-size: 13px;
+				font-weight: bold;
+				text-align: center;
+				z-index: 1;
+			}
+
+			#menu {
+				position: absolute;
+				bottom: 20px;
+				width: 100%;
+				text-align: center;
+			}
+
+			.element {
+				width: 120px;
+				height: 160px;
+				box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+				border: 1px solid rgba(127,255,255,0.25); /*rgba(255, 0, 0, 1);*/
+				text-align: center;
+				cursor: default;
+			}
+
+			.element:hover {
+				box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
+				border: 1px solid rgba(127,255,255,0.75);
+			}
+
+				.element .age {
+					position: absolute;
+					top: 20px;
+					right: 20px;
+					font-size: 12px;
+					color: rgba(127,255,255,0.75);
+				}
+
+				.element .symbol {
+					position: absolute;
+					top: 40px;
+					left: 0px;
+					right: 0px;
+					font-size: 60px;
+					font-weight: bold;
+					color: rgba(255,255,255,0.75);
+					text-shadow: 0 0 10px rgba(0,255,255,0.95);
+				}
+
+				.element .details {
+					position: absolute;
+					bottom: 15px;
+					left: 0px;
+					right: 0px;
+					font-size: 12px;
+					color: rgba(127,255,255,0.75);
+				}
+
+			button {
+				color: rgba(127,255,255,0.75);
+				background: transparent;
+				outline: 1px solid rgba(127,255,255,0.75);
+				border: 0px;
+				padding: 5px 10px;
+				cursor: pointer;
+			}
+			button:hover {
+				background-color: rgba(0,255,255,0.5);
+			}
+			button:active {
+				color: #000000;
+				background-color: rgba(0,255,255,0.75);
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script src="js/libs/tween.min.js"></script>
+		<script src="js/controls/TrackballControls.js"></script>
+		<script src="js/renderers/CSS3DRenderer.js"></script>
+
+		<div id="container"></div>
+		<div id="info">Self Immolation in Tibet </div>
+		<div id="analysisCredits"> A short analysis <a href="https://tibetdata.github.io/projects/selfimmolationData/index.html" target="_blank">here</a> &emsp; &emsp; Data provided by Urgyen, <a href="http://www.sft-canada.org/" target="_blank"> SFT Canada</a> &emsp; &emsp; Minor iteration on  <a href="https://mrdoob.github.io/three.js/examples/#css3d_periodictable" target="_blank">Ricardo Cabello's work</a><br><br>
+		** Note that this is just a draft and was a learning exercise to get comfortable with Three.js 
+		</div>
+		<div id="menu">
+			<button id="table">TABLE</button>
+			<button id="sphere">SPHERE</button>
+			<button id="helix">HELIX</button>
+			<button id="grid">GRID</button>
+		</div>
+		<div id="container">
+		<script>
+			var table = [
+			15,"H","Dorjee","[Monk]",3,1,
+			16,"He","Samdrup","[Monk]",4,1,
+			16,"Li","Dorjee Kyab","[Monk]",5,1,
+			16,"Be","Wangchen Kyi","",6,1,
+			17,"B","Lobsang Damchoe","[Former monk]",7,1,
+			17,"C","Rinchen","",8,1,
+			18,"N","Rinzin Dorje","[Former monk]",9,1,
+			18,"O","Tenzin Choedron","[Nun]",10,1,
+			18,"F","Nangdrol","[Layperson]",11,1,
+			18,"Ne","Dorjee","",12,1,
+			18,"Na","Gepey","[Monk",13,1,
+			18,"Mg","Losang Lozin",	"[Monk]",14,1,
+			18,"Al","Lobsang Kelsang","[Layperson]",3,2,
+			18,"Si","Kalsang Jinpa","[Former monk]",4,2,
+			18,"P","Kharbum Gyal","",5,2,
+			18,"S","Lubhum Gyal","",6,2,
+			18,"Cl","Kunchok Tsering","",7,2,
+			18,"Ar","Sangye Tashi","[Former student]",8,2,
+			18,"K","Sonam Dhargye","",9,2,
+			18,"Ca","Konchok Sonam","[Monk]",10,2,
+			19,"Sc","Lobsang Gyatso","[Monk]",11,2,
+			19,"Ti","Tsering Kyi","[Student]",12,2,
+			19,"V","Dorje Tseten","[Restaurant Worker]",13,2,
+			19,"Cr","Gonpo Tsering","[Student]",14,2,
+			20,"Mn","Lobsang Sherab","[Monk]",1,3,
+			20,"Fe","Lungtok","[Monk",2,3,
+			20,"Co","Tsepo","",3,3,
+			20,"Ni","Nyingchag Bum","",4,3,
+			20,"Cu","Chugtso","[Mother]",5,3,
+			20,"Zn","Lobsang Dawa","[Monk]",6,3,
+			20,"Ga","Tsering Gyal","[Monk]",7,3,
+			20,"Ge","Lobsang Palden","[Monk]",8,3,
+			20,"As","Tsepey Drolma","",9,3,
+			21,"Se","Chimey Palden","[Monk]",10,3,
+			21,"Br","Lobsang Tsultrim","[Monk]",11,3,
+			21,"Kr","Tashi","Layperson",12,3,
+			21,"Rb","Wande Khar","",13,3,
+			21,"Sr","Wangchen Dolma","[Nun]",14,3,
+			22,"Y","Tenpa Darjey","[Monk]",15,3,
+			22,"Zr","Ngawang Norphel","",16,3,
+			22,"Nb","Tsewang Dorjee","[Nomad]",1,4,
+			22,"Mo","Tsering Tashi","",2,4,
+			22,"Tc","Phagmo Dhondup","",3,4,
+			22,"Ru","Lhamo Tashi","[Student]",4,4,
+			23,"Rh","Atse",	"Nun",5,4,
+			23,"Pd","Thupwang Kyab","[Nomad]",6,4,
+			23,"Ag","Tamdin Tso","[Nomad]",7,4,
+			23,"Cd","Tenzin Dolma",	"",8,4,
+			23,"In","Tamdrin Kyab","[Former monk]",9,4,
+			23,"Sn","Pema Dorjee","",10,4,
+			23,"Sb","Kunchok Kyab","",11,4,
+			23,"Te","Kunchok Woser ","[Monk]",12,4,
+			24,"I","Tenzin Khedup","[Former monk]",13,4,
+			24,"Xe","Choepa","",14,4,
+			24,"Cs","Lhamo Tseten","[Farmer & Nomad]",15,4,
+			24,"Ba","Nyankar Tashi ","[Mother]",16,4,
+			24,"La","Sangdak Tsering","[Nomad]",1,5,
+			24,"Ce","Wangyal","[Former monk]",2,5,
+			24,"Pr","Gonpo Tsering","",3,5,
+			24,"Nd","Kalsang Kyab","[Cattle herder]",4,5,
+			24,"Pm","Kunchok Phelgye","",5,5,
+			25,"Sm","Tennyi","",6,5,
+			25,"Eu","Tsultrim","",7,5,
+			25,"Gd","Dargye","[Restaurant Worker]",8,5,
+			25,"Tb","Sonam","",9,5,
+			25,"Dy","Choepak Kyab","",10,5,
+			25,"Ho","Dolkar Tso","[Farmer]",11,5,
+			25,"Er","Tenzin","[Cousin]",12,5,
+			25,"Tm","Dorjee Lhundrup","[Farmer]",13,5,
+			25,"Yb","Wangchen Norbu","",14,5,
+			25,"Lu","Lobsang Dorjee","",15,5,
+			26,"Hf","Chagmo Kyi","[Mother of 2]",16,5,
+			26,"Ta","Drugpa Khar","",1,6,
+			27,"W","Yangdang","[Layperson]",2,6,
+			27,"Re","Sangay Gyatso","[Layperson]",3,6,
+			27,"Os","Lhamo Kyab","[Layperson]",4,6,
+			27,"Ir","Tsegyu (Tsegyal)","",5,6,
+			27,"Pt","Tsesung Kyab","",6,6,
+			28,"Au","Dupchoek","",7,6,
+			28,"Hg","Lobsang Thokmey","[Monk]",8,6,
+			28,"Tl","Kunchok Tenzin","[Monk]",9,6,
+			28,"Pb","Phakmo Samdup","[Father]",10,6,
+			28,"Bi","Kelsang Yeshe","",11,6,
+			29,"Po","Tamdrin Dorjee","",12,6,
+			29,"At","Kunchok Kyap",	"",	13,	6,
+			29,"Rn","Lobsang Gedun","",14,6,
+			30,"Fr","Kalkyi ","Mother",2,7,
+			30,"Ra","Kunchok Tseten","[Nomad]",3,7,
+			31,"Ac","Tsering Namgyal","",4,7,
+			31,"Th","Kunchok Wangmo","",5,7,
+			32,"Pa","Rinchen","",6,7,
+			32,"U","Tenzin Sherab","",7,7,
+			32,"Np","Thinley Namgyal","[Farmer & Nomad]",8,7,
+			33,"Pu","Rikyo","Nomad",9,7,
+			35,"Am","Dawa Tsering","",10,7,
+			35,"Cm","Tenzin Phuntsog","",11,7,
+			35,"Bk","Sonam Rabyang","[Monk]",12,7,
+			35,"Cf","Jamyang Palden","[Monk]",13,7,
+			35,"Es","Tsering Dhondup","[Farmer & Nomad]",14,7,
+			37,"Fm","Lobsang Namgyal","[Monk]",15,7,
+			38,"Md","Damchoe Sangpo","[Monastic Official]",16,7,
+			40,"No","Norchuk","",2,8,
+			41,"Lr","Shichung","[Tailor",3,8,
+			41,"Rf","Tsultrun Gyatso","[Monk]",4,8,
+			42,"Db","Kunchok","",5,8,
+			43,"Sg","Gudrub","[Writer,Poet,Activist]",6,8,
+			43,"Bh","Lhamo Kyab","",7,8,
+			44,"Hs","Sonam Dargye","[Farmer]",8,8,
+			45,"Mt","Lama Sopa","",9,8,
+			45,"Ds","Dickyi Choezom","",10,8,
+			48,"Rg","Tamdin Thar","[Nomad]",11,8,
+			49,"Cn","Namlha Tsering","[Farmer & Nomad]",12,8,
+			52,"Uut","Tamdin Dorje","[Layperson]",13,8,
+			57,"Fl","Dorjee Rinchen","[Farmer]",14,8,
+			62,"Up","Pasang Lhamo","",15,8,
+			65,"Lv","Tsering Dhondup","[Farmer & Nomad]",16,8,
+			'NA',"Uus","Tapey","[NA]",4,9,
+			'NA',"Uo","Phuntsog","[NA]",5,9,
+			'NA',"Rb","Tsewang Norbu","[NA]",6,9,
+			'NA',"Sr","Lobsang Kelsang","[NA]",7,9,
+			'NA',"Y","Kelsang Wangchuk","[NA]",8,9,
+			'NA',"Zr","Choephel","[NA]",9,9,
+			'NA',"Nb","Khaying","[NA]",10,9,
+			'NA',"Mo","Norbu Damdrul","[NA]",11,9,
+			'NA',"Tc","Tenzin Wangmo","[Nun]",12,9,
+			'NA',"Ru","Palden Choetso","[Nun]",13,9,
+			'NA',"Rh","Lobsang Jamyang","[Leader of NGO]",14,9,
+			'NA',"Pd","Lobsang Tsultrim","",4,10,
+			'NA',"Ag","Thubten Nyandak Rinpoche","[Rinpoche(Tulku)]",5,10,
+			'NA',"Cd","Lobsang Kunchok","",6,10,
+			'NA',"In","Sangay Dolma","[Nun]",7,10,
+			'NA',"Sn","Sangdag Kyap","",8,10,
+			'NA',"Sb","Sangdag","[Monk]",9,10,
+			'NA',"Te","Ani Dolma","[Nun]",10,10,
+			'NA',"Kr","Jigme Tenzin","[Monk]",11,10,
+			'NA',"Rb","Sangyal Khar","",12,10,
+			'NA',"Sr","Unknown Name","",13,10
+			];
+
+			var camera, scene, renderer;
+			var controls;
+
+			var objects = [];
+			var targets = { table: [], sphere: [], helix: [], grid: [] };
+
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 3000;
+
+				scene = new THREE.Scene();
+
+				// table
+
+				for ( var i = 0; i < table.length; i+=6 ) {
+
+					var element = document.createElement( 'div' );
+					element.className = 'element';
+					element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
+
+					var age = document.createElement( 'div' );
+					age.className = 'age';
+					age.textContent = table [ i ]; //(i/5) + 1;
+					element.appendChild( age );
+					//console.log( 'age.textContent', table [ i ]);
+
+					var symbol = document.createElement( 'div' );
+					symbol.className = 'symbol';
+					symbol.textContent = table[ i + 1 ];
+					element.appendChild( symbol );
+					//console.log( 'age.textContent', table[ i + 1 ]);
+
+					var details = document.createElement( 'div' );
+					details.className = 'details';
+					details.innerHTML = table[ i + 2 ] + '<br>' + table[ i + 3 ];
+					element.appendChild( details );
+					//console.log( 'age.textContent', table[ i + 2 ] + '<br>' + table[ i + 3 ]);
+
+					var object = new THREE.CSS3DObject( element );
+					object.position.x = Math.random() * 4000 - 2000;
+					object.position.y = Math.random() * 4000 - 2000;
+					object.position.z = Math.random() * 4000 - 2000;
+					scene.add( object );
+
+					objects.push( object );
+
+					//
+
+					var object = new THREE.Object3D();
+					object.position.x = ( table[ i + 4 ] * 140 ) - 1330;
+					//console.log( 'object.position.x', table[ i + 4 ]);
+					
+					object.position.y = - ( table[ i + 5 ] * 180 ) + 990;
+					//console.log( 'object.position.y', table[ i + 5 ]);
+
+					targets.table.push( object );
+					//console.log( '************************');
+				}
+
+				// sphere
+
+				var vector = new THREE.Vector3();
+
+				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+					var phi = Math.acos( -1 + ( 2 * i ) / l );
+					var theta = Math.sqrt( l * Math.PI ) * phi;
+
+					var object = new THREE.Object3D();
+
+					object.position.x = 800 * Math.cos( theta ) * Math.sin( phi );
+					object.position.y = 800 * Math.sin( theta ) * Math.sin( phi );
+					object.position.z = 800 * Math.cos( phi );
+
+					vector.copy( object.position ).multiplyScalar( 2 );
+
+					object.lookAt( vector );
+
+					targets.sphere.push( object );
+
+				}
+
+				// helix
+
+				var vector = new THREE.Vector3();
+
+				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+					var phi = i * 0.175 + Math.PI;
+
+					var object = new THREE.Object3D();
+
+					object.position.x = 900 * Math.sin( phi );
+					object.position.y = - ( i * 8 ) + 450;
+					object.position.z = 900 * Math.cos( phi );
+
+					vector.x = object.position.x * 2;
+					vector.y = object.position.y;
+					vector.z = object.position.z * 2;
+
+					object.lookAt( vector );
+
+					targets.helix.push( object );
+
+				}
+
+				// grid
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = new THREE.Object3D();
+
+					object.position.x = ( ( i % 5 ) * 400 ) - 800;
+					object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
+					object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
+
+					targets.grid.push( object );
+
+				}
+
+				//
+
+				renderer = new THREE.CSS3DRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.domElement.style.position = 'absolute';
+				document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+				//
+
+				controls = new THREE.TrackballControls( camera, renderer.domElement );
+				controls.rotateSpeed = 0.5;
+				controls.minDistance = 500;
+				controls.maxDistance = 6000;
+				controls.addEventListener( 'change', render );
+
+				var button = document.getElementById( 'table' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.table, 2000 );
+
+				}, false );
+
+				var button = document.getElementById( 'sphere' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.sphere, 2000 );
+
+				}, false );
+
+				var button = document.getElementById( 'helix' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.helix, 2000 );
+
+				}, false );
+
+				var button = document.getElementById( 'grid' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.grid, 2000 );
+
+				}, false );
+
+				transform( targets.table, 2000 );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function transform( targets, duration ) {
+
+				TWEEN.removeAll();
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = objects[ i ];
+					var target = targets[ i ];
+
+					new TWEEN.Tween( object.position )
+						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+					new TWEEN.Tween( object.rotation )
+						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+				}
+
+				new TWEEN.Tween( this )
+					.to( {}, duration * 2 )
+					.onUpdate( render )
+					.start();
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				render();
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				TWEEN.update();
+
+				controls.update();
+
+			}
+
+			function render() {
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+	</body>
+</html>
